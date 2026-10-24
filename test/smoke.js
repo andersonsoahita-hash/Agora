@@ -1,0 +1,25 @@
+const { chromium } = require('playwright');
+const start = require('./server');
+(async () => {
+  const { srv, hits, url } = await start(4173);
+  const b = await chromium.launch(); const ctx = await b.newContext({ viewport: { width: 393, height: 852 }, serviceWorkers: 'allow' });
+  const p = await ctx.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message)); p.on('console', m => { if (m.type() === 'error') errs.push('console: ' + m.text()); });
+  const ext = []; p.on('request', r => { if (!r.url().startsWith('http://localhost:4173') && !r.url().startsWith('data:') && !r.url().startsWith('blob:')) ext.push(r.url()); });
+  await p.goto(url); await p.waitForTimeout(600);
+  const out = {};
+  out.cover = await p.isVisible('#cover');
+  await p.click('#coverGo'); await p.waitForTimeout(700);
+  out.coverGone = !(await p.$('#cover'));
+  out.homeText = (await p.innerText('#app')).slice(0, 200).replace(/\n/g, ' | ');
+  out.donneesOnHome = (await p.innerText('#app')).includes('Tes données');
+  out.xp0 = /0 j · 0 pts/.test(await p.innerText('#app'));
+  await p.click('[data-act=settings]'); await p.waitForTimeout(500);
+  out.settings = (await p.innerText('#app')).includes('Réglages') && (await p.innerText('#app')).includes('Tes données');
+  await p.waitForTimeout(1500);
+  out.sw = await p.evaluate(async () => { const r = await navigator.serviceWorker.getRegistration(); return !!(r && (r.active || r.waiting)); });
+  out.offlineReady = (await p.innerText('#app')).includes('prêt');
+  out.ls = await p.evaluate(() => JSON.parse(localStorage.getItem('ao_state_v1')));
+  console.log(JSON.stringify(out, null, 1)); console.log('ERRS', errs, 'EXT', ext, 'AGORA_ERRORS', await p.evaluate(() => window.AGORA_ERRORS));
+  await p.screenshot({ path: '/tmp/claude-0/-home-claude/adb16bb4-f64b-5c56-930e-024fea637c82/scratchpad/settings.png' });
+  await b.close(); srv.close();
+})();

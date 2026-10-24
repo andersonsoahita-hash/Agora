@@ -1,0 +1,57 @@
+/* ===== Polices hébergées (aucun appel externe) ===== */
+@font-face{font-family:'Dancing Script';font-weight:700;font-style:normal;font-display:swap;src:url(fonts/dancing-script-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'DM Sans';font-weight:400;font-style:normal;font-display:swap;src:url(fonts/dm-sans-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'DM Sans';font-weight:500;font-style:normal;font-display:swap;src:url(fonts/dm-sans-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'DM Sans';font-weight:700;font-style:normal;font-display:swap;src:url(fonts/dm-sans-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Fraunces';font-weight:500;font-style:normal;font-display:swap;src:url(fonts/fraunces-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Fraunces';font-weight:600;font-style:normal;font-display:swap;src:url(fonts/fraunces-latin-600-normal.woff2) format('woff2')}
+
+/* ===== Mobile / PWA ===== */
+:root{padding-top:env(safe-area-inset-top,0px)}
+html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+input,textarea,select{font-size:16px;font-family:inherit;color:var(--fg)}
+input[type=date]{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-top:4px;min-height:44px}
+.chip,.btn,.tabbar button,.gear{touch-action:manipulation}
+.chip{min-height:36px}
+.gear{margin-left:auto;background:none;border:1px solid var(--line);border-radius:50%;width:44px;height:44px;color:var(--fg);display:grid;place-items:center;cursor:pointer;flex:none}
+.gear svg{width:22px;height:22px}
+.banner{border-color:var(--gold);background:var(--surface2)}
+.dayc{border-left:4px solid var(--accent)}
+.ritem{padding:10px 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:8px;min-width:0}
+.rname{display:flex;flex-direction:column;gap:2px;min-width:0;overflow-wrap:anywhere}
+.rname input{margin-bottom:6px}
+.col{display:flex;flex-direction:column;gap:6px;flex:none}
+code{background:var(--surface2);border-radius:4px;padding:1px 5px;font-size:.85em}
+audio{width:100%}
+.lock{position:fixed;inset:0;z-index:200;background:var(--bg);display:grid;place-items:center;padding:24px}
+.lockbox{max-width:420px;text-align:center}
+
+/* ===== Couverture ===== */
+.cover{position:fixed;inset:0;z-index:150;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;
+  background:radial-gradient(120% 90% at 50% 20%,#B5341E 0%,#9E2B16 55%,#6e1b0d 100%);color:#fff8f0;
+  padding:max(24px,env(safe-area-inset-top,0px)) max(24px,env(safe-area-inset-right,0px)) max(24px,env(safe-area-inset-bottom,0px)) max(24px,env(safe-area-inset-left,0px));transition:opacity .5s ease,transform .5s ease}
+.cover.out{opacity:0;transform:scale(1.04);pointer-events:none}
+.cover .cmark svg{width:108px;height:108px;display:block}
+.cover .cname{font-family:'Dancing Script','Fraunces',cursive;font-weight:700;font-size:4.2rem;line-height:1;margin:0;letter-spacing:.01em}
+.cover .csub{margin:0;font-size:.95rem;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.cover .csub i{font-style:normal;font-weight:700;color:#C9A24B;letter-spacing:.08em}
+.cover .cquote{margin:6px 0 0;font-family:'Fraunces',Georgia,serif;font-size:1.05rem;max-width:20em;opacity:.9}
+.cover .cgo{margin-top:22px;background:#fff8f0;color:#9E2B16;border:0;border-radius:999px;padding:13px 34px;font-weight:700;font-size:1rem;min-height:48px;cursor:pointer}
+.cover .cgo:focus-visible{outline:3px solid #C9A24B;outline-offset:3px}
+.nojs{padding:24px;text-align:center}
+
+/* ===== Animations sobres (désactivées si l'utilisateur le demande) ===== */
+@media (prefers-reduced-motion:no-preference){
+  @keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @keyframes cin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  #app .stack>*{animation:up .38s ease-out both}
+  #app .stack>*:nth-child(2){animation-delay:.04s}#app .stack>*:nth-child(3){animation-delay:.08s}#app .stack>*:nth-child(4){animation-delay:.12s}
+  #app .stack>*:nth-child(5){animation-delay:.16s}#app .stack>*:nth-child(n+6){animation-delay:.2s}
+  .cover .cmark svg{animation:spin 48s linear infinite}
+  .cover .cname{animation:cin .8s .1s ease-out both}.cover .csub{animation:cin .8s .25s ease-out both}.cover .cquote{animation:cin .8s .4s ease-out both}.cover .cgo{animation:cin .8s .55s ease-out both}
+  .bar>i{transition:width .6s ease}
+  .btn,.chip,.card.tap{transition:transform .12s ease,border-color .15s ease}
+  .btn:active,.chip:active,.card.tap:active{transform:scale(.97)}
+}
+@media (prefers-reduced-motion:reduce){.cover{transition:none}}

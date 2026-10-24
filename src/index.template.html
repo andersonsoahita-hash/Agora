@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self'; connect-src 'self' data: blob:; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Agora · L’art oratoire</title>
+<meta name="description" content="Agora, l’art oratoire, by Stephen. Ton coach de prise de parole.">
+<meta name="theme-color" content="#9E2B16">
+<meta name="color-scheme" content="light dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Agora">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="style.css">
+<script src="theme-boot.js"></script>
+</head>
+<body>
+<div id="cover" class="cover" role="dialog" aria-label="Agora">
+  <div class="cmark" aria-hidden="true">@@MARK@@</div>
+  <h1 class="cname">Agora</h1>
+  <p class="csub">L’art oratoire · <i>by Stephen</i></p>
+  <p class="cquote">Chacun mérite sa place sur la place.</p>
+  <button id="coverGo" class="cgo" type="button">Entrer</button>
+</div>
+<div id="app"><noscript><p class="nojs">Agora a besoin de JavaScript pour fonctionner.</p></noscript></div>
+<nav id="tabbar" class="tabbar"></nav>
+<script src="app.js?v=@@HASH@@"></script>
+</body>
+</html>
