@@ -1,4 +1,4 @@
-window.AGORA_BUILD='1d1d4a9ec3';
+window.AGORA_BUILD='5a2ed1827e';
 /* ============================================================
    Analyse de la voix (signal) et du texte (transcription)
    Tout se calcule dans la page. Aucun audio n'est envoyé nulle part.
