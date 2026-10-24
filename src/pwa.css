@@ -55,3 +55,4 @@ audio{width:100%}
   .btn:active,.chip:active,.card.tap:active{transform:scale(.97)}
 }
 @media (prefers-reduced-motion:reduce){.cover{transition:none}}
+.cover .cmark circle{fill:#fff8f0}.cover .cmark circle:first-child{fill:#C9A24B}.cover .cmark circle:last-child{fill:#C9A24B;opacity:.9}

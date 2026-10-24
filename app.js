@@ -1,4 +1,4 @@
-window.AGORA_BUILD='51ad29844f';
+window.AGORA_BUILD='1d1d4a9ec3';
 /* ============================================================
    Analyse de la voix (signal) et du texte (transcription)
    Tout se calcule dans la page. Aucun audio n'est envoyé nulle part.
@@ -2481,6 +2481,7 @@ function today() { return new Date().toISOString().slice(0, 10); }
 /* ---------- état + stockage ---------- */
 var S = { goals: [], sessions: [], done: {}, quiz: {}, type: null, proofs: [], prep: [], erist: { best: 0 }, xp: 0, days: [], badges: [], why: null, angles: '', set: { sr: false }, since: 0, lastExport: 0 };
 var cap = { db: null, sample: null, downloads: null, uid: null }; /* PWA : aucune IA, aucun service distant */
+Object.freeze(cap); /* verrouillé : aucun appel IA possible depuis l’appli */
 var saveTimer = null;
 function loadLocal() { try { var r = localStorage.getItem(LS); if (r) merge(JSON.parse(r)); } catch (e) {} }
 function merge(o) { for (var k in S) if (o && o[k] != null && typeof o[k] === typeof S[k]) S[k] = o[k]; }
@@ -2653,7 +2654,7 @@ function idbDo(store, mode, fn) {
   return idb().then(function (d) {
     return new Promise(function (res, rej) {
       var t = d.transaction(store, mode), out = fn(t.objectStore(store));
-      t.oncomplete = function () { res(out && out.result !== undefined ? out.result : out); };
+      t.oncomplete = function () { res(out && typeof out === 'object' && 'result' in out ? out.result : out); };
       t.onerror = t.onabort = function () { rej(t.error); };
     });
   });
@@ -2664,12 +2665,26 @@ function idbPut(store, v) { return idbDo(store, 'readwrite', function (s) { retu
 function idbDel(store, id) { return idbDo(store, 'readwrite', function (s) { return s.delete(id); }); }
 
 /* ---------- enregistreur ---------- */
+var wake = null;
+function pwaWake(on) {
+  try {
+    if (on && navigator.wakeLock && !wake) navigator.wakeLock.request('screen').then(function (w) { wake = w; w.addEventListener('release', function () { wake = null; }); }, function () {});
+    else if (!on && wake) { wake.release(); wake = null; }
+  } catch (e) {}
+}
+document.addEventListener('visibilitychange', function () {
+  if (document.visibilityState !== 'visible') return;
+  if (st.rec && mr && mr.state === 'inactive') { stopRec(); toast('Enregistrement interrompu : l’appli a été quittée. Ce qui a été capté est gardé.', true); }
+  else if (st.rec) pwaWake(true);
+});
 function pwaRecorder(stream) {
+  pwaWake(true);
   var types = ['audio/mp4;codecs=mp4a.40.2', 'audio/mp4', 'audio/webm;codecs=opus', 'audio/webm'];
   try { for (var i = 0; i < types.length; i++) if (MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(types[i])) return new MediaRecorder(stream, { mimeType: types[i] }); } catch (e) {}
   return new MediaRecorder(stream);
 }
 function pwaSaveRec(blob, dur) {
+  pwaWake(false);
   var id = uid(); st.audioId = id;
   var rec = { id: id, name: String(st.sujet || 'Enregistrement').slice(0, 60), date: Date.now(), dur: Math.round(dur || st.recSec || st.audioLen || 0), type: st.type, sujet: st.sujet, mime: blob.type || '', size: blob.size, blob: blob, del: 0 };
   return idbPut('rec', rec).then(function () { persistAsk(true); refreshLib(); }).catch(function () { st.audioId = null; toast('Enregistrement non gardé : stockage indisponible sur ce navigateur.', true); });
@@ -2738,8 +2753,8 @@ function cleanState(o) {
     return { id: p.id, sujet: str(p.sujet, 120), fait: str(p.fait, 1200), url: str(p.url, 400), tags: str(p.tags, 120), date: str(p.date, 10) || today() };
   });
   c.prep = a(o.prep).filter(function (p) { return p && isId(p.id) && (p.kind === 'debat' || p.kind === 'discours') && p.data && typeof p.data === 'object' && typeof p.topic === 'string'; }).slice(0, 25);
-  c.done = {}; if (o.done && typeof o.done === 'object') Object.keys(o.done).slice(0, 500).forEach(function (k) { if (isId(k) && o.done[k]) c.done[k] = true; });
-  c.quiz = {}; if (o.quiz && typeof o.quiz === 'object') Object.keys(o.quiz).slice(0, 500).forEach(function (k) { var n = +o.quiz[k]; if (isId(k) && isFinite(n) && n >= 0 && n <= 100) c.quiz[k] = n; });
+  c.done = {}; if (o.done && typeof o.done === 'object') Object.keys(o.done).slice(0, 500).forEach(function (k) { if (isId(k) && byId(D.lessons, k) && o.done[k]) c.done[k] = true; });
+  c.quiz = {}; if (o.quiz && typeof o.quiz === 'object') Object.keys(o.quiz).slice(0, 500).forEach(function (k) { var n = +o.quiz[k]; if (isId(k) && byId(D.lessons, k) && isFinite(n) && n >= 0 && n <= 100) c.quiz[k] = n; });
   c.type = typeof o.type === 'string' && o.type.length < 40 ? o.type : null;
   c.erist = { best: o.erist && isFinite(+o.erist.best) ? Math.max(0, Math.min(99, +o.erist.best)) : 0 };
   c.xp = isFinite(+o.xp) ? Math.max(0, Math.min(1e6, Math.round(+o.xp))) : 0;
@@ -3125,10 +3140,10 @@ function pwaBoot() {
     var seen = false; try { seen = sessionStorage.getItem('ao_cover') === '1'; } catch (e) {}
     var closeCover = function () { try { sessionStorage.setItem('ao_cover', '1'); } catch (e) {} cv.classList.add('out'); setTimeout(function () { if (cv.parentNode) cv.parentNode.removeChild(cv); }, 520); };
     if (seen) cv.parentNode.removeChild(cv);
-    else { var go1 = byIdEl('coverGo'); if (go1) { go1.onclick = closeCover; go1.focus && go1.focus(); } }
+    else { var go1 = byIdEl('coverGo'); if (go1) { go1.onclick = closeCover; } }
   }
   try {
-    fetch('acces.json', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { if (j && j.actif === false) showLock(j.message); }).catch(function () {});
+    if (navigator.onLine !== false) fetch('acces.json', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { if (j && j.actif === false) showLock(j.message); }).catch(function () {});
   } catch (e) {}
 }
 
@@ -3704,7 +3719,7 @@ function vPrep() {
   h += '</div>';
   h += '<div class="callout info small">' + (cap.sample
     ? 'Claude rédige la structure et les arguments des deux camps. <b>Il ne peut pas vérifier de chiffres en direct</b> : il n’en invente aucun et indique où chercher. Les chiffres vérifiés, c’est toi qui les saisis avec leur source, ou tu demandes un dossier chiffré dans la conversation avec Claude (bouton fourni dans chaque débat).'
-    : 'Hors Claude, l’appli te donne une <b>trame</b> (structure et angles à remplir), sans texte généré. Aucun chiffre n’est inventé : tu saisis les tiens avec leur source.') + '</div>';
+    : 'Dans cette version, l’appli te donne une <b>trame</b> (structure et angles à remplir), sans texte généré. Aucun chiffre n’est inventé : tu saisis les tiens avec leur source.') + '</div>';
   if (S.prep.length) {
     h += '<h2>Mes préparations</h2>';
     S.prep.forEach(function (it) {
@@ -3734,7 +3749,7 @@ function proofCount(it) { var n = 0, k; for (k in it.proofs) if (it.proofs[k] &&
 function vDebat(it) {
   var d = it.data, m = d.mine || {}, a = d.adv || {}, h = '<div class="top"><button class="btn small ghost" data-act="prep-close">← Préparer</button><button class="chip" data-act="prep-del" data-v="' + it.id + '">Supprimer</button></div><div class="stack">';
   h += '<div><div class="eyebrow">Débat · ton camp : ' + esc(m.camp || it.side) + '</div><h1>' + esc(d.question || it.topic) + '</h1></div>';
-  h += (prepUI.err ? '<div class="callout small" style="border-color:var(--warn)">' + esc(prepUI.err) + '</div>' : '') + '<div class="callout' + (it.ai ? ' info' : '') + ' small">' + (it.ai ? 'Rédigé par Claude. <b>Aucun chiffre n’a été vérifié</b> : saisis les tiens avec leur source dans chaque argument.' : 'Trame sans IA : à toi de remplir.') + ' Preuves vérifiées par toi : <b>' + proofCount(it) + '</b>.</div>';
+  h += (prepUI.err ? '<div class="callout small" style="border-color:var(--warn)">' + esc(prepUI.err) + '</div>' : '') + '<div class="callout' + (it.ai ? ' info' : '') + ' small">' + (it.ai ? 'Rédigé par une IA (ancien export). <b>Aucun chiffre n’a été vérifié</b> : saisis les tiens avec leur source dans chaque argument.' : 'Trame sans IA : à toi de remplir.') + ' Preuves vérifiées par toi : <b>' + proofCount(it) + '</b>.</div>';
   if (arr(d.definitions).length || d.criteres) h += '<div class="card">' + (arr(d.definitions).length ? '<div class="eyebrow">Définitions</div><ul style="margin:6px 0 10px;padding-left:18px">' + arr(d.definitions).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : '') + (d.criteres ? '<div class="eyebrow">Le vrai point de clivage</div><p style="margin:6px 0 0">' + esc(d.criteres) + '</p>' : '') + '</div>';
   h += '<div class="row">' + [['mine', 'Ma partie'], ['adv', 'Adversaire'], ['face', 'Face-à-face']].map(function (t) { return '<button class="chip' + (prepUI.tab === t[0] ? ' on' : '') + '" data-act="prep-tab" data-v="' + t[0] + '">' + t[1] + '</button>'; }).join('') + '</div>';
   if (prepUI.tab === 'mine') {
@@ -3749,14 +3764,14 @@ function vDebat(it) {
     h += arr(d.points_de_friction).map(function (f) { return '<div class="card"><h3>' + esc(f.theme) + '</h3><p style="margin:6px 0"><b>Ma ligne.</b> ' + (f.ma_ligne ? esc(f.ma_ligne) : '<span class="muted">À écrire.</span>') + '</p><p style="margin:0"><b>Sa ligne.</b> ' + (f.sa_ligne ? esc(f.sa_ligne) : '<span class="muted">À écrire.</span>') + '</p></div>'; }).join('');
   }
   if (arr(d.a_verifier).length) h += '<div class="card"><h3>À vérifier avant de parler</h3><ul style="margin:6px 0 0;padding-left:18px">' + d.a_verifier.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
-  h += '<details class="card"><summary><b>Demander un dossier chiffré vérifié à Claude</b></summary><p class="small muted">Copie ce message et envoie-le dans la conversation avec Claude : il pourra chercher sur le web et te donner des chiffres avec leurs sources.</p><pre class="brief" id="briefPre">' + esc(dossierPrompt(it)) + '</pre><button class="btn small ghost" style="margin-top:8px" data-act="copy">Copier</button></details>';
+  h += '<details class="card"><summary><b>Dossier chiffré à faire vérifier (message à copier)</b></summary><p class="small muted">Copie ce message et colle-le dans l’assistant de ton choix (avec recherche web) pour obtenir des chiffres avec leurs sources, puis saisis ici ceux que tu as vérifiés.</p><pre class="brief" id="briefPre">' + esc(dossierPrompt(it)) + '</pre><button class="btn small ghost" style="margin-top:8px" data-act="copy">Copier</button></details>';
   h += '<button class="btn" data-act="prep-studio" data-v="' + it.id + '">S’entraîner à le dire au Studio</button></div>';
   return h;
 }
 function vSpeech(it) {
   var d = it.data, h = '<div class="top"><button class="btn small ghost" data-act="prep-close">← Préparer</button><button class="chip" data-act="prep-del" data-v="' + it.id + '">Supprimer</button></div><div class="stack">';
   h += '<div><div class="eyebrow">Discours · ' + durLabel(it.dur) + (d.mots ? ' · environ ' + esc(d.mots) + ' mots' : '') + '</div><h1>' + esc(d.titre || it.topic) + '</h1></div>';
-  h += (prepUI.err ? '<div class="callout small" style="border-color:var(--warn)">' + esc(prepUI.err) + '</div>' : '') + '<div class="callout' + (it.ai ? ' info' : '') + ' small">' + (it.ai ? 'Rédigé par Claude. Les « [CHIFFRE À VÉRIFIER] » sont des emplacements : remplace-les par un chiffre que tu as vérifié, ou supprime la phrase.' : 'Trame sans IA : écris chaque partie avec tes mots.') + '</div>';
+  h += (prepUI.err ? '<div class="callout small" style="border-color:var(--warn)">' + esc(prepUI.err) + '</div>' : '') + '<div class="callout' + (it.ai ? ' info' : '') + ' small">' + (it.ai ? 'Rédigé par une IA (ancien export). Les « [CHIFFRE À VÉRIFIER] » sont des emplacements : remplace-les par un chiffre que tu as vérifié, ou supprime la phrase.' : 'Trame sans IA : écris chaque partie avec tes mots.') + '</div>';
   if (arr(d.plan).length) h += '<div class="card"><div class="eyebrow">Plan</div><ol style="margin:6px 0 0;padding-left:20px">' + d.plan.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ol></div>';
   h += '<div class="card prose">' + arr(d.parties).map(function (p) { return '<h3>' + esc(p.partie) + '</h3><p>' + esc(p.texte) + '</p>'; }).join('') + '</div>';
   if (arr(d.conseils_oraux).length) h += '<div class="box b-exo"><b>Pour le dire</b><ul>' + d.conseils_oraux.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';

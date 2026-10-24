@@ -154,7 +154,7 @@ function vPrep() {
   h += '</div>';
   h += '<div class="callout info small">' + (cap.sample
     ? 'Claude rédige la structure et les arguments des deux camps. <b>Il ne peut pas vérifier de chiffres en direct</b> : il n’en invente aucun et indique où chercher. Les chiffres vérifiés, c’est toi qui les saisis avec leur source, ou tu demandes un dossier chiffré dans la conversation avec Claude (bouton fourni dans chaque débat).'
-    : 'Hors Claude, l’appli te donne une <b>trame</b> (structure et angles à remplir), sans texte généré. Aucun chiffre n’est inventé : tu saisis les tiens avec leur source.') + '</div>';
+    : 'Dans cette version, l’appli te donne une <b>trame</b> (structure et angles à remplir), sans texte généré. Aucun chiffre n’est inventé : tu saisis les tiens avec leur source.') + '</div>';
   if (S.prep.length) {
     h += '<h2>Mes préparations</h2>';
     S.prep.forEach(function (it) {
@@ -184,7 +184,7 @@ function proofCount(it) { var n = 0, k; for (k in it.proofs) if (it.proofs[k] &&
 function vDebat(it) {
   var d = it.data, m = d.mine || {}, a = d.adv || {}, h = '<div class="top"><button class="btn small ghost" data-act="prep-close">← Préparer</button><button class="chip" data-act="prep-del" data-v="' + it.id + '">Supprimer</button></div><div class="stack">';
   h += '<div><div class="eyebrow">Débat · ton camp : ' + esc(m.camp || it.side) + '</div><h1>' + esc(d.question || it.topic) + '</h1></div>';
-  h += (prepUI.err ? '<div class="callout small" style="border-color:var(--warn)">' + esc(prepUI.err) + '</div>' : '') + '<div class="callout' + (it.ai ? ' info' : '') + ' small">' + (it.ai ? 'Rédigé par Claude. <b>Aucun chiffre n’a été vérifié</b> : saisis les tiens avec leur source dans chaque argument.' : 'Trame sans IA : à toi de remplir.') + ' Preuves vérifiées par toi : <b>' + proofCount(it) + '</b>.</div>';
+  h += (prepUI.err ? '<div class="callout small" style="border-color:var(--warn)">' + esc(prepUI.err) + '</div>' : '') + '<div class="callout' + (it.ai ? ' info' : '') + ' small">' + (it.ai ? 'Rédigé par une IA (ancien export). <b>Aucun chiffre n’a été vérifié</b> : saisis les tiens avec leur source dans chaque argument.' : 'Trame sans IA : à toi de remplir.') + ' Preuves vérifiées par toi : <b>' + proofCount(it) + '</b>.</div>';
   if (arr(d.definitions).length || d.criteres) h += '<div class="card">' + (arr(d.definitions).length ? '<div class="eyebrow">Définitions</div><ul style="margin:6px 0 10px;padding-left:18px">' + arr(d.definitions).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : '') + (d.criteres ? '<div class="eyebrow">Le vrai point de clivage</div><p style="margin:6px 0 0">' + esc(d.criteres) + '</p>' : '') + '</div>';
   h += '<div class="row">' + [['mine', 'Ma partie'], ['adv', 'Adversaire'], ['face', 'Face-à-face']].map(function (t) { return '<button class="chip' + (prepUI.tab === t[0] ? ' on' : '') + '" data-act="prep-tab" data-v="' + t[0] + '">' + t[1] + '</button>'; }).join('') + '</div>';
   if (prepUI.tab === 'mine') {
@@ -199,14 +199,14 @@ function vDebat(it) {
     h += arr(d.points_de_friction).map(function (f) { return '<div class="card"><h3>' + esc(f.theme) + '</h3><p style="margin:6px 0"><b>Ma ligne.</b> ' + (f.ma_ligne ? esc(f.ma_ligne) : '<span class="muted">À écrire.</span>') + '</p><p style="margin:0"><b>Sa ligne.</b> ' + (f.sa_ligne ? esc(f.sa_ligne) : '<span class="muted">À écrire.</span>') + '</p></div>'; }).join('');
   }
   if (arr(d.a_verifier).length) h += '<div class="card"><h3>À vérifier avant de parler</h3><ul style="margin:6px 0 0;padding-left:18px">' + d.a_verifier.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
-  h += '<details class="card"><summary><b>Demander un dossier chiffré vérifié à Claude</b></summary><p class="small muted">Copie ce message et envoie-le dans la conversation avec Claude : il pourra chercher sur le web et te donner des chiffres avec leurs sources.</p><pre class="brief" id="briefPre">' + esc(dossierPrompt(it)) + '</pre><button class="btn small ghost" style="margin-top:8px" data-act="copy">Copier</button></details>';
+  h += '<details class="card"><summary><b>Dossier chiffré à faire vérifier (message à copier)</b></summary><p class="small muted">Copie ce message et colle-le dans l’assistant de ton choix (avec recherche web) pour obtenir des chiffres avec leurs sources, puis saisis ici ceux que tu as vérifiés.</p><pre class="brief" id="briefPre">' + esc(dossierPrompt(it)) + '</pre><button class="btn small ghost" style="margin-top:8px" data-act="copy">Copier</button></details>';
   h += '<button class="btn" data-act="prep-studio" data-v="' + it.id + '">S’entraîner à le dire au Studio</button></div>';
   return h;
 }
 function vSpeech(it) {
   var d = it.data, h = '<div class="top"><button class="btn small ghost" data-act="prep-close">← Préparer</button><button class="chip" data-act="prep-del" data-v="' + it.id + '">Supprimer</button></div><div class="stack">';
   h += '<div><div class="eyebrow">Discours · ' + durLabel(it.dur) + (d.mots ? ' · environ ' + esc(d.mots) + ' mots' : '') + '</div><h1>' + esc(d.titre || it.topic) + '</h1></div>';
-  h += (prepUI.err ? '<div class="callout small" style="border-color:var(--warn)">' + esc(prepUI.err) + '</div>' : '') + '<div class="callout' + (it.ai ? ' info' : '') + ' small">' + (it.ai ? 'Rédigé par Claude. Les « [CHIFFRE À VÉRIFIER] » sont des emplacements : remplace-les par un chiffre que tu as vérifié, ou supprime la phrase.' : 'Trame sans IA : écris chaque partie avec tes mots.') + '</div>';
+  h += (prepUI.err ? '<div class="callout small" style="border-color:var(--warn)">' + esc(prepUI.err) + '</div>' : '') + '<div class="callout' + (it.ai ? ' info' : '') + ' small">' + (it.ai ? 'Rédigé par une IA (ancien export). Les « [CHIFFRE À VÉRIFIER] » sont des emplacements : remplace-les par un chiffre que tu as vérifié, ou supprime la phrase.' : 'Trame sans IA : écris chaque partie avec tes mots.') + '</div>';
   if (arr(d.plan).length) h += '<div class="card"><div class="eyebrow">Plan</div><ol style="margin:6px 0 0;padding-left:20px">' + d.plan.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ol></div>';
   h += '<div class="card prose">' + arr(d.parties).map(function (p) { return '<h3>' + esc(p.partie) + '</h3><p>' + esc(p.texte) + '</p>'; }).join('') + '</div>';
   if (arr(d.conseils_oraux).length) h += '<div class="box b-exo"><b>Pour le dire</b><ul>' + d.conseils_oraux.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';

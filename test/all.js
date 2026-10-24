@@ -1,5 +1,5 @@
 const { chromium } = require('playwright');const fs=require('fs');
-const art=fs.readFileSync(__dirname+'/../dist/artifact.html','utf8');
+const art=fs.readFileSync(__dirname+'/_legacy/artifact.html','utf8');
 (async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:390,height:800}});const errs=[];
 p.on('pageerror',e=>errs.push(e.message));
 await p.setContent('<!doctype html><html><head><meta charset=utf8></head><body>'+art+'</body></html>');

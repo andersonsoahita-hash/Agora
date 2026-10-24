@@ -21,6 +21,7 @@ function today() { return new Date().toISOString().slice(0, 10); }
 /* ---------- état + stockage ---------- */
 var S = { goals: [], sessions: [], done: {}, quiz: {}, type: null, proofs: [], prep: [], erist: { best: 0 }, xp: 0, days: [], badges: [], why: null, angles: '', set: { sr: false }, since: 0, lastExport: 0 };
 var cap = { db: null, sample: null, downloads: null, uid: null }; /* PWA : aucune IA, aucun service distant */
+Object.freeze(cap); /* verrouillé : aucun appel IA possible depuis l’appli */
 var saveTimer = null;
 function loadLocal() { try { var r = localStorage.getItem(LS); if (r) merge(JSON.parse(r)); } catch (e) {} }
 function merge(o) { for (var k in S) if (o && o[k] != null && typeof o[k] === typeof S[k]) S[k] = o[k]; }

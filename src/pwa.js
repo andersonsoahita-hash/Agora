@@ -62,7 +62,7 @@ function idbDo(store, mode, fn) {
   return idb().then(function (d) {
     return new Promise(function (res, rej) {
       var t = d.transaction(store, mode), out = fn(t.objectStore(store));
-      t.oncomplete = function () { res(out && out.result !== undefined ? out.result : out); };
+      t.oncomplete = function () { res(out && typeof out === 'object' && 'result' in out ? out.result : out); };
       t.onerror = t.onabort = function () { rej(t.error); };
     });
   });
@@ -73,12 +73,26 @@ function idbPut(store, v) { return idbDo(store, 'readwrite', function (s) { retu
 function idbDel(store, id) { return idbDo(store, 'readwrite', function (s) { return s.delete(id); }); }
 
 /* ---------- enregistreur ---------- */
+var wake = null;
+function pwaWake(on) {
+  try {
+    if (on && navigator.wakeLock && !wake) navigator.wakeLock.request('screen').then(function (w) { wake = w; w.addEventListener('release', function () { wake = null; }); }, function () {});
+    else if (!on && wake) { wake.release(); wake = null; }
+  } catch (e) {}
+}
+document.addEventListener('visibilitychange', function () {
+  if (document.visibilityState !== 'visible') return;
+  if (st.rec && mr && mr.state === 'inactive') { stopRec(); toast('Enregistrement interrompu : l’appli a été quittée. Ce qui a été capté est gardé.', true); }
+  else if (st.rec) pwaWake(true);
+});
 function pwaRecorder(stream) {
+  pwaWake(true);
   var types = ['audio/mp4;codecs=mp4a.40.2', 'audio/mp4', 'audio/webm;codecs=opus', 'audio/webm'];
   try { for (var i = 0; i < types.length; i++) if (MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(types[i])) return new MediaRecorder(stream, { mimeType: types[i] }); } catch (e) {}
   return new MediaRecorder(stream);
 }
 function pwaSaveRec(blob, dur) {
+  pwaWake(false);
   var id = uid(); st.audioId = id;
   var rec = { id: id, name: String(st.sujet || 'Enregistrement').slice(0, 60), date: Date.now(), dur: Math.round(dur || st.recSec || st.audioLen || 0), type: st.type, sujet: st.sujet, mime: blob.type || '', size: blob.size, blob: blob, del: 0 };
   return idbPut('rec', rec).then(function () { persistAsk(true); refreshLib(); }).catch(function () { st.audioId = null; toast('Enregistrement non gardé : stockage indisponible sur ce navigateur.', true); });
@@ -147,8 +161,8 @@ function cleanState(o) {
     return { id: p.id, sujet: str(p.sujet, 120), fait: str(p.fait, 1200), url: str(p.url, 400), tags: str(p.tags, 120), date: str(p.date, 10) || today() };
   });
   c.prep = a(o.prep).filter(function (p) { return p && isId(p.id) && (p.kind === 'debat' || p.kind === 'discours') && p.data && typeof p.data === 'object' && typeof p.topic === 'string'; }).slice(0, 25);
-  c.done = {}; if (o.done && typeof o.done === 'object') Object.keys(o.done).slice(0, 500).forEach(function (k) { if (isId(k) && o.done[k]) c.done[k] = true; });
-  c.quiz = {}; if (o.quiz && typeof o.quiz === 'object') Object.keys(o.quiz).slice(0, 500).forEach(function (k) { var n = +o.quiz[k]; if (isId(k) && isFinite(n) && n >= 0 && n <= 100) c.quiz[k] = n; });
+  c.done = {}; if (o.done && typeof o.done === 'object') Object.keys(o.done).slice(0, 500).forEach(function (k) { if (isId(k) && byId(D.lessons, k) && o.done[k]) c.done[k] = true; });
+  c.quiz = {}; if (o.quiz && typeof o.quiz === 'object') Object.keys(o.quiz).slice(0, 500).forEach(function (k) { var n = +o.quiz[k]; if (isId(k) && byId(D.lessons, k) && isFinite(n) && n >= 0 && n <= 100) c.quiz[k] = n; });
   c.type = typeof o.type === 'string' && o.type.length < 40 ? o.type : null;
   c.erist = { best: o.erist && isFinite(+o.erist.best) ? Math.max(0, Math.min(99, +o.erist.best)) : 0 };
   c.xp = isFinite(+o.xp) ? Math.max(0, Math.min(1e6, Math.round(+o.xp))) : 0;
@@ -534,9 +548,9 @@ function pwaBoot() {
     var seen = false; try { seen = sessionStorage.getItem('ao_cover') === '1'; } catch (e) {}
     var closeCover = function () { try { sessionStorage.setItem('ao_cover', '1'); } catch (e) {} cv.classList.add('out'); setTimeout(function () { if (cv.parentNode) cv.parentNode.removeChild(cv); }, 520); };
     if (seen) cv.parentNode.removeChild(cv);
-    else { var go1 = byIdEl('coverGo'); if (go1) { go1.onclick = closeCover; go1.focus && go1.focus(); } }
+    else { var go1 = byIdEl('coverGo'); if (go1) { go1.onclick = closeCover; } }
   }
   try {
-    fetch('acces.json', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { if (j && j.actif === false) showLock(j.message); }).catch(function () {});
+    if (navigator.onLine !== false) fetch('acces.json', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { if (j && j.actif === false) showLock(j.message); }).catch(function () {});
   } catch (e) {}
 }

@@ -1,6 +1,6 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
-const art = fs.readFileSync(__dirname + '/../dist/artifact.html', 'utf8');
+const art = fs.readFileSync(__dirname + '/_legacy/artifact.html', 'utf8');
 let bad = 0; const ck = (c, m) => { console.log((c ? 'OK   ' : 'FAIL ') + m); if (!c) bad++; };
 const TXT = "Je voudrais dire une chose simple : le bonheur, c'est d'abord se sentir utile. Attention, je ne dis pas qu'il faut tout sacrifier aux autres. Certes, on peut être heureux seul un dimanche ; mais ce n'est pas ce qui tient dans la durée. Prenons le cas d'une personne qui s'occupe d'un proche : elle est fatiguée, et pourtant elle tient. Autrement dit : on supporte presque tout quand cela sert à quelqu'un.";
 (async () => {

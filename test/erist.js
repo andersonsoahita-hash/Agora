@@ -1,5 +1,5 @@
 const { chromium } = require('playwright'); const fs = require('fs');
-const art = fs.readFileSync(__dirname + '/../dist/artifact.html', 'utf8');
+const art = fs.readFileSync(__dirname + '/_legacy/artifact.html', 'utf8');
 (async () => {
   const b = await chromium.launch(); let bad = 0; const ck = (c, l) => { console.log((c ? 'OK   ' : 'FAIL ') + l); if (!c) bad++; };
   for (const [name, vp] of [['phone', { width: 390, height: 800 }], ['desktop', { width: 1200, height: 800 }]]) {

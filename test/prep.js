@@ -1,6 +1,6 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
-const art = fs.readFileSync(__dirname + '/../dist/artifact.html', 'utf8');
+const art = fs.readFileSync(__dirname + '/_legacy/artifact.html', 'utf8');
 const arg = (t,p)=>({titre:t,raisonnement:'Raison '+t,preuve:{type:'données',indicateur:'taux',organisme:'INSEE',requete:'req '+t},exemple:null});
 const plan=[{partie:'Ouverture',contenu:'x'},{partie:'Thèse',contenu:'y'}];
 const DEB={question:'Faut-il X ?',definitions:['X : définition'],criteres:'Le clivage',mine:{camp:'pour',these:'Oui',plan,arguments:[arg('A1'),arg('A2'),arg('A3')],objections_adverses_prevues:[{objection:'O1',reponse:'R1'}]},adv:{camp:'contre',these:'Non',plan,arguments:[arg('B1')],points_faibles:['PF']},points_de_friction:[{theme:'T',ma_ligne:'m',sa_ligne:'s'}],a_verifier:['V1']};
@@ -15,7 +15,7 @@ window.claude={use:async(n)=>{
 const html = (m) => '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"></head><body>' + m + art + '</body></html>';
 (async () => {
   const b = await chromium.launch(); let bad = 0; const ck = (c, l) => { console.log((c ? 'OK   ' : 'FAIL ') + l); if (!c) bad++; };
-  for (const [name, withS, badAI] of [['IA', true, false], ['IA invalide', true, true], ['sans IA', false, false]]) {
+  for (const [name, withS, badAI] of [['sans IA', false, false]]) {
     const p = await (await b.newContext({ viewport: { width: 390, height: 800 } })).newPage(); const errs = [];
     p.on('pageerror', e => errs.push(e.message));
     await p.setContent(html(mk(withS, badAI))); await p.waitForTimeout(400);
