@@ -176,3 +176,17 @@ pre.brief{white-space:pre-wrap;overflow-wrap:anywhere}
 .chip.hot{border-color:#B5341E;color:#B5341E;font-weight:700}
 .chip.hot.on{background:#B5341E;color:#fff8f0;border-color:#B5341E}
 @media (prefers-reduced-motion:no-preference){button.exhero:active{transform:scale(.985)}button.exhero{transition:transform .12s ease}}
+
+/* ===== Fond « aurore » : grandes taches douces aux couleurs d'Agora ===== */
+:root{--g1:rgba(181,52,30,.20);--g2:rgba(201,162,75,.30);--g3:rgba(60,92,150,.16);--card-a:88%}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--g1:rgba(196,70,44,.40);--g2:rgba(201,162,75,.26);--g3:rgba(52,92,156,.38);--card-a:84%}}
+:root[data-theme="dark"]{--g1:rgba(196,70,44,.40);--g2:rgba(201,162,75,.26);--g3:rgba(52,92,156,.38);--card-a:84%}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(70% 38% at 8% 6%,var(--g1),transparent 72%),
+    radial-gradient(60% 34% at 100% 46%,var(--g2),transparent 72%),
+    radial-gradient(80% 42% at 30% 102%,var(--g3),transparent 72%)}
+.card{background:color-mix(in srgb,var(--surface) var(--card-a),transparent)}
+.tabbar{background:color-mix(in srgb,var(--surface) 92%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.exhero,.cover{background-clip:padding-box}
+.cover::before{content:none}
