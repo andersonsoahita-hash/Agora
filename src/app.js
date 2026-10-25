@@ -38,6 +38,7 @@ function streak() {
   return n;
 }
 /*@@LEVELS@@*/
+/*@@EXPRESS@@*/
 /*@@PWA@@*/
 
 /* ---------- navigation ---------- */
@@ -140,19 +141,24 @@ function pillarsHtml(p) {
 
 /* ---------- STUDIO ---------- */
 var st = { type: 'argumenter', dur: 60, sujet: null, rec: null, blob: null, audio: null, transcript: '', status: '', busy: false, result: null, recSec: 0, recMs: 0, recog: null, lastSpan: null, steps: false };
-function newSubject() { var t = byId(D.exerciseTypes, st.type); st.sujet = pick(t.sujets); }
+function newSubject() {
+  if (st.type === 'express') { st.sujet = ex.theme; return; }
+  if (st.type === 'mot') { st.sujet = pick(D.wordBank); return; }
+  var t = byId(D.exerciseTypes, st.type); st.sujet = pick(t.sujets);
+}
 function vStudio() {
   if (view.sub && view.sub.result) return vResult(view.sub.result);
   if (!st.sujet) newSubject();
   var t = byId(D.exerciseTypes, st.type);
   var h = '<div class="top"><h1>Studio</h1></div><div class="stack">';
   h += '<div class="card stack"><div class="eyebrow">Exercice</div><div class="hscroll">' + D.exerciseTypes.map(function (x) { return '<button class="chip' + (x.id === st.type ? ' on' : '') + '" data-act="st-type" data-v="' + x.id + '">' + esc(x.nom) + '</button>'; }).join('') + '</div>';
-  h += '<div class="row">' + D.durations.map(function (d) { return '<button class="chip' + (d === st.dur ? ' on' : '') + '" data-act="st-dur" data-v="' + d + '">' + durLabel(d) + '</button>'; }).join('') + '</div>';
-  h += '<div><div class="eyebrow">Sujet</div><h2>' + esc(st.sujet) + '</h2><div class="row" style="margin-top:6px"><button class="btn small ghost" data-act="st-new">Autre sujet</button></div></div>';
+  if (st.type !== 'express') h += '<div class="row">' + D.durations.map(function (d) { return '<button class="chip' + (d === st.dur ? ' on' : '') + '" data-act="st-dur" data-v="' + d + '">' + durLabel(d) + '</button>'; }).join('') + '</div>';
+  if (st.type !== 'express') h += '<div><div class="eyebrow">' + (st.type === 'mot' ? 'Ton mot' : 'Sujet') + '</div><h2>' + esc(st.sujet) + '</h2><div class="row" style="margin-top:6px"><button class="btn small ghost" data-act="st-new">' + (st.type === 'mot' ? 'Tirer au sort un autre mot' : 'Autre sujet') + '</button></div></div>';
   h += '<div class="callout"><b>' + esc(t.modele) + '</b> — ' + esc(t.aide) + '</div>';
   h += exLevelHtml(st.type);
   if (st.type === 'discours') h += '<div class="small">' + D.speechSteps.map(function (s, i) { return '<div class="metric"><span>' + (i + 1) + '. <b>' + esc(s.nom) + '</b> — ' + esc(s.objectif) + '</span></div>'; }).join('') + '</div>';
   h += '</div>';
+  if (st.type === 'express') { h += exPhaseHtml(); if (ex.phase !== 'speak') return h + '</div>'; }
   h += '<div class="card stack" id="recCard">' + recHtml() + '</div>';
   h += '<div class="card stack" id="recLib"></div>';
   h += '<div class="card stack"><div class="eyebrow">Transcription (pour analyser les mots)</div><textarea id="trIn" placeholder="' + (SR_API && CAN_MIC && S.set && S.set.sr ? 'Elle se remplit pendant l’enregistrement (transcription en ligne activée). Tu peux la corriger.' : 'Écris ou colle ici le texte de ce que tu as dit. Sans texte, seule la voix est analysée.') + '">' + esc(st.transcript) + '</textarea></div>';
@@ -205,6 +211,7 @@ function endTimer(timeUp) {
   if (st.rec) stopRec(); else refreshRec();
 }
 function studioAfterRender() {
+  exAfterRender();
   var f = document.getElementById('fileIn'); if (f) f.onchange = function () { if (f.files && f.files[0]) setBlob(f.files[0]); };
   var t = document.getElementById('trIn'); if (t) t.oninput = function () { st.transcript = t.value; var b = document.getElementById('goAnalyse'); if (b) b.disabled = !(st.blob || st.transcript.trim()); };
 }
@@ -267,14 +274,15 @@ function doAnalyse() {
       sig = null;
     }
     var pil = A.pillars(sig, t);
-    var rec = { id: uid(), audioId: st.audioId || null, date: today(), sujet: st.sujet, type: st.type, dur: st.dur, sig: sig ? slim(sig) : null, txt: t, transcript: txt, pil: pil };
+    var exd = st.type === 'express' ? exSessionData(sig) : null;
+    var rec = { id: uid(), ex: exd || undefined, audioId: st.audioId || null, date: today(), sujet: st.sujet, type: st.type, dur: st.dur, sig: sig ? slim(sig) : null, txt: t, transcript: txt, pil: pil };
     var lvBefore = exLevel(st.type).lvl;
     S.sessions.unshift(rec); S.sessions = S.sessions.slice(0, 200);
     var lvAfter = exLevel(st.type);
-    touchDay(); addXp(10 + (sig ? 10 : 0) + (t ? 5 : 0) + (st.type === 'connecteurs' && t && t.steps ? t.steps.count * 3 : 0)); autoGoals();
+    touchDay(); addXp(10 + exBonus(rec) + (sig ? 10 : 0) + (t ? 5 : 0) + (st.type === 'connecteurs' && t && t.steps ? t.steps.count * 3 : 0)); autoGoals();
     if (lvAfter.lvl > lvBefore) toast('Niveau ' + lvAfter.lvl + ' : ' + lvAfter.name + ' · ' + byId(D.exerciseTypes, st.type).nom, true);
     persist();
-    st.busy = false; st.blob = null; st.pcm = null; st.audioId = null; st.transcript = ''; st.recSec = 0; st.ended = false; st.timerOn = false; st.status = '';
+    st.busy = false; st.blob = null; st.pcm = null; st.audioId = null; if (rec.ex) exReset(); st.transcript = ''; st.recSec = 0; st.ended = false; st.timerOn = false; st.status = '';
     view = { tab: 'studio', sub: { result: rec.id } }; render(); window.scrollTo(0, 0);
   }
   if (st.pcm) {
@@ -308,6 +316,7 @@ function vResult(id) {
   if (!s) return '<p>Séance introuvable.</p><button class="btn" data-act="back">Retour</button>';
   var a = s.sig, t = s.txt, h = '<div class="top"><div><div class="eyebrow">' + esc(s.date) + ' · ' + esc(durLabel(s.dur)) + '</div><h1>Résultat</h1></div><button class="btn small ghost" data-act="back">Fermer</button></div><div class="stack">';
   h += '<div class="card"><h3>' + esc(s.sujet) + '</h3>' + pillarsHtml(s.pil) + '<p class="muted small" style="margin:10px 0 0">Indices de 0 à 100 calculés par l’appli à partir de ta voix et de ton texte. Ils orientent ton travail ; ils ne mesurent pas l’effet réel sur un public.</p>' + ((s.pil.partial || []).length ? '<p class="small tag-warn">Non calculé faute de données : ' + s.pil.partial.join(', ') + '.</p>' : '') + '</div>';
+  h += exResultHtml(s);
   h += '<div class="card"><h3>À travailler en premier</h3>' + adviceList(a, t).map(function (x) { return '<div class="metric"><span><b>' + esc(x[0]) + '</b><br><span class="muted small">' + esc(x[1]) + '</span></span></div>'; }).join('') + '</div>';
   if (a) {
     h += '<div class="card"><h3>Voix</h3>';
@@ -462,7 +471,7 @@ function briefText(t) {
 document.addEventListener('click', function (ev) {
   var el = ev.target.closest('[data-act]'); if (!el) return;
   var act = el.getAttribute('data-act'), v = el.getAttribute('data-v');
-  if (pwaAct(act, v, el, ev) || prepAct(act, v, el) || eristAct(act, v)) return;
+  if (exAct(act, v, el) || pwaAct(act, v, el, ev) || prepAct(act, v, el) || eristAct(act, v)) return;
   switch (act) {
     case 'tab': go(v); break;
     case 'reco': var g = JSON.parse(v); go(g[0], g[1]); break;
@@ -470,7 +479,7 @@ document.addEventListener('click', function (ev) {
     case 'goal-toggle': S.goals.forEach(function (x) { if (x.id === v) { x.done = !x.done; if (x.done) addXp(20); } }); persist(); render(); break;
     case 'goal-del': S.goals = S.goals.filter(function (x) { return x.id !== v; }); persist(); render(); break;
     case 'open-session': view = { tab: 'studio', sub: { result: v } }; render(); window.scrollTo(0, 0); break;
-    case 'st-type': st.type = v; newSubject(); render(); break;
+    case 'st-type': if (st.rec || st.timerOn) break; st.type = v; if (v === 'express') { if (ex.phase === 'speak') exEnterSpeak(); } else if (D.durations.indexOf(st.dur) < 0) st.dur = 60; newSubject(); st.ended = false; st.recSec = 0; render(); break;
     case 'st-dur': if (st.rec || st.timerOn) break; st.dur = +v; st.ended = false; st.recSec = 0; render(); break;
     case 'st-new': newSubject(); render(); break;
     case 'rec-toggle': st.rec ? endTimer(false) : startRec(); break;
@@ -498,5 +507,5 @@ document.addEventListener('keydown', function (e) { if (e.key === 'Enter' && e.t
 function selectNode(n) { var r = document.createRange(); r.selectNodeContents(n); var s = getSelection(); s.removeAllRanges(); s.addRange(r); }
 
 /* ---------- démarrage ---------- */
-loadLocal(); pwaBoot(); render();
+loadLocal(); exLoad(); pwaBoot(); render();
 })();

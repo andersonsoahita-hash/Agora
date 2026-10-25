@@ -156,7 +156,11 @@ audio{width:100%}
 }
 @media (prefers-reduced-motion:reduce){.cover{transition:none}}
 .cover .cmark circle{fill:#fff8f0}.cover .cmark circle:first-child{fill:#C9A24B}.cover .cmark circle:last-child{fill:#C9A24B;opacity:.9}
-</style><div id="app"></div><nav id="tabbar" class="tabbar"></nav><script>window.AGORA_BUILD='1d1d4a9ec3';
+.exp .pil b{font-size:1.3rem}.exth{margin:4px 0}
+details summary{cursor:pointer;min-height:32px}
+pre.brief{white-space:pre-wrap;overflow-wrap:anywhere}
+.hscroll .chip{white-space:nowrap;flex:none}
+</style><div id="app"></div><nav id="tabbar" class="tabbar"></nav><script>window.AGORA_BUILD='8055aed025';
 /* ============================================================
    Analyse de la voix (signal) et du texte (transcription)
    Tout se calcule dans la page. Aucun audio n'est envoyé nulle part.
@@ -2540,7 +2544,7 @@ window.AO_DATA.durations = [30, 60, 120, 300];
 window.AO_DATA.exerciseTypes = [
   { id: 'argumenter', nom: 'Argumenter une idée', modele: 'PREP', aide: 'Point → Raison → Exemple → Point',
     sujets: ['Tout le monde devrait apprendre à parler en public', 'Le téléphone devrait être interdit en réunion', 'Le luxe est un art avant d’être un commerce', 'Madagascar a un atout sous-estimé', 'Travailler à distance rend meilleur', 'Il faut échouer pour apprendre', 'Un bon leader sait écouter avant de parler', 'Les études ne suffisent plus'] },
-  { id: 'mot', nom: 'Parler à partir d’un mot', modele: 'Libre', aide: 'Définis le mot, donne un exemple, relie-le à ta vie.',
+  { id: 'mot', nom: 'Parler à partir d’un mot', modele: 'Définir → Exemple → Lien avec ta vie', aide: 'Improvisation pure, sans recherche : tire un mot, prends dix secondes de silence, puis définis-le, donne un exemple et relie-le à ta vie.',
     sujets: ['Confiance', 'Héritage', 'Rareté', 'Patience', 'Frontière', 'Lenteur', 'Élégance', 'Risque', 'Mémoire', 'Silence'] },
   { id: 'recit', nom: 'Raconter une histoire', modele: 'Situation → Obstacle → Action → Leçon', aide: 'Une scène, un détail concret, une leçon.',
     sujets: ['Une fois où j’ai eu peur de parler', 'Un échec qui m’a appris quelque chose', 'La rencontre qui a changé mon parcours', 'Un voyage qui m’a marqué', 'Mon premier jour dans un lieu inconnu'] },
@@ -2551,7 +2555,8 @@ window.AO_DATA.exerciseTypes = [
   { id: 'connecteurs', nom: 'Relier ses idées (5 étapes)', modele: 'Annoncer → Prévenir → Concéder → Illustrer → Reformuler', aide: 'Un connecteur par étape : « je voudrais dire… », « attention, je ne dis pas que… », « certes… mais », « prenons le cas de… », « autrement dit… ».',
     sujets: ['Qu’est-ce que le bonheur ?', 'Faut-il toujours dire la vérité ?', 'La réussite se mérite-t-elle ?', 'Parler en public est-il un don ?', 'Faut-il apprendre à perdre ?', 'Le luxe est-il utile ?', 'Que vaut une promesse ?'] },
   { id: 'discours', nom: 'Discours complet', modele: 'Ouverture → Plan → 3 parties → Appel', aide: 'Annonce ton plan, finis par une demande.',
-    sujets: ['Pourquoi j’ai écrit ce livre', 'Ce que je veux transmettre à ma génération', 'Présenter un projet à un jury', 'Un discours de remerciement'] }
+    sujets: ['Pourquoi j’ai écrit ce livre', 'Ce que je veux transmettre à ma génération', 'Présenter un projet à un jury', 'Un discours de remerciement'] },
+  { id: 'express', nom: 'Recherche express', modele: 'Chercher → Structurer → Expliquer', aide: 'Tire un thème, cherche l’essentiel sans IA, structure, puis explique en un cinquième du temps de préparation.', sujets: [] }
 ];
 
 window.AO_DATA.speechSteps = [
@@ -2614,6 +2619,35 @@ window.AO_DATA.archetypeFor = function (sc) {
   const map = { LE: 'architecte', LP: 'pedagogue', EL: 'garant', EP: 'rassembleur', PE: 'tribun', PL: 'conteur' };
   return map[key];
 };
+
+;
+/* Banque de thèmes pour « Recherche express » et de mots pour « Parler à partir d'un mot ».
+   Titres neutres : aucun fait n'est affirmé ici, tout est à chercher. */
+window.AO_DATA = window.AO_DATA || {};
+(function () {
+  function L(s) { return s.split('|').map(function (x) { return x.trim(); }).filter(Boolean); }
+  window.AO_DATA.themeCats = [
+    { id: 'luxe', nom: 'Luxe et marques', l: L('Haute couture|Haute joaillerie|Savoir-faire artisanal|Rareté|Héritage de marque|Palace|Conciergerie hôtelière|Parfumerie de niche|Champagne|Maroquinerie|Horlogerie|Collaboration entre marques|Contrefaçon|Seconde main de luxe|Luxe durable|Expérience client haut de gamme|Storytelling de marque|Ambassadeur de marque|Défilé de mode|Cognac|Soie|Cuir|Jet privé|Art de la table|Personal shopping|Duty free|Édition limitée|Boutique phare|Maison de vente aux enchères|Cachemire|Orfèvrerie|Vin de garde|Spa de luxe|Croisière de luxe|Clientèle ultra-fortunée|Marque centenaire|Logo et monogramme|Gastronomie étoilée|Hôtellerie indépendante|Luxe et digital') },
+    { id: 'eco', nom: 'Économie et business', l: L('Inflation|Taux d’intérêt|PIB|Monnaie|Microfinance|Franchise|Start-up|Business model|Économie informelle|Chaîne d’approvisionnement|Mondialisation|Protectionnisme|Cryptomonnaie|Assurance|Bourse|Dividende|Marge commerciale|Seuil de rentabilité|Plan de trésorerie|Effet de levier|Capital-risque|Financement participatif|Monopole|Économie circulaire|Commerce équitable|Zone franche|Droits de douane|Banque centrale|Retraite par répartition|Dette publique|Balance commerciale|Salaire minimum|Chômage|Économie d’échelle|Offre et demande|Pénurie|Spéculation|Investissement responsable|Microentreprise|Sous-traitance|Délocalisation|Taux de change|Faillite|Fusion-acquisition|Coopérative|Impôt sur les sociétés') },
+    { id: 'mkt', nom: 'Marketing et communication', l: L('Positionnement|Persona|Tunnel de conversion|Référencement naturel|Marketing d’influence|Community management|Brand content|Identité visuelle|Taux d’engagement|Publicité native|Neuromarketing|Bouche-à-oreille|Gestion de crise|Relations presse|Marketing sensoriel|Packaging|Fidélisation client|Net Promoter Score|Marque employeur|Rédaction publicitaire|Newsletter|Podcast|Algorithme des réseaux|Viralité|Greenwashing|Slogan|Étude de marché|Segmentation|Parcours client|Marketing de contenu|Cocréation|Produit d’appel|Prix psychologique|Rupture de stock|Marque blanche|Placement de produit|Événementiel|Partenariat de marque|Tonalité de marque|Mascotte') },
+    { id: 'hist', nom: 'Histoire et monde', l: L('Révolution française|Empire romain|Colonisation|Décolonisation|Guerre froide|Route de la soie|Renaissance|Siècle des Lumières|Révolution industrielle|Chute du mur de Berlin|Abolition de l’esclavage|Mai 68|Union européenne|Organisation des Nations unies|Printemps arabe|Apartheid|Peste noire|Invention de l’imprimerie|Vikings|Égypte antique|Démocratie athénienne|Croisades|Crise de 1929|Plan Marshall|Empire ottoman|Empire inca|Commerce triangulaire|Exposition universelle|Siècle de Louis XIV|Napoléon Bonaparte|Alexandre le Grand|Gandhi|Nelson Mandela|Déclaration des droits de l’homme|Première Guerre mondiale|Seconde Guerre mondiale|Chute de Rome|Ère Meiji|Grande Muraille de Chine|Âge d’or néerlandais|Révolution russe|Esclavage dans l’océan Indien|Traité de Versailles|Voyages de Christophe Colomb|Conférence de Berlin') },
+    { id: 'sci', nom: 'Sciences et technologie', l: L('Intelligence artificielle|Chaîne de blocs|Photosynthèse|Trou noir|ADN|Vaccin|Énergie solaire|Fusion nucléaire|Internet|Informatique en nuage|Cybersécurité|Données massives|Réalité virtuelle|Satellite|Électricité|Batterie au lithium|Gravité|Relativité|Évolution des espèces|Microbiote|Changement climatique|Biodiversité|Océans|Volcan|Séisme|Cyclone|Recyclage|Hydrogène vert|Voiture électrique|Réseau 5G|Imprimante 3D|Robotique|Ordinateur quantique|Cookies web|Logiciel libre|Cellule souche|Antibiotiques|Résistance aux antibiotiques|Énergie éolienne|Dessalement de l’eau|Nanotechnologie|Système solaire|Mission vers Mars|Boussole|Climat tropical|Mousson|Effet de serre|Déforestation') },
+    { id: 'idees', nom: 'Société et idées', l: L('Liberté|Justice|Égalité|Démocratie|Laïcité|Mérite|Solitude|Bonheur|Courage|Confiance|Honnêteté|Jalousie|Ambition|Patience|Humilité|Travail|Argent|Réussite|Échec|Famille|Amitié|Éducation|Mémoire|Héritage|Tradition|Modernité|Silence|Temps|Hasard|Destin|Pouvoir|Autorité|Désobéissance|Responsabilité|Générosité|Pardon|Curiosité|Doute|Loyauté|Nostalgie|Fierté|Honte|Discipline|Liberté d’expression|Fake news|Censure|Consommation|Minimalisme|Inégalités|Intégration|Bénévolat|Engagement|Entraide') },
+    { id: 'mada', nom: 'Madagascar', l: L('Vanille|Baobab|Lémuriens|Riziculture|Zébu|Fady|Famadihana|Hira gasy|Kabary|Antananarivo|Nosy Be|Saphir|Marché du Zoma|Ravinala|Tsingy|Canal des Pangalanes|Épices de Madagascar|Cacao|Litchi|Girofle|Ylang-ylang|Lamba|Déforestation à Madagascar|Taxi-brousse|Langue malgache|Royaume de Madagascar|Andrianampoinimerina|Ranavalona Ire|Diaspora malgache|Délestage électrique|Pêche à Madagascar|Écotourisme|Cyclones à Madagascar|Artisanat malgache|Jeunesse malgache|Sakafo malgache|Route nationale 7|Indépendance de Madagascar|Franc-parler malgache|Entrepreneuriat à Madagascar|Fosa|Aloalo') },
+    { id: 'objets', nom: 'Objets du quotidien', l: L('Smartphone|Horloge|Miroir|Valise|Clé|Parapluie|Café|Thé|Pain|Sel|Eau|Chaussure|Montre|Ceinture|Lunettes|Billet de banque|Carte bancaire|Vélo|Métro|Avion|Bibliothèque|Marché|Restaurant|Hôtel|Cuisine|Lit|Fenêtre|Porte|Pont|Livre|Stylo|Lumière|Feu|Pluie|Sac à dos|Cadenas|Boussole de poche|Écharpe|Savon|Brosse à dents|Réveil|Escalier|Ascenseur|Passeport|Enveloppe|Carte routière|Bougie|Couteau|Chaise|Cintre') },
+    { id: 'arts', nom: 'Arts et culture', l: L('Impressionnisme|Cubisme|Art de rue|Photographie|Cinéma|Slam|Jazz|Hip-hop|Opéra|Poésie|Roman|Théâtre|Sculpture|Architecture gothique|Design|Gastronomie française|Musée|Mécénat|Patrimoine mondial|Festival de Cannes|Calligraphie|Danse|Mythologie grecque|Fable|Proverbe|Conte|Bande dessinée|Série télévisée|Mode et société|Musique classique|Art contemporain|Graffiti|Musée du Louvre|Carnaval|Artisanat d’art|Théâtre d’improvisation|Éloge funèbre|Discours célèbre|Éloquence politique|Bibliothèque nationale') },
+    { id: 'sante', nom: 'Corps, santé et sport', l: L('Sommeil|Stress|Respiration|Hydratation|Sucre|Jeûne|Muscle|Cardio|Méditation|Marathon|Football|Rugby|Jeux olympiques|Dopage|Échauffement|Posture|Mémoire du cerveau|Hormones|Immunité|Effet placebo|Épuisement professionnel|Alimentation équilibrée|Vitamine D|Sédentarité|Yoga|Natation|Boxe|Athlétisme|Esprit d’équipe|Blessure sportive|Récupération|Motivation|Habitude|Concentration|Écrans et santé') },
+    { id: 'lieux', nom: 'Lieux et géographie', l: L('Paris|Sahara|Amazonie|Himalaya|Singapour|Dubaï|Tokyo|New York|Lagos|Le Caire|Venise|Genève|Milan|Londres|Shanghai|Mer Méditerranée|Océan Indien|Alpes|Nil|Afrique de l’Est|Île Maurice|La Réunion|Seychelles|Antarctique|Désert de Gobi|Versailles|Marseille|Casablanca|Nairobi|Pôle Nord') },
+    { id: 'pro', nom: 'Carrière et vie pro', l: L('Entretien d’embauche|Négociation|Leadership|Gestion du temps|Télétravail|Alternance|Réseau professionnel|Retour d’expérience|Conflit en équipe|Gestion de projet|Méthode agile|Délégation|Productivité|Procrastination|Management|Reconversion|Intrapreneuriat|Travail indépendant|Marque personnelle|Éthique professionnelle|Diversité en entreprise|Prise de parole en réunion|Compte rendu|Cahier des charges|Prise de décision|Gestion du stress au travail|Mentorat|Culture d’entreprise|Burn-out|Premier jour de travail|Lettre de motivation|Offre d’emploi|Période d’essai|Mobilité internationale|Esprit d’entreprise') }
+  ];
+  var all = [];
+  window.AO_DATA.themeCats.forEach(function (c) { c.l.forEach(function (t) { all.push({ c: c.id, t: t }); }); });
+  window.AO_DATA.themeAll = all;
+  /* mots simples pour l'improvisation pure (un seul mot, sans recherche) */
+  var words = [];
+  ['idees', 'objets'].forEach(function (id) { window.AO_DATA.themeCats.filter(function (c) { return c.id === id; })[0].l.forEach(function (t) { if (t.indexOf(' ') < 0 && t.indexOf('’') < 0) words.push(t); }); });
+  window.AO_DATA.wordBank = words.concat(['Confiance', 'Rareté', 'Frontière', 'Lenteur', 'Élégance', 'Risque', 'Murmure', 'Seuil', 'Racine', 'Vitrine', 'Détour', 'Promesse', 'Équilibre', 'Rivalité', 'Ombre', 'Horizon', 'Marge', 'Rituel', 'Fragilité', 'Audace']).filter(function (w, i, a) { return a.indexOf(w) === i; });
+})();
 
 ;
 var LOGO='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100.0" cy="22.0" r="11" fill="#C9A24B"/><circle cx="142.2" cy="34.4" r="11" fill="#C2391F"/><circle cx="171.0" cy="67.6" r="11" fill="#C2391F"/><circle cx="177.2" cy="111.1" r="11" fill="#C2391F"/><circle cx="158.9" cy="151.1" r="11" fill="#C2391F"/><circle cx="122.0" cy="174.8" r="11" fill="#C2391F"/><circle cx="78.0" cy="174.8" r="11" fill="#C2391F"/><circle cx="41.1" cy="151.1" r="11" fill="#C2391F"/><circle cx="22.8" cy="111.1" r="11" fill="#C2391F"/><circle cx="29.0" cy="67.6" r="11" fill="#C2391F"/><circle cx="57.8" cy="34.4" r="11" fill="#C2391F"/><circle cx="100" cy="100" r="27" fill="#C2391F"/></svg>';
@@ -2694,6 +2728,7 @@ var BADGES = [
   { id: 'sf', t: 'Sans faute', d: 'Réussis un quiz de leçon à 100 %.', ok: function () { return D.lessons.some(function (l) { return l.quiz && S.quiz[l.id] === l.quiz.length; }); } },
   { id: 'poly', t: 'Polyvalent', d: 'Essaie 4 types d’exercices différents.', ok: function () { var t = {}; S.sessions.forEach(function (s) { if (s.type) t[s.type] = 1; }); return Object.keys(t).length >= 4; } },
   { id: 'c5', t: 'Cinq sur cinq', d: 'Dans « Relier ses idées », fais détecter les 5 étapes dans ton texte.', ok: function () { return S.sessions.some(function (s) { return s.type === 'connecteurs' && s.txt && s.txt.steps && s.txt.steps.count === 5; }); } },
+  { id: 'exp', t: 'Éclair', d: 'Termine une « Recherche express » dans le Studio.', ok: function () { return S.sessions.some(function (s) { return s.type === 'express'; }); } },
   { id: 'prep', t: 'Préparateur', d: 'Prépare un débat ou un discours dans « Préparer ».', ok: function () { return (S.prep || []).length >= 1; } },
   { id: 'eri', t: 'Éristicien', d: 'Obtiens 12 sur 12 au quiz global des 38 stratagèmes.', ok: function () { return S.erist && S.erist.best >= 12; } }
 ];
@@ -2748,13 +2783,150 @@ function stepsHtml(t) {
   return h;
 }
 
+/* ---------- Recherche express : chercher, structurer, expliquer (sans IA) ---------- */
+var EX_T = [2, 3, 5, 7, 10, 15, 20, 30];
+var ex = { phase: 'setup', T: 5, cat: 'tous', theme: null, themeCat: '', endAt: 0, notes: '', seen: [], crossed: false };
+var EX_CHK = ['J’ai défini le thème en une phrase.', 'J’ai donné trois idées claires, pas plus.', 'J’ai donné un exemple concret.', 'J’ai terminé par une conclusion.'];
+/* Plan : explication = 1/5 du temps total, arrondie au quart de minute (30 s, 1 min, 1 min 15…) ; recherche ≈ 60 %, structuration le reste, par demi-minutes */
+function exPlan(T) {
+  var tot = T * 60, speak = Math.max(30, Math.round(tot / 5 / 15) * 15), search = Math.round(tot * 0.6 / 30) * 30;
+  return { tot: tot, search: search, struct: tot - search, speak: speak };
+}
+function exLab(sec) { sec = Math.round(sec); if (sec < 60) return sec + ' s'; var m = Math.floor(sec / 60), s = sec % 60; return m + ' min' + (s ? ' ' + s : ''); }
+function exPool() { return ex.cat === 'tous' ? D.themeAll : D.themeAll.filter(function (x) { return x.c === ex.cat; }); }
+function exDraw() {
+  var pool = exPool(), fresh = pool.filter(function (x) { return ex.seen.indexOf(x.t) < 0; });
+  if (!fresh.length) { ex.seen = []; fresh = pool; }
+  var p = pick(fresh); ex.theme = p.t; ex.themeCat = p.c; ex.seen.push(p.t); ex.seen = ex.seen.slice(-150);
+  exSave();
+}
+function exSave() { lsSet('ao_express', JSON.stringify(ex)); }
+function exLoad() {
+  try {
+    var o = JSON.parse(lsGet('ao_express') || 'null');
+    if (o && typeof o === 'object') {
+      if (['setup', 'search', 'struct', 'speak'].indexOf(o.phase) >= 0) ex.phase = o.phase;
+      if (EX_T.indexOf(o.T) >= 0) ex.T = o.T;
+      if (o.cat === 'tous' || D.themeCats.some(function (c) { return c.id === o.cat; })) ex.cat = o.cat;
+      if (typeof o.theme === 'string' && o.theme.length < 120) { ex.theme = o.theme; ex.themeCat = typeof o.themeCat === 'string' ? o.themeCat.slice(0, 20) : ''; }
+      if (isFinite(+o.endAt)) ex.endAt = +o.endAt;
+      if (typeof o.notes === 'string') ex.notes = o.notes.slice(0, 4000);
+      if (Array.isArray(o.seen)) ex.seen = o.seen.filter(function (x) { return typeof x === 'string'; }).slice(-150);
+    }
+  } catch (e) {}
+  if (!ex.theme) exDraw();
+  if (ex.phase === 'search' || ex.phase === 'struct') exSync();
+  if (ex.phase === 'speak') exEnterSpeak();
+  if (ex.phase !== 'setup') st.type = 'express';
+  window.AGORA_EX = { plan: exPlan, lab: exLab };
+}
+function exEnterSpeak() { var p = exPlan(ex.T); ex.phase = 'speak'; st.dur = p.speak; st.sujet = ex.theme; st.ended = false; st.recSec = 0; st.timerOn = false; }
+function exSync() {
+  var changed = false, p = exPlan(ex.T), now = Date.now();
+  while ((ex.phase === 'search' || ex.phase === 'struct') && now >= ex.endAt) {
+    ex.crossed = now - ex.endAt < 3000;
+    if (ex.phase === 'search') { ex.phase = 'struct'; ex.endAt += p.struct * 1000; } else exEnterSpeak();
+    changed = true;
+  }
+  return changed;
+}
+function exReset() { ex.phase = 'setup'; ex.notes = ''; exDraw(); }
+function exTick() {
+  if (ex.phase !== 'search' && ex.phase !== 'struct') return;
+  if (exSync()) {
+    exSave();
+    if (ex.crossed) { beep(); try { if (navigator.vibrate) navigator.vibrate([200, 100, 200]); } catch (e) {} }
+    if (view.tab === 'studio' && st.type === 'express' && !view.sub && !st.rec) render();
+    return;
+  }
+  var p = exPlan(ex.T), rem = Math.max(0, (ex.endAt - Date.now()) / 1000), tot = ex.phase === 'search' ? p.search : p.struct;
+  var t = document.getElementById('exTmr'); if (t) t.textContent = fmt(Math.ceil(rem));
+  var b = document.getElementById('exBar'); if (b) b.style.width = Math.min(100, Math.round(100 * (1 - rem / tot))) + '%';
+}
+setInterval(exTick, 500);
+function exPhaseHtml() {
+  var p = exPlan(ex.T), h = '';
+  if (ex.phase === 'setup') {
+    h += '<div class="card stack"><div class="eyebrow">Temps total de préparation</div><div class="row">' + EX_T.map(function (t) { return '<button class="chip' + (t === ex.T ? ' on' : '') + '" data-act="ex-T" data-v="' + t + '">' + t + ' min</button>'; }).join('') + '</div>';
+    h += '<div class="pillars exp"><div class="pil"><b>' + exLab(p.search) + '</b><span class="small muted">Recherche</span></div><div class="pil"><b>' + exLab(p.struct) + '</b><span class="small muted">Structurer</span></div><div class="pil"><b>' + exLab(p.speak) + '</b><span class="small muted">Expliquer</span></div></div>';
+    h += '<p class="muted small" style="margin:0">L’explication dure un cinquième du temps total, arrondi au quart de minute.</p></div>';
+    h += '<div class="card stack"><div class="eyebrow">Thème</div><div class="hscroll"><button class="chip' + (ex.cat === 'tous' ? ' on' : '') + '" data-act="ex-cat" data-v="tous">Tous</button>' + D.themeCats.map(function (c) { return '<button class="chip' + (ex.cat === c.id ? ' on' : '') + '" data-act="ex-cat" data-v="' + c.id + '">' + esc(c.nom) + '</button>'; }).join('') + '</div>';
+    h += '<h2 id="exTheme" class="exth">' + esc(ex.theme) + '</h2><div class="row"><button class="btn small ghost" data-act="ex-draw">Tirer au sort</button></div>';
+    h += '<div class="row" style="flex-wrap:nowrap"><input type="text" id="exCustom" placeholder="Ou écris ton propre thème" maxlength="80"><button class="btn small ghost" data-act="ex-custom">Utiliser</button></div></div>';
+    h += '<div class="callout small"><b>La règle.</b> Cherche dans des livres, des articles, Wikipédia ou tes cours. Pas d’assistant IA ni de résumé automatique : c’est ton tri qui t’entraîne. Quand le temps tombe, tu dois expliquer clairement en <b>' + exLab(p.speak) + '</b>.</div>';
+    h += '<button class="btn" data-act="ex-start">Lancer la recherche · ' + exLab(p.search) + '</button>';
+  } else if (ex.phase === 'search' || ex.phase === 'struct') {
+    var S1 = ex.phase === 'search', rem = Math.max(0, (ex.endAt - Date.now()) / 1000), tot = S1 ? p.search : p.struct;
+    h += '<div class="card stack"><div class="eyebrow">' + (S1 ? 'Phase 1 sur 3 · Recherche' : 'Phase 2 sur 3 · Structurer') + '</div><h2>' + esc(ex.theme) + '</h2>';
+    h += '<div class="timer" id="exTmr" aria-live="off">' + fmt(Math.ceil(rem)) + '</div><div class="bar"><i id="exBar" style="width:' + Math.min(100, Math.round(100 * (1 - rem / tot))) + '%"></i></div>';
+    h += '<div class="callout small">' + (S1
+      ? 'Va à l’essentiel : une définition, deux ou trois chiffres ou faits clés, un exemple qui parle. Ne lis pas tout, trie. Pas d’IA.'
+      : 'Ferme les onglets. Garde : <b>1 définition en une phrase</b>, <b>3 idées au maximum</b>, <b>1 exemple</b>, <b>1 conclusion</b>. Tout doit tenir en ' + exLab(p.speak) + ' : barre le reste.') + '</div>';
+    h += '<textarea id="exNotes" placeholder="' + (S1 ? 'Note l’essentiel : mots-clés seulement.' : 'Ton plan : définition, 3 idées, exemple, conclusion.') + '" maxlength="4000" style="min-height:110px">' + esc(ex.notes) + '</textarea>';
+    h += '<div class="row"><button class="btn small" data-act="ex-skip">' + (S1 ? 'Passer à la structuration' : 'Je suis prêt à expliquer') + '</button><button class="btn small ghost" data-act="ex-abort">Abandonner</button></div></div>';
+  } else {
+    h += '<div class="card stack"><div class="eyebrow">Phase 3 sur 3 · Expliquer en ' + exLab(p.speak) + '</div><h2>' + esc(ex.theme) + '</h2><p class="muted small" style="margin:0">Explique comme à quelqu’un qui ne connaît pas le sujet. Appuie sur REC quand tu es prêt : le chrono s’arrête tout seul.</p>';
+    if (ex.notes.trim()) h += '<details><summary class="small">Voir mes notes</summary><pre class="brief">' + esc(ex.notes) + '</pre></details>';
+    if (!st.rec && !st.timerOn) h += '<div class="row"><button class="btn small ghost" data-act="ex-abort">Recommencer avec un autre thème</button></div>';
+    h += '</div>';
+  }
+  return h;
+}
+function exAfterRender() {
+  var on = document.querySelector('#app .hscroll .chip.on'); if (on && on.parentNode && on.parentNode.scrollWidth > on.parentNode.clientWidth) on.parentNode.scrollLeft = Math.max(0, on.offsetLeft - on.parentNode.clientWidth / 2 + on.offsetWidth / 2);
+  var n = document.getElementById('exNotes'); if (n) n.oninput = function () { ex.notes = n.value; clearTimeout(exAfterRender.t); exAfterRender.t = setTimeout(exSave, 400); };
+}
+function exSessionData(sig) {
+  var p = exPlan(ex.T), actual = sig && sig.ok ? Math.round(sig.spanSec || sig.durationSec || 0) : Math.round(st.recSec || 0);
+  return { theme: ex.theme, cat: ex.themeCat || '', T: ex.T, search: p.search, struct: p.struct, speak: p.speak, actual: actual, notes: ex.notes.slice(0, 4000), chk: [], xpd: [] };
+}
+function exBonus(rec) { return rec.ex ? 5 + (rec.ex.speak && rec.ex.actual >= rec.ex.speak * 0.8 ? 10 : 0) : 0; }
+function exResultHtml(s) {
+  var e = s.ex; if (!e) return '';
+  var pct = e.speak ? Math.round(100 * e.actual / e.speak) : 0;
+  var h = '<div class="card stack"><h3>Recherche express</h3>';
+  h += m('Thème', esc(e.theme)) + m('Préparation', exLab(e.search) + ' de recherche · ' + exLab(e.struct) + ' pour structurer') + m('Explication visée', exLab(e.speak));
+  h += m('Temps de parole utilisé', e.actual + ' s (' + pct + ' %)', pct >= 80 ? 'tag-ok' : 'tag-warn');
+  h += '<p class="small muted" style="margin:0">' + (pct >= 80 ? 'Tu as bien rempli ton temps.' : pct >= 60 ? 'Il te restait un peu de temps : un exemple de plus aurait aidé.' : 'Tu as laissé beaucoup de temps : tu as peut-être trop résumé. Ajoute un exemple et une conclusion.') + '</p>';
+  h += '<div class="eyebrow" style="margin-top:6px">Ton auto-évaluation</div>' + EX_CHK.map(function (t, i) { return '<label class="metric" style="align-items:center"><span><input type="checkbox" data-act="ex-chk" data-v="' + esc(s.id) + '|' + i + '"' + ((e.chk || []).indexOf(i) >= 0 ? ' checked' : '') + '> ' + esc(t) + '</span></label>'; }).join('');
+  if (e.notes && e.notes.trim()) h += '<details><summary class="small">Mes notes de préparation</summary><pre class="brief">' + esc(e.notes) + '</pre></details>';
+  h += '<button class="btn small ghost" style="align-self:flex-start" data-act="ex-proof" data-v="' + esc(e.theme) + '">Garder un fait avec sa source dans Preuves</button></div>';
+  return h;
+}
+function exAct(act, v, el) {
+  switch (act) {
+    case 'ex-T': if (ex.phase === 'setup' && EX_T.indexOf(+v) >= 0) { ex.T = +v; exSave(); render(); } return true;
+    case 'ex-cat': ex.cat = v; exDraw(); render(); return true;
+    case 'ex-draw':
+      var pool = exPool(), steps = 0, reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce) { exDraw(); render(); return true; }
+      (function spin() { var t = document.getElementById('exTheme'); if (!t) return; if (steps++ < 12) { t.textContent = pick(pool).t; setTimeout(spin, 55 + steps * 14); } else { exDraw(); render(); } })();
+      return true;
+    case 'ex-custom': var cv = (document.getElementById('exCustom').value || '').trim().slice(0, 80); if (cv.length < 2) { toast('Écris un thème d’au moins 2 lettres.'); return true; } ex.theme = cv; ex.themeCat = 'perso'; exSave(); render(); return true;
+    case 'ex-start': var p = exPlan(ex.T); ex.phase = 'search'; ex.endAt = Date.now() + p.search * 1000; ex.notes = ''; exSave(); beep0(); render(); return true;
+    case 'ex-skip':
+      if (ex.phase === 'search') { ex.phase = 'struct'; ex.endAt = Date.now() + exPlan(ex.T).struct * 1000; } else if (ex.phase === 'struct') exEnterSpeak();
+      exSave(); render(); return true;
+    case 'ex-abort': exReset(); render(); return true;
+    case 'ex-chk':
+      var q = v.split('|'), s = byId(S.sessions, q[0]), i = +q[1]; if (!s || !s.ex || !(i >= 0 && i < EX_CHK.length)) return true;
+      s.ex.chk = s.ex.chk || []; s.ex.xpd = s.ex.xpd || [];
+      var at = s.ex.chk.indexOf(i);
+      if (el.checked && at < 0) { s.ex.chk.push(i); if (s.ex.xpd.indexOf(i) < 0) { s.ex.xpd.push(i); addXp(3); } } else if (!el.checked && at >= 0) s.ex.chk.splice(at, 1);
+      persist(); return true;
+    case 'ex-resume': st.type = 'express'; if (ex.phase === 'speak') exEnterSpeak(); go('studio'); return true;
+    case 'ex-proof': pwa.prefill = v; go('proofs'); return true;
+  }
+  return false;
+}
+
 /* ============================================================
    PWA : données locales, enregistrements, corbeille, réglages,
    mise à jour, couverture. Aucun appel réseau vers un service tiers.
    ============================================================ */
 var VERSION = '1.0.0', BUILD = window.AGORA_BUILD || 'dev';
 var DAY = 86400000;
-var pwa = { swReg: null, updateReady: false, wantReload: false, offlineReady: false, installEvt: null, imp: null, proofEdit: null, proofFilter: '', msg: '', persisted: null, dismissed: {} };
+var pwa = { prefill: '', swReg: null, updateReady: false, wantReload: false, offlineReady: false, installEvt: null, imp: null, proofEdit: null, proofFilter: '', msg: '', persisted: null, dismissed: {} };
 var WHY_DEFAULT = [
   'Dans la Grèce antique, l’agora, c’était la place publique. On y vendait, on y croisait ses voisins et, surtout, on y parlait. Quelqu’un se levait, les autres écoutaient, et la meilleure idée avait sa chance.',
   'Donc l’agora n’appartenait à personne. Elle appartenait à celui qui osait prendre la parole.',
@@ -2904,6 +3076,7 @@ function cleanState(o) {
   var c = {}, a = function (x) { return Array.isArray(x) ? x : []; };
   c.goals = a(o.goals).filter(function (g) { return g && isId(g.id) && typeof g.t === 'string'; }).slice(0, 100).map(function (g) { return { id: g.id, t: str(g.t, 80), done: !!g.done }; });
   c.sessions = a(o.sessions).filter(function (s) { return s && isId(s.id) && typeof s.date === 'string' && typeof s.sujet === 'string'; }).slice(0, 300).map(function (s) {
+    if (s.ex && typeof s.ex === 'object') { var e = s.ex; s.ex = { theme: str(e.theme, 120), cat: str(e.cat, 20), T: +e.T || 5, search: +e.search || 0, struct: +e.struct || 0, speak: +e.speak || 0, actual: +e.actual || 0, notes: str(e.notes, 4000), chk: Array.isArray(e.chk) ? e.chk.filter(function (i) { return i >= 0 && i < 4; }).slice(0, 4) : [], xpd: Array.isArray(e.xpd) ? e.xpd.filter(function (i) { return i >= 0 && i < 4; }).slice(0, 4) : [] }; } else delete s.ex;
     s.date = str(s.date, 10); s.sujet = str(s.sujet, 300); if (s.transcript != null) s.transcript = str(s.transcript, 30000); if (s.note != null) s.note = str(s.note, 4000);
     if (s.audioId != null && !isId(s.audioId)) s.audioId = null; return s;
   });
@@ -3041,6 +3214,10 @@ function isStandalone() { return (window.matchMedia && matchMedia('(display-mode
 function isIOS() { return /iPhone|iPad|iPod/.test(navigator.userAgent); }
 function homeBanners() {
   var h = '';
+  if (ex.phase === 'search' || ex.phase === 'struct' || ex.phase === 'speak') {
+    var xr = Math.max(0, Math.ceil((ex.endAt - Date.now()) / 1000));
+    h += '<button class="card tap banner" data-act="ex-resume"><div class="eyebrow">Recherche express en cours</div><h3>' + esc(ex.theme) + '</h3><p class="muted small" style="margin:4px 0 0">' + (ex.phase === 'search' ? 'Phase 1 · recherche · reste ' + fmt(xr) : ex.phase === 'struct' ? 'Phase 2 · structurer · reste ' + fmt(xr) : 'Phase 3 · à toi d’expliquer') + '. Touche pour reprendre.</p></button>';
+  }
   if (pwa.updateReady) h += '<div class="card banner"><b>Nouvelle version prête</b><p class="muted small" style="margin:4px 0 8px">Ton travail est conservé.</p><button class="btn small" data-act="update-now">Mettre à jour</button></div>';
   if (needBackup()) h += '<div class="card banner"><b>Pense à sauvegarder</b><p class="muted small" style="margin:4px 0 8px">Ta dernière sauvegarde date de plus de 14 jours' + (S.lastExport ? ' (' + esc(fmtDay(S.lastExport)) + ')' : ' ou n’a jamais été faite') + '.</p><div class="row"><button class="btn small" data-act="export-data">Sauvegarder maintenant</button><button class="btn small ghost" data-act="bk-later">Plus tard</button></div></div>';
   if (!isStandalone() && lsGet('ao_inst_dismiss') !== '1') {
@@ -3050,10 +3227,11 @@ function homeBanners() {
   return h;
 }
 function homeDaily() {
-  var n = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / DAY), ex = D.exerciseTypes[n % D.exerciseTypes.length], sj = ex.sujets[n % ex.sujets.length];
+  var n = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / DAY), exT = D.exerciseTypes[n % D.exerciseTypes.length], isEx = exT.id === 'express';
+  var sj = isEx ? D.themeAll[(n * 7) % D.themeAll.length].t : exT.sujets[n % exT.sujets.length];
   var o = D.orators[n % D.orators.length], wk = Date.now() - 7 * DAY;
   var wkN = S.sessions.filter(function (s) { return new Date(s.date).getTime() > wk; }).length;
-  var h = '<div class="card dayc"><div class="eyebrow">Défi du jour</div><h3>' + esc(ex.nom) + '</h3><p style="margin:6px 0 10px">' + esc(sj) + '</p><button class="btn small" data-act="daily-go" data-v="' + esc(ex.id) + '|' + (n % ex.sujets.length) + '">Relever le défi</button></div>';
+  var h = '<div class="card dayc"><div class="eyebrow">Défi du jour</div><h3>' + esc(exT.nom) + '</h3><p style="margin:6px 0 10px">' + esc(sj) + '</p><button class="btn small" data-act="daily-go" data-v="' + esc(exT.id) + '|' + (isEx ? (n * 7) % D.themeAll.length : n % exT.sujets.length) + '">Relever le défi</button></div>';
   h += '<button class="card tap" data-act="orator" data-v="' + esc(o.id) + '"><div class="eyebrow">Orateur du jour</div><h3>' + esc(o.nom) + '</h3><p class="muted small" style="margin:4px 0 0">' + esc(o.discours.titre) + ' · ' + esc(o.epoque) + '</p></button>';
   h += '<div class="card"><div class="eyebrow">Cette semaine</div><div class="row" style="justify-content:space-around;margin-top:8px"><div class="pil"><b>' + wkN + '</b><span class="small muted">séance' + (wkN > 1 ? 's' : '') + '</span></div><div class="pil"><b>' + streak() + '</b><span class="small muted">jour' + (streak() > 1 ? 's' : '') + ' de suite</span></div><div class="pil"><b>' + S.xp + '</b><span class="small muted">points</span></div></div></div>';
   return h;
@@ -3088,7 +3266,7 @@ function vProofs() {
   h += '<div class="callout info">Cette appli ne cherche pas sur internet. Tu gardes ici tes faits, chiffres et citations, avec leur source et la date de vérification. Ajoute-les à la main ou importe un fichier.</div>';
   h += '<div class="card stack"><h3>Ma bibliothèque <span class="muted small">(' + S.proofs.length + ')</span></h3><input type="search" id="pSearch" placeholder="Chercher un mot, un sujet, une source…" value="' + esc(pwa.proofFilter) + '" autocomplete="off"><div id="pList" class="stack"></div></div>';
   h += '<div class="card stack"><h3>' + (pe ? 'Modifier la preuve' : 'Ajouter une preuve') + '</h3>';
-  h += '<input type="text" id="pSujet" placeholder="Sujet (ex. luxe durable)" maxlength="120" value="' + esc(pe ? pe.sujet : '') + '"><textarea id="pFait" placeholder="Fait, chiffre ou citation" style="min-height:80px" maxlength="1200">' + esc(pe ? pe.fait : '') + '</textarea><input type="text" id="pUrl" placeholder="Source (lien ou référence)" maxlength="400" value="' + esc(pe ? pe.url : '') + '"><input type="text" id="pTags" placeholder="Mots-clés, séparés par des virgules" maxlength="120" value="' + esc(pe ? pe.tags || '' : '') + '"><label class="small muted">Vérifié le<input type="date" id="pDate" value="' + esc(pe ? pe.date : today()) + '"></label>';
+  h += '<input type="text" id="pSujet" placeholder="Sujet (ex. luxe durable)" maxlength="120" value="' + esc(pe ? pe.sujet : (pwa.prefill || '')) + '"><textarea id="pFait" placeholder="Fait, chiffre ou citation" style="min-height:80px" maxlength="1200">' + esc(pe ? pe.fait : '') + '</textarea><input type="text" id="pUrl" placeholder="Source (lien ou référence)" maxlength="400" value="' + esc(pe ? pe.url : '') + '"><input type="text" id="pTags" placeholder="Mots-clés, séparés par des virgules" maxlength="120" value="' + esc(pe ? pe.tags || '' : '') + '"><label class="small muted">Vérifié le<input type="date" id="pDate" value="' + esc(pe ? pe.date : today()) + '"></label>';
   h += '<div class="row"><button class="btn small" data-act="proof-add">' + (pe ? 'Enregistrer les changements' : 'Enregistrer') + '</button>' + (pe ? '<button class="btn small ghost" data-act="proof-cancel">Annuler</button>' : '') + '</div></div>';
   h += '<div class="card stack"><h3>Importer des preuves</h3><p class="muted small" style="margin:0">Fichier .txt, .md, .csv ou .json. Une preuve par ligne, au format <code>Sujet | Fait | Source</code>. Les PDF ne sont pas lus : copie le texte utile dans un .txt.</p><label class="btn ghost small" style="cursor:pointer;align-self:flex-start">Choisir un fichier<input type="file" id="proofFile" accept=".txt,.md,.csv,.json,text/plain,application/json" hidden></label><div class="small" id="proofMsg">' + esc(pwa.msg && view.tab === 'proofs' ? pwa.msg : '') + '</div></div>';
   h += '<div class="card stack"><h3>Brief de recherche</h3><p class="muted small" style="margin:0">Génère un message à coller dans l’assistant de ton choix (avec recherche web), puis rapporte ici les références vérifiées.</p><input type="text" id="topicIn" placeholder="Ex. : le luxe durable en Europe" value="' + esc(proofTopic) + '" maxlength="120"><div class="row"><button class="btn" data-act="brief">Générer le brief</button><button class="btn ghost" data-act="angles-copy">Copier : pistes d’arguments</button></div><div id="briefOut"></div></div>';
@@ -3233,7 +3411,7 @@ function pwaAct(act, v, el, ev) {
       if (!fa) { toast('Écris le fait ou le chiffre à garder.'); return true; }
       if (pwa.proofEdit) { var pe = byId(S.proofs, pwa.proofEdit); if (pe) { pe.sujet = su; pe.fait = fa; pe.url = ur; pe.tags = tg; pe.date = dt; } pwa.proofEdit = null; }
       else S.proofs.unshift({ id: uid(), sujet: su, fait: fa, url: ur, tags: tg, date: dt });
-      persist(); toast('Preuve enregistrée'); render(); return true;
+      pwa.prefill = ''; persist(); toast('Preuve enregistrée'); render(); return true;
     case 'proof-edit': pwa.proofEdit = v; render(); window.scrollTo(0, document.body.scrollHeight); return true;
     case 'proof-cancel': pwa.proofEdit = null; render(); return true;
     case 'proof-del':
@@ -3247,7 +3425,7 @@ function pwaAct(act, v, el, ev) {
       var ti = byIdEl('topicIn'); proofTopic = ti ? ti.value.trim() : ''; if (!proofTopic) { toast('Écris d’abord un sujet.'); return true; }
       copyText('Sujet de discours : « ' + proofTopic + ' ». Propose 4 angles d’argumentation en français. Pour chacun : l’angle, et le type de preuve à aller chercher avec l’endroit où la trouver. N’invente aucun chiffre ni aucune source.', el); return true;
     case 'angles-save': S.angles = byIdEl('anglesNote').value.slice(0, 6000); persist(); toast('Notes enregistrées'); return true;
-    case 'daily-go': var dv = v.split('|'), dt2 = byId(D.exerciseTypes, dv[0]); if (dt2) { st.type = dt2.id; st.sujet = dt2.sujets[+dv[1] % dt2.sujets.length]; go('studio'); } return true;
+    case 'daily-go': var dv = v.split('|'), dt2 = byId(D.exerciseTypes, dv[0]); if (dt2 && dt2.id === 'express') { if (ex.phase === 'setup') { var th = D.themeAll[+dv[1] % D.themeAll.length]; ex.theme = th.t; ex.themeCat = th.c; exSave(); } st.type = 'express'; st.sujet = ex.theme; if (ex.phase === 'speak') exEnterSpeak(); go('studio'); } else if (dt2) { st.type = dt2.id; if (D.durations.indexOf(st.dur) < 0) st.dur = 60; st.sujet = dt2.sujets[+dv[1] % dt2.sujets.length]; go('studio'); } return true;
   }
   return false;
 }
@@ -3406,19 +3584,24 @@ function pillarsHtml(p) {
 
 /* ---------- STUDIO ---------- */
 var st = { type: 'argumenter', dur: 60, sujet: null, rec: null, blob: null, audio: null, transcript: '', status: '', busy: false, result: null, recSec: 0, recMs: 0, recog: null, lastSpan: null, steps: false };
-function newSubject() { var t = byId(D.exerciseTypes, st.type); st.sujet = pick(t.sujets); }
+function newSubject() {
+  if (st.type === 'express') { st.sujet = ex.theme; return; }
+  if (st.type === 'mot') { st.sujet = pick(D.wordBank); return; }
+  var t = byId(D.exerciseTypes, st.type); st.sujet = pick(t.sujets);
+}
 function vStudio() {
   if (view.sub && view.sub.result) return vResult(view.sub.result);
   if (!st.sujet) newSubject();
   var t = byId(D.exerciseTypes, st.type);
   var h = '<div class="top"><h1>Studio</h1></div><div class="stack">';
   h += '<div class="card stack"><div class="eyebrow">Exercice</div><div class="hscroll">' + D.exerciseTypes.map(function (x) { return '<button class="chip' + (x.id === st.type ? ' on' : '') + '" data-act="st-type" data-v="' + x.id + '">' + esc(x.nom) + '</button>'; }).join('') + '</div>';
-  h += '<div class="row">' + D.durations.map(function (d) { return '<button class="chip' + (d === st.dur ? ' on' : '') + '" data-act="st-dur" data-v="' + d + '">' + durLabel(d) + '</button>'; }).join('') + '</div>';
-  h += '<div><div class="eyebrow">Sujet</div><h2>' + esc(st.sujet) + '</h2><div class="row" style="margin-top:6px"><button class="btn small ghost" data-act="st-new">Autre sujet</button></div></div>';
+  if (st.type !== 'express') h += '<div class="row">' + D.durations.map(function (d) { return '<button class="chip' + (d === st.dur ? ' on' : '') + '" data-act="st-dur" data-v="' + d + '">' + durLabel(d) + '</button>'; }).join('') + '</div>';
+  if (st.type !== 'express') h += '<div><div class="eyebrow">' + (st.type === 'mot' ? 'Ton mot' : 'Sujet') + '</div><h2>' + esc(st.sujet) + '</h2><div class="row" style="margin-top:6px"><button class="btn small ghost" data-act="st-new">' + (st.type === 'mot' ? 'Tirer au sort un autre mot' : 'Autre sujet') + '</button></div></div>';
   h += '<div class="callout"><b>' + esc(t.modele) + '</b> — ' + esc(t.aide) + '</div>';
   h += exLevelHtml(st.type);
   if (st.type === 'discours') h += '<div class="small">' + D.speechSteps.map(function (s, i) { return '<div class="metric"><span>' + (i + 1) + '. <b>' + esc(s.nom) + '</b> — ' + esc(s.objectif) + '</span></div>'; }).join('') + '</div>';
   h += '</div>';
+  if (st.type === 'express') { h += exPhaseHtml(); if (ex.phase !== 'speak') return h + '</div>'; }
   h += '<div class="card stack" id="recCard">' + recHtml() + '</div>';
   h += '<div class="card stack" id="recLib"></div>';
   h += '<div class="card stack"><div class="eyebrow">Transcription (pour analyser les mots)</div><textarea id="trIn" placeholder="' + (SR_API && CAN_MIC && S.set && S.set.sr ? 'Elle se remplit pendant l’enregistrement (transcription en ligne activée). Tu peux la corriger.' : 'Écris ou colle ici le texte de ce que tu as dit. Sans texte, seule la voix est analysée.') + '">' + esc(st.transcript) + '</textarea></div>';
@@ -3471,6 +3654,7 @@ function endTimer(timeUp) {
   if (st.rec) stopRec(); else refreshRec();
 }
 function studioAfterRender() {
+  exAfterRender();
   var f = document.getElementById('fileIn'); if (f) f.onchange = function () { if (f.files && f.files[0]) setBlob(f.files[0]); };
   var t = document.getElementById('trIn'); if (t) t.oninput = function () { st.transcript = t.value; var b = document.getElementById('goAnalyse'); if (b) b.disabled = !(st.blob || st.transcript.trim()); };
 }
@@ -3533,14 +3717,15 @@ function doAnalyse() {
       sig = null;
     }
     var pil = A.pillars(sig, t);
-    var rec = { id: uid(), audioId: st.audioId || null, date: today(), sujet: st.sujet, type: st.type, dur: st.dur, sig: sig ? slim(sig) : null, txt: t, transcript: txt, pil: pil };
+    var exd = st.type === 'express' ? exSessionData(sig) : null;
+    var rec = { id: uid(), ex: exd || undefined, audioId: st.audioId || null, date: today(), sujet: st.sujet, type: st.type, dur: st.dur, sig: sig ? slim(sig) : null, txt: t, transcript: txt, pil: pil };
     var lvBefore = exLevel(st.type).lvl;
     S.sessions.unshift(rec); S.sessions = S.sessions.slice(0, 200);
     var lvAfter = exLevel(st.type);
-    touchDay(); addXp(10 + (sig ? 10 : 0) + (t ? 5 : 0) + (st.type === 'connecteurs' && t && t.steps ? t.steps.count * 3 : 0)); autoGoals();
+    touchDay(); addXp(10 + exBonus(rec) + (sig ? 10 : 0) + (t ? 5 : 0) + (st.type === 'connecteurs' && t && t.steps ? t.steps.count * 3 : 0)); autoGoals();
     if (lvAfter.lvl > lvBefore) toast('Niveau ' + lvAfter.lvl + ' : ' + lvAfter.name + ' · ' + byId(D.exerciseTypes, st.type).nom, true);
     persist();
-    st.busy = false; st.blob = null; st.pcm = null; st.audioId = null; st.transcript = ''; st.recSec = 0; st.ended = false; st.timerOn = false; st.status = '';
+    st.busy = false; st.blob = null; st.pcm = null; st.audioId = null; if (rec.ex) exReset(); st.transcript = ''; st.recSec = 0; st.ended = false; st.timerOn = false; st.status = '';
     view = { tab: 'studio', sub: { result: rec.id } }; render(); window.scrollTo(0, 0);
   }
   if (st.pcm) {
@@ -3574,6 +3759,7 @@ function vResult(id) {
   if (!s) return '<p>Séance introuvable.</p><button class="btn" data-act="back">Retour</button>';
   var a = s.sig, t = s.txt, h = '<div class="top"><div><div class="eyebrow">' + esc(s.date) + ' · ' + esc(durLabel(s.dur)) + '</div><h1>Résultat</h1></div><button class="btn small ghost" data-act="back">Fermer</button></div><div class="stack">';
   h += '<div class="card"><h3>' + esc(s.sujet) + '</h3>' + pillarsHtml(s.pil) + '<p class="muted small" style="margin:10px 0 0">Indices de 0 à 100 calculés par l’appli à partir de ta voix et de ton texte. Ils orientent ton travail ; ils ne mesurent pas l’effet réel sur un public.</p>' + ((s.pil.partial || []).length ? '<p class="small tag-warn">Non calculé faute de données : ' + s.pil.partial.join(', ') + '.</p>' : '') + '</div>';
+  h += exResultHtml(s);
   h += '<div class="card"><h3>À travailler en premier</h3>' + adviceList(a, t).map(function (x) { return '<div class="metric"><span><b>' + esc(x[0]) + '</b><br><span class="muted small">' + esc(x[1]) + '</span></span></div>'; }).join('') + '</div>';
   if (a) {
     h += '<div class="card"><h3>Voix</h3>';
@@ -4052,7 +4238,7 @@ function eristAct(act, v) {
 document.addEventListener('click', function (ev) {
   var el = ev.target.closest('[data-act]'); if (!el) return;
   var act = el.getAttribute('data-act'), v = el.getAttribute('data-v');
-  if (pwaAct(act, v, el, ev) || prepAct(act, v, el) || eristAct(act, v)) return;
+  if (exAct(act, v, el) || pwaAct(act, v, el, ev) || prepAct(act, v, el) || eristAct(act, v)) return;
   switch (act) {
     case 'tab': go(v); break;
     case 'reco': var g = JSON.parse(v); go(g[0], g[1]); break;
@@ -4060,7 +4246,7 @@ document.addEventListener('click', function (ev) {
     case 'goal-toggle': S.goals.forEach(function (x) { if (x.id === v) { x.done = !x.done; if (x.done) addXp(20); } }); persist(); render(); break;
     case 'goal-del': S.goals = S.goals.filter(function (x) { return x.id !== v; }); persist(); render(); break;
     case 'open-session': view = { tab: 'studio', sub: { result: v } }; render(); window.scrollTo(0, 0); break;
-    case 'st-type': st.type = v; newSubject(); render(); break;
+    case 'st-type': if (st.rec || st.timerOn) break; st.type = v; if (v === 'express') { if (ex.phase === 'speak') exEnterSpeak(); } else if (D.durations.indexOf(st.dur) < 0) st.dur = 60; newSubject(); st.ended = false; st.recSec = 0; render(); break;
     case 'st-dur': if (st.rec || st.timerOn) break; st.dur = +v; st.ended = false; st.recSec = 0; render(); break;
     case 'st-new': newSubject(); render(); break;
     case 'rec-toggle': st.rec ? endTimer(false) : startRec(); break;
@@ -4088,6 +4274,6 @@ document.addEventListener('keydown', function (e) { if (e.key === 'Enter' && e.t
 function selectNode(n) { var r = document.createRange(); r.selectNodeContents(n); var s = getSelection(); s.removeAllRanges(); s.addRange(r); }
 
 /* ---------- démarrage ---------- */
-loadLocal(); pwaBoot(); render();
+loadLocal(); exLoad(); pwaBoot(); render();
 })();
 </script>

@@ -4,7 +4,7 @@
    ============================================================ */
 var VERSION = '1.0.0', BUILD = window.AGORA_BUILD || 'dev';
 var DAY = 86400000;
-var pwa = { swReg: null, updateReady: false, wantReload: false, offlineReady: false, installEvt: null, imp: null, proofEdit: null, proofFilter: '', msg: '', persisted: null, dismissed: {} };
+var pwa = { prefill: '', swReg: null, updateReady: false, wantReload: false, offlineReady: false, installEvt: null, imp: null, proofEdit: null, proofFilter: '', msg: '', persisted: null, dismissed: {} };
 var WHY_DEFAULT = [
   'Dans la Grèce antique, l’agora, c’était la place publique. On y vendait, on y croisait ses voisins et, surtout, on y parlait. Quelqu’un se levait, les autres écoutaient, et la meilleure idée avait sa chance.',
   'Donc l’agora n’appartenait à personne. Elle appartenait à celui qui osait prendre la parole.',
@@ -154,6 +154,7 @@ function cleanState(o) {
   var c = {}, a = function (x) { return Array.isArray(x) ? x : []; };
   c.goals = a(o.goals).filter(function (g) { return g && isId(g.id) && typeof g.t === 'string'; }).slice(0, 100).map(function (g) { return { id: g.id, t: str(g.t, 80), done: !!g.done }; });
   c.sessions = a(o.sessions).filter(function (s) { return s && isId(s.id) && typeof s.date === 'string' && typeof s.sujet === 'string'; }).slice(0, 300).map(function (s) {
+    if (s.ex && typeof s.ex === 'object') { var e = s.ex; s.ex = { theme: str(e.theme, 120), cat: str(e.cat, 20), T: +e.T || 5, search: +e.search || 0, struct: +e.struct || 0, speak: +e.speak || 0, actual: +e.actual || 0, notes: str(e.notes, 4000), chk: Array.isArray(e.chk) ? e.chk.filter(function (i) { return i >= 0 && i < 4; }).slice(0, 4) : [], xpd: Array.isArray(e.xpd) ? e.xpd.filter(function (i) { return i >= 0 && i < 4; }).slice(0, 4) : [] }; } else delete s.ex;
     s.date = str(s.date, 10); s.sujet = str(s.sujet, 300); if (s.transcript != null) s.transcript = str(s.transcript, 30000); if (s.note != null) s.note = str(s.note, 4000);
     if (s.audioId != null && !isId(s.audioId)) s.audioId = null; return s;
   });
@@ -291,6 +292,10 @@ function isStandalone() { return (window.matchMedia && matchMedia('(display-mode
 function isIOS() { return /iPhone|iPad|iPod/.test(navigator.userAgent); }
 function homeBanners() {
   var h = '';
+  if (ex.phase === 'search' || ex.phase === 'struct' || ex.phase === 'speak') {
+    var xr = Math.max(0, Math.ceil((ex.endAt - Date.now()) / 1000));
+    h += '<button class="card tap banner" data-act="ex-resume"><div class="eyebrow">Recherche express en cours</div><h3>' + esc(ex.theme) + '</h3><p class="muted small" style="margin:4px 0 0">' + (ex.phase === 'search' ? 'Phase 1 · recherche · reste ' + fmt(xr) : ex.phase === 'struct' ? 'Phase 2 · structurer · reste ' + fmt(xr) : 'Phase 3 · à toi d’expliquer') + '. Touche pour reprendre.</p></button>';
+  }
   if (pwa.updateReady) h += '<div class="card banner"><b>Nouvelle version prête</b><p class="muted small" style="margin:4px 0 8px">Ton travail est conservé.</p><button class="btn small" data-act="update-now">Mettre à jour</button></div>';
   if (needBackup()) h += '<div class="card banner"><b>Pense à sauvegarder</b><p class="muted small" style="margin:4px 0 8px">Ta dernière sauvegarde date de plus de 14 jours' + (S.lastExport ? ' (' + esc(fmtDay(S.lastExport)) + ')' : ' ou n’a jamais été faite') + '.</p><div class="row"><button class="btn small" data-act="export-data">Sauvegarder maintenant</button><button class="btn small ghost" data-act="bk-later">Plus tard</button></div></div>';
   if (!isStandalone() && lsGet('ao_inst_dismiss') !== '1') {
@@ -300,10 +305,11 @@ function homeBanners() {
   return h;
 }
 function homeDaily() {
-  var n = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / DAY), ex = D.exerciseTypes[n % D.exerciseTypes.length], sj = ex.sujets[n % ex.sujets.length];
+  var n = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / DAY), exT = D.exerciseTypes[n % D.exerciseTypes.length], isEx = exT.id === 'express';
+  var sj = isEx ? D.themeAll[(n * 7) % D.themeAll.length].t : exT.sujets[n % exT.sujets.length];
   var o = D.orators[n % D.orators.length], wk = Date.now() - 7 * DAY;
   var wkN = S.sessions.filter(function (s) { return new Date(s.date).getTime() > wk; }).length;
-  var h = '<div class="card dayc"><div class="eyebrow">Défi du jour</div><h3>' + esc(ex.nom) + '</h3><p style="margin:6px 0 10px">' + esc(sj) + '</p><button class="btn small" data-act="daily-go" data-v="' + esc(ex.id) + '|' + (n % ex.sujets.length) + '">Relever le défi</button></div>';
+  var h = '<div class="card dayc"><div class="eyebrow">Défi du jour</div><h3>' + esc(exT.nom) + '</h3><p style="margin:6px 0 10px">' + esc(sj) + '</p><button class="btn small" data-act="daily-go" data-v="' + esc(exT.id) + '|' + (isEx ? (n * 7) % D.themeAll.length : n % exT.sujets.length) + '">Relever le défi</button></div>';
   h += '<button class="card tap" data-act="orator" data-v="' + esc(o.id) + '"><div class="eyebrow">Orateur du jour</div><h3>' + esc(o.nom) + '</h3><p class="muted small" style="margin:4px 0 0">' + esc(o.discours.titre) + ' · ' + esc(o.epoque) + '</p></button>';
   h += '<div class="card"><div class="eyebrow">Cette semaine</div><div class="row" style="justify-content:space-around;margin-top:8px"><div class="pil"><b>' + wkN + '</b><span class="small muted">séance' + (wkN > 1 ? 's' : '') + '</span></div><div class="pil"><b>' + streak() + '</b><span class="small muted">jour' + (streak() > 1 ? 's' : '') + ' de suite</span></div><div class="pil"><b>' + S.xp + '</b><span class="small muted">points</span></div></div></div>';
   return h;
@@ -338,7 +344,7 @@ function vProofs() {
   h += '<div class="callout info">Cette appli ne cherche pas sur internet. Tu gardes ici tes faits, chiffres et citations, avec leur source et la date de vérification. Ajoute-les à la main ou importe un fichier.</div>';
   h += '<div class="card stack"><h3>Ma bibliothèque <span class="muted small">(' + S.proofs.length + ')</span></h3><input type="search" id="pSearch" placeholder="Chercher un mot, un sujet, une source…" value="' + esc(pwa.proofFilter) + '" autocomplete="off"><div id="pList" class="stack"></div></div>';
   h += '<div class="card stack"><h3>' + (pe ? 'Modifier la preuve' : 'Ajouter une preuve') + '</h3>';
-  h += '<input type="text" id="pSujet" placeholder="Sujet (ex. luxe durable)" maxlength="120" value="' + esc(pe ? pe.sujet : '') + '"><textarea id="pFait" placeholder="Fait, chiffre ou citation" style="min-height:80px" maxlength="1200">' + esc(pe ? pe.fait : '') + '</textarea><input type="text" id="pUrl" placeholder="Source (lien ou référence)" maxlength="400" value="' + esc(pe ? pe.url : '') + '"><input type="text" id="pTags" placeholder="Mots-clés, séparés par des virgules" maxlength="120" value="' + esc(pe ? pe.tags || '' : '') + '"><label class="small muted">Vérifié le<input type="date" id="pDate" value="' + esc(pe ? pe.date : today()) + '"></label>';
+  h += '<input type="text" id="pSujet" placeholder="Sujet (ex. luxe durable)" maxlength="120" value="' + esc(pe ? pe.sujet : (pwa.prefill || '')) + '"><textarea id="pFait" placeholder="Fait, chiffre ou citation" style="min-height:80px" maxlength="1200">' + esc(pe ? pe.fait : '') + '</textarea><input type="text" id="pUrl" placeholder="Source (lien ou référence)" maxlength="400" value="' + esc(pe ? pe.url : '') + '"><input type="text" id="pTags" placeholder="Mots-clés, séparés par des virgules" maxlength="120" value="' + esc(pe ? pe.tags || '' : '') + '"><label class="small muted">Vérifié le<input type="date" id="pDate" value="' + esc(pe ? pe.date : today()) + '"></label>';
   h += '<div class="row"><button class="btn small" data-act="proof-add">' + (pe ? 'Enregistrer les changements' : 'Enregistrer') + '</button>' + (pe ? '<button class="btn small ghost" data-act="proof-cancel">Annuler</button>' : '') + '</div></div>';
   h += '<div class="card stack"><h3>Importer des preuves</h3><p class="muted small" style="margin:0">Fichier .txt, .md, .csv ou .json. Une preuve par ligne, au format <code>Sujet | Fait | Source</code>. Les PDF ne sont pas lus : copie le texte utile dans un .txt.</p><label class="btn ghost small" style="cursor:pointer;align-self:flex-start">Choisir un fichier<input type="file" id="proofFile" accept=".txt,.md,.csv,.json,text/plain,application/json" hidden></label><div class="small" id="proofMsg">' + esc(pwa.msg && view.tab === 'proofs' ? pwa.msg : '') + '</div></div>';
   h += '<div class="card stack"><h3>Brief de recherche</h3><p class="muted small" style="margin:0">Génère un message à coller dans l’assistant de ton choix (avec recherche web), puis rapporte ici les références vérifiées.</p><input type="text" id="topicIn" placeholder="Ex. : le luxe durable en Europe" value="' + esc(proofTopic) + '" maxlength="120"><div class="row"><button class="btn" data-act="brief">Générer le brief</button><button class="btn ghost" data-act="angles-copy">Copier : pistes d’arguments</button></div><div id="briefOut"></div></div>';
@@ -483,7 +489,7 @@ function pwaAct(act, v, el, ev) {
       if (!fa) { toast('Écris le fait ou le chiffre à garder.'); return true; }
       if (pwa.proofEdit) { var pe = byId(S.proofs, pwa.proofEdit); if (pe) { pe.sujet = su; pe.fait = fa; pe.url = ur; pe.tags = tg; pe.date = dt; } pwa.proofEdit = null; }
       else S.proofs.unshift({ id: uid(), sujet: su, fait: fa, url: ur, tags: tg, date: dt });
-      persist(); toast('Preuve enregistrée'); render(); return true;
+      pwa.prefill = ''; persist(); toast('Preuve enregistrée'); render(); return true;
     case 'proof-edit': pwa.proofEdit = v; render(); window.scrollTo(0, document.body.scrollHeight); return true;
     case 'proof-cancel': pwa.proofEdit = null; render(); return true;
     case 'proof-del':
@@ -497,7 +503,7 @@ function pwaAct(act, v, el, ev) {
       var ti = byIdEl('topicIn'); proofTopic = ti ? ti.value.trim() : ''; if (!proofTopic) { toast('Écris d’abord un sujet.'); return true; }
       copyText('Sujet de discours : « ' + proofTopic + ' ». Propose 4 angles d’argumentation en français. Pour chacun : l’angle, et le type de preuve à aller chercher avec l’endroit où la trouver. N’invente aucun chiffre ni aucune source.', el); return true;
     case 'angles-save': S.angles = byIdEl('anglesNote').value.slice(0, 6000); persist(); toast('Notes enregistrées'); return true;
-    case 'daily-go': var dv = v.split('|'), dt2 = byId(D.exerciseTypes, dv[0]); if (dt2) { st.type = dt2.id; st.sujet = dt2.sujets[+dv[1] % dt2.sujets.length]; go('studio'); } return true;
+    case 'daily-go': var dv = v.split('|'), dt2 = byId(D.exerciseTypes, dv[0]); if (dt2 && dt2.id === 'express') { if (ex.phase === 'setup') { var th = D.themeAll[+dv[1] % D.themeAll.length]; ex.theme = th.t; ex.themeCat = th.c; exSave(); } st.type = 'express'; st.sujet = ex.theme; if (ex.phase === 'speak') exEnterSpeak(); go('studio'); } else if (dt2) { st.type = dt2.id; if (D.durations.indexOf(st.dur) < 0) st.dur = 60; st.sujet = dt2.sujets[+dv[1] % dt2.sujets.length]; go('studio'); } return true;
   }
   return false;
 }

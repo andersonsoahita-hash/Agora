@@ -10,7 +10,7 @@ const TXT = "Je voudrais dire une chose simple : le bonheur, c'est d'abord se se
   await p.waitForTimeout(300);
   let t = await p.innerText('body');
   ck(/ton rang/i.test(t) && /passant/i.test(t), 'accueil : rang Passant');
-  ck(/Récompenses/.test(t) && /0 \/ 11/.test(t), 'accueil : 0 / 11 récompenses');
+  ck(/Récompenses/.test(t) && /0 \/ 12/.test(t), 'accueil : 0 / 12 récompenses');
   // cours : module
   await p.click('[data-act=tab][data-v=course]');
   t = await p.innerText('body');

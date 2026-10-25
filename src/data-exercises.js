@@ -4,7 +4,7 @@ window.AO_DATA.durations = [30, 60, 120, 300];
 window.AO_DATA.exerciseTypes = [
   { id: 'argumenter', nom: 'Argumenter une idée', modele: 'PREP', aide: 'Point → Raison → Exemple → Point',
     sujets: ['Tout le monde devrait apprendre à parler en public', 'Le téléphone devrait être interdit en réunion', 'Le luxe est un art avant d’être un commerce', 'Madagascar a un atout sous-estimé', 'Travailler à distance rend meilleur', 'Il faut échouer pour apprendre', 'Un bon leader sait écouter avant de parler', 'Les études ne suffisent plus'] },
-  { id: 'mot', nom: 'Parler à partir d’un mot', modele: 'Libre', aide: 'Définis le mot, donne un exemple, relie-le à ta vie.',
+  { id: 'mot', nom: 'Parler à partir d’un mot', modele: 'Définir → Exemple → Lien avec ta vie', aide: 'Improvisation pure, sans recherche : tire un mot, prends dix secondes de silence, puis définis-le, donne un exemple et relie-le à ta vie.',
     sujets: ['Confiance', 'Héritage', 'Rareté', 'Patience', 'Frontière', 'Lenteur', 'Élégance', 'Risque', 'Mémoire', 'Silence'] },
   { id: 'recit', nom: 'Raconter une histoire', modele: 'Situation → Obstacle → Action → Leçon', aide: 'Une scène, un détail concret, une leçon.',
     sujets: ['Une fois où j’ai eu peur de parler', 'Un échec qui m’a appris quelque chose', 'La rencontre qui a changé mon parcours', 'Un voyage qui m’a marqué', 'Mon premier jour dans un lieu inconnu'] },
@@ -15,7 +15,8 @@ window.AO_DATA.exerciseTypes = [
   { id: 'connecteurs', nom: 'Relier ses idées (5 étapes)', modele: 'Annoncer → Prévenir → Concéder → Illustrer → Reformuler', aide: 'Un connecteur par étape : « je voudrais dire… », « attention, je ne dis pas que… », « certes… mais », « prenons le cas de… », « autrement dit… ».',
     sujets: ['Qu’est-ce que le bonheur ?', 'Faut-il toujours dire la vérité ?', 'La réussite se mérite-t-elle ?', 'Parler en public est-il un don ?', 'Faut-il apprendre à perdre ?', 'Le luxe est-il utile ?', 'Que vaut une promesse ?'] },
   { id: 'discours', nom: 'Discours complet', modele: 'Ouverture → Plan → 3 parties → Appel', aide: 'Annonce ton plan, finis par une demande.',
-    sujets: ['Pourquoi j’ai écrit ce livre', 'Ce que je veux transmettre à ma génération', 'Présenter un projet à un jury', 'Un discours de remerciement'] }
+    sujets: ['Pourquoi j’ai écrit ce livre', 'Ce que je veux transmettre à ma génération', 'Présenter un projet à un jury', 'Un discours de remerciement'] },
+  { id: 'express', nom: 'Recherche express', modele: 'Chercher → Structurer → Expliquer', aide: 'Tire un thème, cherche l’essentiel sans IA, structure, puis explique en un cinquième du temps de préparation.', sujets: [] }
 ];
 
 window.AO_DATA.speechSteps = [

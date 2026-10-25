@@ -37,6 +37,7 @@ var BADGES = [
   { id: 'sf', t: 'Sans faute', d: 'Réussis un quiz de leçon à 100 %.', ok: function () { return D.lessons.some(function (l) { return l.quiz && S.quiz[l.id] === l.quiz.length; }); } },
   { id: 'poly', t: 'Polyvalent', d: 'Essaie 4 types d’exercices différents.', ok: function () { var t = {}; S.sessions.forEach(function (s) { if (s.type) t[s.type] = 1; }); return Object.keys(t).length >= 4; } },
   { id: 'c5', t: 'Cinq sur cinq', d: 'Dans « Relier ses idées », fais détecter les 5 étapes dans ton texte.', ok: function () { return S.sessions.some(function (s) { return s.type === 'connecteurs' && s.txt && s.txt.steps && s.txt.steps.count === 5; }); } },
+  { id: 'exp', t: 'Éclair', d: 'Termine une « Recherche express » dans le Studio.', ok: function () { return S.sessions.some(function (s) { return s.type === 'express'; }); } },
   { id: 'prep', t: 'Préparateur', d: 'Prépare un débat ou un discours dans « Préparer ».', ok: function () { return (S.prep || []).length >= 1; } },
   { id: 'eri', t: 'Éristicien', d: 'Obtiens 12 sur 12 au quiz global des 38 stratagèmes.', ok: function () { return S.erist && S.erist.best >= 12; } }
 ];
