@@ -1,4 +1,4 @@
-window.AGORA_BUILD='8055aed025';
+window.AGORA_BUILD='b0f2886efb';
 /* ============================================================
    Analyse de la voix (signal) et du texte (transcription)
    Tout se calcule dans la page. Aucun audio n'est envoyé nulle part.
@@ -2711,7 +2711,7 @@ function exPhaseHtml() {
   return h;
 }
 function exAfterRender() {
-  var on = document.querySelector('#app .hscroll .chip.on'); if (on && on.parentNode && on.parentNode.scrollWidth > on.parentNode.clientWidth) on.parentNode.scrollLeft = Math.max(0, on.offsetLeft - on.parentNode.clientWidth / 2 + on.offsetWidth / 2);
+  var on = document.querySelector('#app .hscroll .chip.on'); if (on && on.parentNode) { var pr = on.parentNode, l = on.offsetLeft - pr.offsetLeft; if (l < pr.scrollLeft || l + on.offsetWidth > pr.scrollLeft + pr.clientWidth) pr.scrollLeft = Math.max(0, l - 12); }
   var n = document.getElementById('exNotes'); if (n) n.oninput = function () { ex.notes = n.value; clearTimeout(exAfterRender.t); exAfterRender.t = setTimeout(exSave, 400); };
 }
 function exSessionData(sig) {
@@ -2756,6 +2756,15 @@ function exAct(act, v, el) {
     case 'ex-proof': pwa.prefill = v; go('proofs'); return true;
   }
   return false;
+}
+
+function exOrdered() { var l = D.exerciseTypes.filter(function (x) { return x.id === 'express'; }); return l.concat(D.exerciseTypes.filter(function (x) { return x.id !== 'express'; })); }
+function exHero() {
+  var p = exPlan(ex.T), on = st.type === 'express';
+  var steps = '<div class="exsteps"><span><b>1</b> Chercher</span><i></i><span><b>2</b> Structurer</span><i></i><span><b>3</b> Expliquer</span></div>';
+  if (on) return '<div class="exhero on"><div class="exbadge">Exercice actif</div><h2>Recherche express</h2>' + steps + '<p>Un thème, un chrono, aucune IA. Tu cherches l’essentiel, tu tries, puis tu expliques clairement.</p></div>';
+  var live = ex.phase !== 'setup';
+  return '<button class="exhero" data-act="' + (live ? 'ex-resume' : 'st-type') + '" data-v="express"><div class="exbadge">' + (live ? 'En cours' : 'Nouveau') + '</div><h2>Recherche express</h2>' + steps + '<p>' + (live ? 'Reprends ta recherche sur « ' + esc(ex.theme) + ' ».' : 'Tire un thème, cherche sans IA pendant ' + exLab(p.search) + ', structure ' + exLab(p.struct) + ', puis explique en ' + exLab(p.speak) + '.') + '</p><span class="exgo">' + (live ? 'Reprendre' : 'Essayer maintenant') + ' →</span></button>';
 }
 
 /* ============================================================
@@ -3432,7 +3441,8 @@ function vStudio() {
   if (!st.sujet) newSubject();
   var t = byId(D.exerciseTypes, st.type);
   var h = '<div class="top"><h1>Studio</h1></div><div class="stack">';
-  h += '<div class="card stack"><div class="eyebrow">Exercice</div><div class="hscroll">' + D.exerciseTypes.map(function (x) { return '<button class="chip' + (x.id === st.type ? ' on' : '') + '" data-act="st-type" data-v="' + x.id + '">' + esc(x.nom) + '</button>'; }).join('') + '</div>';
+  h += exHero();
+  h += '<div class="card stack"><div class="eyebrow">Exercice</div><div class="hscroll">' + exOrdered().map(function (x) { return '<button class="chip' + (x.id === st.type ? ' on' : '') + (x.id === 'express' ? ' hot' : '') + '" data-act="st-type" data-v="' + x.id + '">' + esc(x.nom) + '</button>'; }).join('') + '</div>';
   if (st.type !== 'express') h += '<div class="row">' + D.durations.map(function (d) { return '<button class="chip' + (d === st.dur ? ' on' : '') + '" data-act="st-dur" data-v="' + d + '">' + durLabel(d) + '</button>'; }).join('') + '</div>';
   if (st.type !== 'express') h += '<div><div class="eyebrow">' + (st.type === 'mot' ? 'Ton mot' : 'Sujet') + '</div><h2>' + esc(st.sujet) + '</h2><div class="row" style="margin-top:6px"><button class="btn small ghost" data-act="st-new">' + (st.type === 'mot' ? 'Tirer au sort un autre mot' : 'Autre sujet') + '</button></div></div>';
   h += '<div class="callout"><b>' + esc(t.modele) + '</b> — ' + esc(t.aide) + '</div>';

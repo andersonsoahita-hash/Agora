@@ -20,7 +20,7 @@ let fails = 0; const ok = (n, c, x) => { console.log((c ? 'OK   ' : 'FAIL ') + n
   ok('type express dans le Studio', (await p.innerText('#app')).includes('Recherche express'));
   await p.click('[data-act=st-type][data-v=mot]'); await p.waitForTimeout(200);
   let t = await p.innerText('#app'); ok('mot : tirage au sort', /Ton mot/i.test(t) && /Tirer au sort un autre mot/.test(t) && !/undefined/.test(t));
-  const w1 = await p.innerText('#app h2'); let diff = false; for (let i = 0; i < 6 && !diff; i++) { await p.click('[data-act=st-new]'); await p.waitForTimeout(80); diff = (await p.innerText('#app h2')) !== w1; } ok('mot : change à chaque tirage', diff);
+  const w1 = await p.innerText('#app .card h2'); let diff = false; for (let i = 0; i < 6 && !diff; i++) { await p.click('[data-act=st-new]'); await p.waitForTimeout(80); diff = (await p.innerText('#app .card h2')) !== w1; } ok('mot : change à chaque tirage', diff);
   // --- express : réglage
   await p.click('[data-act=st-type][data-v=express]'); await p.waitForTimeout(250);
   t = await p.innerText('#app'); ok('express : écran de préparation', /Temps total de préparation/i.test(t) && /Recherche/i.test(t) && /Expliquer/i.test(t) && !/undefined/.test(t));

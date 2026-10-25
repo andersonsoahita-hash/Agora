@@ -88,7 +88,7 @@ function exPhaseHtml() {
   return h;
 }
 function exAfterRender() {
-  var on = document.querySelector('#app .hscroll .chip.on'); if (on && on.parentNode && on.parentNode.scrollWidth > on.parentNode.clientWidth) on.parentNode.scrollLeft = Math.max(0, on.offsetLeft - on.parentNode.clientWidth / 2 + on.offsetWidth / 2);
+  var on = document.querySelector('#app .hscroll .chip.on'); if (on && on.parentNode) { var pr = on.parentNode, l = on.offsetLeft - pr.offsetLeft; if (l < pr.scrollLeft || l + on.offsetWidth > pr.scrollLeft + pr.clientWidth) pr.scrollLeft = Math.max(0, l - 12); }
   var n = document.getElementById('exNotes'); if (n) n.oninput = function () { ex.notes = n.value; clearTimeout(exAfterRender.t); exAfterRender.t = setTimeout(exSave, 400); };
 }
 function exSessionData(sig) {
@@ -133,4 +133,13 @@ function exAct(act, v, el) {
     case 'ex-proof': pwa.prefill = v; go('proofs'); return true;
   }
   return false;
+}
+
+function exOrdered() { var l = D.exerciseTypes.filter(function (x) { return x.id === 'express'; }); return l.concat(D.exerciseTypes.filter(function (x) { return x.id !== 'express'; })); }
+function exHero() {
+  var p = exPlan(ex.T), on = st.type === 'express';
+  var steps = '<div class="exsteps"><span><b>1</b> Chercher</span><i></i><span><b>2</b> Structurer</span><i></i><span><b>3</b> Expliquer</span></div>';
+  if (on) return '<div class="exhero on"><div class="exbadge">Exercice actif</div><h2>Recherche express</h2>' + steps + '<p>Un thème, un chrono, aucune IA. Tu cherches l’essentiel, tu tries, puis tu expliques clairement.</p></div>';
+  var live = ex.phase !== 'setup';
+  return '<button class="exhero" data-act="' + (live ? 'ex-resume' : 'st-type') + '" data-v="express"><div class="exbadge">' + (live ? 'En cours' : 'Nouveau') + '</div><h2>Recherche express</h2>' + steps + '<p>' + (live ? 'Reprends ta recherche sur « ' + esc(ex.theme) + ' ».' : 'Tire un thème, cherche sans IA pendant ' + exLab(p.search) + ', structure ' + exLab(p.struct) + ', puis explique en ' + exLab(p.speak) + '.') + '</p><span class="exgo">' + (live ? 'Reprendre' : 'Essayer maintenant') + ' →</span></button>';
 }

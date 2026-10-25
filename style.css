@@ -160,3 +160,19 @@ audio{width:100%}
 details summary{cursor:pointer;min-height:32px}
 pre.brief{white-space:pre-wrap;overflow-wrap:anywhere}
 .hscroll .chip{white-space:nowrap;flex:none}
+/* ===== Recherche express : mise en avant ===== */
+.exhero{display:block;width:100%;text-align:left;border:0;border-radius:18px;padding:18px 18px 16px;color:#fff8f0;cursor:pointer;
+  background:linear-gradient(135deg,#B5341E 0%,#8a2412 70%);box-shadow:0 6px 18px rgba(158,43,22,.28);position:relative;overflow:hidden;font:inherit}
+.exhero::after{content:"";position:absolute;right:-30px;top:-30px;width:130px;height:130px;border-radius:50%;background:rgba(201,162,75,.22)}
+.exhero h2{font-family:var(--serif);font-size:1.6rem;margin:6px 0 10px;color:#fff8f0}
+.exhero p{margin:10px 0 0;font-size:.92rem;line-height:1.45;opacity:.95;position:relative}
+.exbadge{display:inline-block;background:#C9A24B;color:#2a1608;font-weight:700;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;border-radius:999px;padding:3px 10px;position:relative}
+.exsteps{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:.82rem;position:relative}
+.exsteps span{display:inline-flex;align-items:center;gap:6px;background:rgba(255,248,240,.16);border-radius:999px;padding:4px 10px 4px 5px;white-space:nowrap}
+.exsteps b{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#fff8f0;color:#9E2B16;font-size:.75rem}
+.exsteps i{width:10px;height:2px;background:rgba(255,248,240,.5);flex:none}
+.exgo{display:inline-block;margin-top:12px;background:#fff8f0;color:#9E2B16;font-weight:700;border-radius:999px;padding:9px 18px;position:relative}
+.exhero.on{cursor:default;box-shadow:none}
+.chip.hot{border-color:#B5341E;color:#B5341E;font-weight:700}
+.chip.hot.on{background:#B5341E;color:#fff8f0;border-color:#B5341E}
+@media (prefers-reduced-motion:no-preference){button.exhero:active{transform:scale(.985)}button.exhero{transition:transform .12s ease}}
