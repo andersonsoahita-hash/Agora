@@ -8,7 +8,7 @@ const start = require('./server');
   await p.goto(url); await p.waitForTimeout(600);
   const out = {};
   out.cover = await p.isVisible('#cover');
-  await p.click('#coverGo'); await p.waitForTimeout(700);
+  await p.click('#coverGo'); await p.waitForSelector('#cover',{state:'detached',timeout:8000}); await p.waitForTimeout(700);
   out.coverGone = !(await p.$('#cover'));
   out.homeText = (await p.innerText('#app')).slice(0, 200).replace(/\n/g, ' | ');
   out.donneesOnHome = (await p.innerText('#app')).includes('Tes données');

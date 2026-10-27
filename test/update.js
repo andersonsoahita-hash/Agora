@@ -6,7 +6,7 @@ let fails = 0; const ok = (n, c, x) => { console.log((c ? 'OK   ' : 'FAIL ') + n
   await p.goto(url); await p.waitForTimeout(500);
   ok('couverture présente au lancement', await p.isVisible('#cover'));
   const anim = await p.evaluate(() => getComputedStyle(document.querySelector('.cname')).animationName); ok('animations coupées si « réduire les animations »', anim === 'none', anim);
-  await p.click('#coverGo'); await p.waitForTimeout(300);
+  await p.click('#coverGo'); await p.waitForSelector('#cover',{state:'detached',timeout:8000}); await p.waitForTimeout(300);
   await p.evaluate(() => { const s = JSON.parse(localStorage.getItem('ao_state_v1')); s.xp = 55; s.goals = [{ id: 'g9', t: 'garde-moi', done: false }]; localStorage.setItem('ao_state_v1', JSON.stringify(s)); });
   await p.reload(); await p.waitForTimeout(1500);
   ok('couverture non réaffichée dans la même session', !(await p.$('#cover')));

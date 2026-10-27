@@ -8,6 +8,7 @@ let js = parts.map(R).join('\n;\n')
   .replace('/*@@PREP@@*/', () => R('src/prep.js'))
   .replace('/*@@ERIST@@*/', () => R('src/erist.js'))
   .replace('/*@@EXPRESS@@*/', () => R('src/express.js'))
+  .replace('/*@@GATE@@*/', () => R('src/gate.js'))
   .replace('/*@@PWA@@*/', () => R('src/pwa.js'));
 if (/\/\*@@/.test(js)) throw new Error('marqueur non remplacé');
 const css = R('src/styles.css') + '\n' + R('src/pwa.css');

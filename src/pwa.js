@@ -552,9 +552,18 @@ function pwaBoot() {
   var cv = byIdEl('cover');
   if (cv) {
     var seen = false; try { seen = sessionStorage.getItem('ao_cover') === '1'; } catch (e) {}
-    var closeCover = function () { try { sessionStorage.setItem('ao_cover', '1'); } catch (e) {} cv.classList.add('out'); setTimeout(function () { if (cv.parentNode) cv.parentNode.removeChild(cv); }, 520); };
+    var closeCover = function () { try { sessionStorage.setItem('ao_cover', '1'); } catch (e) {} cv.classList.add('out'); setTimeout(function () { gate.stop(); if (cv.parentNode) cv.parentNode.removeChild(cv); }, 520); };
     if (seen) cv.parentNode.removeChild(cv);
-    else { var go1 = byIdEl('coverGo'); if (go1) { go1.onclick = closeCover; } }
+    else {
+      var rain = byIdEl('rain'); if (rain) { try { gate.start(rain); } catch (e) {} }
+      var go1 = byIdEl('coverGo'), st = byIdEl('cstat'), busy = false;
+      if (go1) go1.onclick = function () {
+        if (busy) return; busy = true; go1.disabled = true; go1.textContent = 'Vérification…';
+        var calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches, gap = calm ? 60 : 340;
+        var L = ['Identité · Stephen ✓', 'Signature · by Stephen ✓', 'Accès · validé ✓'];
+        L.forEach(function (t, i) { setTimeout(function () { if (!st) return; var d = document.createElement('div'); d.textContent = t; st.appendChild(d); if (i === L.length - 1) { go1.textContent = 'Bienvenue, Stephen'; setTimeout(closeCover, calm ? 80 : 450); } }, gap * (i + 1)); });
+      };
+    }
   }
   try {
     if (navigator.onLine !== false) fetch('acces.json', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { if (j && j.actif === false) showLock(j.message); }).catch(function () {});

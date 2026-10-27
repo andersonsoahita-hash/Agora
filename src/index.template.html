@@ -20,12 +20,17 @@
 <script src="theme-boot.js"></script>
 </head>
 <body>
-<div id="cover" class="cover" role="dialog" aria-label="Agora">
-  <div class="cmark" aria-hidden="true">@@MARK@@</div>
-  <h1 class="cname">Agora</h1>
-  <p class="csub">L’art oratoire · <i>by Stephen</i></p>
-  <p class="cquote">Ce que tu as à dire mérite d’être entendu. Viens apprendre à le dire.</p>
-  <button id="coverGo" class="cgo" type="button">Entrer</button>
+<div id="cover" class="cover" role="dialog" aria-label="Agora, accès">
+  <canvas id="rain" class="rain" aria-hidden="true"></canvas>
+  <div class="cpanel">
+    <div class="cmark" aria-hidden="true">@@MARK@@</div>
+    <h1 class="cname">Agora</h1>
+    <p class="cby">by Stephen</p>
+    <p class="csub">L’art oratoire · Stephen Group</p>
+    <p class="cquote">Ce que tu as à dire mérite d’être entendu. Viens apprendre à le dire.</p>
+    <div id="cstat" class="cstat" aria-live="polite"></div>
+    <button id="coverGo" class="cgo" type="button">Valider mon accès</button>
+  </div>
 </div>
 <div id="app"><noscript><p class="nojs">Agora a besoin de JavaScript pour fonctionner.</p></noscript></div>
 <nav id="tabbar" class="tabbar"></nav>

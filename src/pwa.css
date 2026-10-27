@@ -28,7 +28,7 @@ audio{width:100%}
 
 /* ===== Couverture ===== */
 .cover{position:fixed;inset:0;z-index:150;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;
-  background:radial-gradient(120% 90% at 50% 20%,#B5341E 0%,#9E2B16 55%,#6e1b0d 100%);color:#fff8f0;
+  background:#070b14;color:#fff8f0;overflow:hidden;
   padding:max(24px,env(safe-area-inset-top,0px)) max(24px,env(safe-area-inset-right,0px)) max(24px,env(safe-area-inset-bottom,0px)) max(24px,env(safe-area-inset-left,0px));transition:opacity .5s ease,transform .5s ease}
 .cover.out{opacity:0;transform:scale(1.04);pointer-events:none}
 .cover .cmark svg{width:108px;height:108px;display:block}
@@ -90,3 +90,14 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .tabbar{background:color-mix(in srgb,var(--surface) 92%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .exhero,.cover{background-clip:padding-box}
 .cover::before{content:none}
+
+/* ===== Écran d'accès : pluie de chiffres + validation ===== */
+.cover .rain{position:absolute;inset:0;width:100%;height:100%;display:block}
+.cover .cpanel{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:12px;padding:30px 22px;border-radius:26px;
+  background:radial-gradient(closest-side,rgba(7,11,20,.92) 55%,rgba(7,11,20,0) 100%);max-width:100%}
+.cover .cby{margin:-4px 0 0;font-family:'Dancing Script','Fraunces',cursive;font-weight:700;font-size:2.1rem;line-height:1;color:#E8C46E}
+.cover .csub{opacity:.8}
+.cover .cstat{min-height:4.2em;font:600 .86rem/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#E8C46E;text-align:left}
+.cover .cgo{background:#C9A24B;color:#1a1206}
+.cover .cgo:disabled{opacity:1;cursor:default}
+.cover .csub{font-size:.78rem;letter-spacing:.09em;white-space:nowrap}
