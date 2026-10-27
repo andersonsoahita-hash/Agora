@@ -4,7 +4,7 @@ let fails = 0; const ok = (n, c, x) => { console.log((c ? 'OK   ' : 'FAIL ') + n
   const { srv, url } = await start(4179);
   const b = await chromium.launch({ args: ['--use-fake-device-for-media-stream', '--use-fake-ui-for-media-stream'] });
   const c = await b.newContext({ viewport: { width: 393, height: 852 }, permissions: ['microphone'], reducedMotion: 'reduce' }); const p = await c.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message)); p.on('console', m => { if (m.type() === 'error') errs.push(m.text()); });
-  await p.goto(url); await p.click('#coverGo'); await p.waitForSelector('#cover',{state:'detached',timeout:8000}); await p.waitForTimeout(500);
+  await p.goto(url); await p.click('#coverGo'); await p.waitForTimeout(500);
   const T = [2, 3, 5, 7, 10, 15, 20, 30];
   const plans = await p.evaluate((T) => T.map(t => window.AGORA_EX.plan(t)), T);
   ok('explication = multiple de 15 s', plans.every(x => x.speak % 15 === 0), plans.map(x => x.speak));
@@ -34,14 +34,14 @@ let fails = 0; const ok = (n, c, x) => { console.log((c ? 'OK   ' : 'FAIL ') + n
   await p.click('[data-act=ex-start]'); await p.waitForTimeout(400); t = await p.innerText('#app'); ok('phase 1 recherche + chrono', /Phase 1 sur 3/i.test(t) && /\d:\d\d/.test(await p.innerText('#exTmr')));
   ok('pas d’enregistreur pendant la recherche', !(await p.$('[data-act=rec-toggle]')));
   await p.fill('#exNotes', 'définition : le silence ; idée 1'); await p.waitForTimeout(600);
-  await p.reload(); await p.waitForTimeout(600); if (await p.$('#coverGo')) { await p.click('#coverGo'); await p.waitForSelector('#cover',{state:'detached',timeout:8000}); await p.waitForTimeout(500); }
+  await p.reload(); await p.waitForTimeout(600); if (await p.$('#coverGo')) { await p.click('#coverGo'); await p.waitForTimeout(500); }
   await p.click('#tabbar [data-v=studio]'); await p.waitForTimeout(300); t = await p.innerText('#app');
   ok('reprise après rechargement (chrono continue)', /Phase 1 sur 3/i.test(t) && (await p.inputValue('#exNotes')).includes('idée 1'), t.slice(0, 200));
   await p.evaluate(() => { const o = JSON.parse(localStorage.getItem('ao_express')); o.endAt = Date.now() + 1500; localStorage.setItem('ao_express', JSON.stringify(o)); });
-  await p.reload(); await p.waitForTimeout(400); if (await p.$('#coverGo')) { await p.click('#coverGo'); await p.waitForSelector('#cover',{state:'detached',timeout:8000}); await p.waitForTimeout(500); }
+  await p.reload(); await p.waitForTimeout(400); if (await p.$('#coverGo')) { await p.click('#coverGo'); await p.waitForTimeout(500); }
   await p.click('#tabbar [data-v=studio]'); await p.waitForTimeout(2500); t = await p.innerText('#app'); ok('passage automatique à la structuration', /Phase 2 sur 3/i.test(t), t.slice(0, 120));
   await p.evaluate(() => { const o = JSON.parse(localStorage.getItem('ao_express')); o.endAt = Date.now() - 1000; localStorage.setItem('ao_express', JSON.stringify(o)); });
-  await p.reload(); await p.waitForTimeout(400); if (await p.$('#coverGo')) { await p.click('#coverGo'); await p.waitForSelector('#cover',{state:'detached',timeout:8000}); await p.waitForTimeout(500); }
+  await p.reload(); await p.waitForTimeout(400); if (await p.$('#coverGo')) { await p.click('#coverGo'); await p.waitForTimeout(500); }
   await p.click('#tabbar [data-v=studio]'); await p.waitForTimeout(500); t = await p.innerText('#app'); ok('phase 3 : expliquer en 30 s + enregistreur', /Phase 3 sur 3/i.test(t) && /30 s/.test(t) && !!(await p.$('[data-act=rec-toggle]')) && /Voir mes notes/.test(t), t.slice(0, 200));
   ok('chrono de parole = 0:30', (await p.innerText('#tmr')).trim() === '0:30');
   await p.click('[data-act=rec-toggle]'); await p.waitForTimeout(3000); await p.click('[data-act=rec-toggle]'); await p.waitForTimeout(1200);

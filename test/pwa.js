@@ -4,7 +4,7 @@ let fails = 0; const ok = (n, c, x) => { console.log((c ? 'OK   ' : 'FAIL ') + n
 (async () => {
   const { srv, url } = await start(4174);
   const b = await chromium.launch({ args: ['--use-fake-device-for-media-stream', '--use-fake-ui-for-media-stream'] });
-  const mk = async (opts) => { const c = await b.newContext(Object.assign({ viewport: { width: 393, height: 852 }, acceptDownloads: true, permissions: ['microphone'] }, opts || {})); const p = await c.newPage(); p.errs = []; p.on('pageerror', e => p.errs.push(e.message)); p.on('console', m => { if (m.type() === 'error') p.errs.push(m.text()); }); p.ext = []; p.on('request', r => { const u = r.url(); if (!u.startsWith('http://localhost:4174') && !u.startsWith('data:') && !u.startsWith('blob:')) p.ext.push(u); }); await p.goto(url); await p.click('#coverGo'); await p.waitForSelector('#cover',{state:'detached',timeout:8000}); await p.waitForTimeout(650); return { c, p }; };
+  const mk = async (opts) => { const c = await b.newContext(Object.assign({ viewport: { width: 393, height: 852 }, acceptDownloads: true, permissions: ['microphone'] }, opts || {})); const p = await c.newPage(); p.errs = []; p.on('pageerror', e => p.errs.push(e.message)); p.on('console', m => { if (m.type() === 'error') p.errs.push(m.text()); }); p.ext = []; p.on('request', r => { const u = r.url(); if (!u.startsWith('http://localhost:4174') && !u.startsWith('data:') && !u.startsWith('blob:')) p.ext.push(u); }); await p.goto(url); await p.click('#coverGo'); await p.waitForTimeout(650); return { c, p }; };
   const txt = p => p.innerText('#app');
   const tab = async (p, t) => { await p.click('#tabbar [data-v=' + t + ']'); await p.waitForTimeout(250); };
   let { c: c1, p } = await mk();
@@ -50,7 +50,7 @@ let fails = 0; const ok = (n, c, x) => { console.log((c ? 'OK   ' : 'FAIL ') + n
   // --- leçon terminée + quiz pour avoir de la progression
   await p.evaluate(() => { const s = JSON.parse(localStorage.getItem('ao_state_v1')); s.done.c1 = true; s.quiz.c1 = 3; s.xp = 120; localStorage.setItem('ao_state_v1', JSON.stringify(s)); });
   // --- export
-  await p.reload(); await p.waitForTimeout(500); if (await p.$('#coverGo')) { await p.click('#coverGo'); await p.waitForSelector('#cover',{state:'detached',timeout:8000}); await p.waitForTimeout(600); }
+  await p.reload(); await p.waitForTimeout(500); if (await p.$('#coverGo')) { await p.click('#coverGo'); await p.waitForTimeout(600); }
   await p.click('[data-act=settings]'); await p.waitForTimeout(500);
   const [dl] = await Promise.all([p.waitForEvent('download'), p.click('[data-act=export-data]')]); const expPath = '/tmp/agora-exp.json'; await dl.saveAs(expPath);
   const exp = JSON.parse(fs.readFileSync(expPath, 'utf8')); ok('export format', exp.app === 'agora' && exp.state.sessions.length === 1 && exp.state.proofs.length === 4 && exp.state.done.c1, Object.keys(exp));
@@ -80,7 +80,7 @@ let fails = 0; const ok = (n, c, x) => { console.log((c ? 'OK   ' : 'FAIL ') + n
   await q.click('[data-act=imp-rollback]'); await q.waitForTimeout(800); ok('retour copie de sécurité', /Retour à la copie|Aucune copie/.test(await txt(q)));
   // --- rappel 14 jours
   await q.evaluate(() => { const s = JSON.parse(localStorage.getItem('ao_state_v1')); s.lastExport = Date.now() - 15 * 864e5; localStorage.setItem('ao_state_v1', JSON.stringify(s)); localStorage.removeItem('ao_bk_dismiss'); });
-  await q.reload(); await q.waitForTimeout(400); if (await q.$('#coverGo')) { await q.click('#coverGo'); await q.waitForSelector('#cover',{state:'detached',timeout:8000}); await q.waitForTimeout(600); }
+  await q.reload(); await q.waitForTimeout(400); if (await q.$('#coverGo')) { await q.click('#coverGo'); await q.waitForTimeout(600); }
   ok('rappel de sauvegarde à 14 jours', /Pense à sauvegarder/.test(await txt(q)));
   await q.screenshot({ path: SHOT + 'home-reminder.png' });
   // --- hors ligne

@@ -39,7 +39,6 @@ function streak() {
 }
 /*@@LEVELS@@*/
 /*@@EXPRESS@@*/
-/*@@GATE@@*/
 /*@@PWA@@*/
 
 /* ---------- navigation ---------- */
