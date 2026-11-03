@@ -103,3 +103,17 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .objlive{position:fixed;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 84px);z-index:120;background:#101826;color:#fff8f0;border-radius:16px;padding:14px 16px;border-left:5px solid #C9A24B;box-shadow:0 10px 30px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:6px}
 .objlive .eyebrow{color:#E8C46E}.objlive .otxt{font-family:'Fraunces',Georgia,serif;font-size:1.2rem;line-height:1.3}
 @media (prefers-reduced-motion:no-preference){.objlive{animation:cin .25s ease-out both}}
+
+/* ===== Écran « mise à jour disponible » (plein écran) ===== */
+.updscreen{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff8f0;
+  background:radial-gradient(120% 90% at 50% 15%,#B5341E 0%,#9E2B16 55%,#6e1b0d 100%);
+  padding:max(24px,env(safe-area-inset-top,0px)) max(24px,env(safe-area-inset-right,0px)) max(24px,env(safe-area-inset-bottom,0px)) max(24px,env(safe-area-inset-left,0px))}
+.updbox{display:flex;flex-direction:column;align-items:center;gap:14px;max-width:24em}
+.updico{color:#E8C46E}
+.updbox h1{margin:6px 0 0;font-family:'Fraunces',Georgia,serif;font-size:2rem;line-height:1.15}
+.updbox p{margin:0;font-size:1.05rem;line-height:1.45;opacity:.92}
+.updgo{margin-top:18px;width:100%;background:#fff8f0;color:#9E2B16;border:0;border-radius:999px;padding:16px 28px;font-weight:700;font-size:1.05rem;min-height:54px;cursor:pointer}
+.updgo:disabled{opacity:.8;cursor:default}.updgo:focus-visible,.updlater:focus-visible{outline:3px solid #C9A24B;outline-offset:3px}
+.updlater{background:transparent;border:0;color:#fff8f0;opacity:.8;text-decoration:underline;font-size:.95rem;padding:10px 16px;min-height:44px;cursor:pointer}
+.updby{margin-top:10px;font-family:'Dancing Script','Fraunces',cursive;font-weight:700;font-size:1.4rem;color:#E8C46E}
+@media (prefers-reduced-motion:no-preference){.updico{animation:spin 6s linear infinite}.updscreen{animation:cin .3s ease-out both}}

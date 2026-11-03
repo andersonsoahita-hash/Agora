@@ -14,10 +14,17 @@ let fails = 0; const ok = (n, c, x) => { console.log((c ? 'OK   ' : 'FAIL ') + n
   const v1 = await p.evaluate(async () => { const ks = await caches.keys(); return ks; }); ok('cache versionné', v1.length === 1 && /^agora-[0-9a-f]{10}$/.test(v1[0]), v1);
   ctl.swExtra = '\n// nouvelle version';
   await p.click('[data-act=update-check]'); await p.waitForTimeout(3500);
+  ok('écran plein écran « mise à jour disponible »', await p.isVisible('#updScreen') && /Mise à jour disponible/.test(await p.innerText('#updScreen')));
+  const bx = await p.evaluate(() => { const r = document.getElementById('updScreen').getBoundingClientRect(); return [r.width, r.height, innerWidth, innerHeight]; }); ok('il couvre tout l’écran', bx[0] === bx[2] && bx[1] === bx[3], bx);
+  await p.click('#updLater'); await p.waitForTimeout(200); ok('« Plus tard » referme l’écran', !(await p.$('#updScreen')));
   const t = await p.innerText('#app'); ok('mise à jour détectée', /Mettre à jour maintenant/.test(t), t.slice(0, 120));
   await p.click('[data-act=update-now]'); await p.waitForTimeout(2500);
   const st = await p.evaluate(() => JSON.parse(localStorage.getItem('ao_state_v1'))); ok('données intactes après mise à jour', st.xp === 55 && st.goals[0].t === 'garde-moi', st);
   ok('app fonctionnelle après mise à jour', !!(await p.$('#tabbar button')) && /Agora/.test(await p.innerText('body')));
+  // nouvelle version détectée au lancement, sans passer par Réglages
+  ctl.swExtra = '\n// version 3'; await p.reload(); await p.waitForTimeout(4500);
+  ok('au lancement : l’écran de mise à jour s’affiche tout seul', await p.isVisible('#updScreen'));
+  await p.click('#updGo'); await p.waitForTimeout(3000); ok('après « Mettre à jour » : écran fermé et app prête', !(await p.$('#updScreen')) && !!(await p.$('#tabbar button')));
   // coupe-circuit
   ctl.acces = '{"actif":false,"message":"Pause de test"}'; await p.reload(); await p.waitForTimeout(1200);
   ok('coupe-circuit : message affiché', await p.isVisible('.lock') && /Pause de test/.test(await p.innerText('.lock')));

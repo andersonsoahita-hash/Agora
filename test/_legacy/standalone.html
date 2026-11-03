@@ -203,7 +203,21 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .objlive{position:fixed;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 84px);z-index:120;background:#101826;color:#fff8f0;border-radius:16px;padding:14px 16px;border-left:5px solid #C9A24B;box-shadow:0 10px 30px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:6px}
 .objlive .eyebrow{color:#E8C46E}.objlive .otxt{font-family:'Fraunces',Georgia,serif;font-size:1.2rem;line-height:1.3}
 @media (prefers-reduced-motion:no-preference){.objlive{animation:cin .25s ease-out both}}
-</style><div id="app"></div><nav id="tabbar" class="tabbar"></nav><script>window.AGORA_BUILD='8c73c5d02d';
+
+/* ===== Écran « mise à jour disponible » (plein écran) ===== */
+.updscreen{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff8f0;
+  background:radial-gradient(120% 90% at 50% 15%,#B5341E 0%,#9E2B16 55%,#6e1b0d 100%);
+  padding:max(24px,env(safe-area-inset-top,0px)) max(24px,env(safe-area-inset-right,0px)) max(24px,env(safe-area-inset-bottom,0px)) max(24px,env(safe-area-inset-left,0px))}
+.updbox{display:flex;flex-direction:column;align-items:center;gap:14px;max-width:24em}
+.updico{color:#E8C46E}
+.updbox h1{margin:6px 0 0;font-family:'Fraunces',Georgia,serif;font-size:2rem;line-height:1.15}
+.updbox p{margin:0;font-size:1.05rem;line-height:1.45;opacity:.92}
+.updgo{margin-top:18px;width:100%;background:#fff8f0;color:#9E2B16;border:0;border-radius:999px;padding:16px 28px;font-weight:700;font-size:1.05rem;min-height:54px;cursor:pointer}
+.updgo:disabled{opacity:.8;cursor:default}.updgo:focus-visible,.updlater:focus-visible{outline:3px solid #C9A24B;outline-offset:3px}
+.updlater{background:transparent;border:0;color:#fff8f0;opacity:.8;text-decoration:underline;font-size:.95rem;padding:10px 16px;min-height:44px;cursor:pointer}
+.updby{margin-top:10px;font-family:'Dancing Script','Fraunces',cursive;font-weight:700;font-size:1.4rem;color:#E8C46E}
+@media (prefers-reduced-motion:no-preference){.updico{animation:spin 6s linear infinite}.updscreen{animation:cin .3s ease-out both}}
+</style><div id="app"></div><nav id="tabbar" class="tabbar"></nav><script>window.AGORA_BUILD='996569b6d5';
 /* ============================================================
    Analyse de la voix (signal) et du texte (transcription)
    Tout se calcule dans la page. Aucun audio n'est envoyé nulle part.
@@ -3545,6 +3559,7 @@ function fillSettings() {
 
 /* ---------- après chaque affichage ---------- */
 function pwaAfterRender() {
+  if (pwa.updPending && !st.rec && !st.timerOn && !st.busy) updShow();
   try {
     if (view.tab === 'studio') { if (!view.sub) refreshLib(); else { var ra = byIdEl('resAudio'); if (ra) playInto(ra.querySelector('.rplay'), ra.getAttribute('data-aid')); } }
     if (view.tab === 'proofs') {
@@ -3632,11 +3647,12 @@ function swInit() {
   if (!('serviceWorker' in navigator)) return;
   navigator.serviceWorker.register('sw.js').then(function (reg) {
     pwa.swReg = reg;
-    if (reg.waiting && navigator.serviceWorker.controller) pwa.updateReady = true;
+    if (reg.waiting && navigator.serviceWorker.controller) { pwa.updateReady = true; updShow(); }
+    try { if (navigator.onLine !== false) reg.update().catch(function () {}); } catch (e) {}
     reg.addEventListener('updatefound', function () {
       var w = reg.installing; if (!w) return;
       w.addEventListener('statechange', function () {
-        if (w.state === 'installed' && navigator.serviceWorker.controller) { pwa.updateReady = true; toast('Mise à jour prête : Réglages', true); if (view.tab === 'home' || view.tab === 'settings') render(); }
+        if (w.state === 'installed' && navigator.serviceWorker.controller) { pwa.updateReady = true; updShow(); if (view.tab === 'home' || view.tab === 'settings') render(); }
       });
     });
   }).catch(function () {});
@@ -3648,6 +3664,19 @@ function swCheck() {
   pwa.swReg.update().then(function () {
     setTimeout(function () { pwa.msg = pwa.updateReady || pwa.swReg.waiting ? 'Une nouvelle version est prête.' : 'Tu as déjà la dernière version.'; if (pwa.swReg.waiting) pwa.updateReady = true; render(); }, 1200);
   }).catch(function () { pwa.msg = 'Vérification impossible (hors ligne ?).'; render(); });
+}
+function updShow() {
+  if (!pwa.updateReady || pwa.updDismissed || byIdEl('updScreen')) return;
+  if (st.rec || st.timerOn || st.busy) { pwa.updPending = true; return; }
+  pwa.updPending = false;
+  var d = document.createElement('div'); d.id = 'updScreen'; d.className = 'updscreen'; d.setAttribute('role', 'alertdialog'); d.setAttribute('aria-modal', 'true'); d.setAttribute('aria-labelledby', 'updT');
+  d.innerHTML = '<div class="updbox"><svg class="updico" viewBox="0 0 64 64" width="84" height="84" aria-hidden="true"><path d="M52 32a20 20 0 1 1-6-14.2" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M48 8v12H36" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    + '<h1 id="updT">Mise à jour disponible</h1><p>Une nouvelle version d’Agora est prête.<br>Tes données restent sur ton téléphone, rien n’est perdu.</p>'
+    + '<button class="updgo" id="updGo" type="button">Mettre à jour maintenant</button><button class="updlater" id="updLater" type="button">Plus tard</button><div class="updby">Agora · by Stephen</div></div>';
+  document.body.appendChild(d);
+  byIdEl('updGo').onclick = function () { this.disabled = true; this.textContent = 'Mise à jour…'; swApply(); };
+  byIdEl('updLater').onclick = function () { pwa.updDismissed = true; var e = byIdEl('updScreen'); if (e && e.parentNode) e.parentNode.removeChild(e); };
+  try { byIdEl('updGo').focus(); } catch (e) {}
 }
 function swApply() {
   var w = pwa.swReg && pwa.swReg.waiting; if (!w) { location.reload(); return; }

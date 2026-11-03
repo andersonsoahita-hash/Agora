@@ -1,4 +1,4 @@
-window.AGORA_BUILD='8c73c5d02d';
+window.AGORA_BUILD='996569b6d5';
 /* ============================================================
    Analyse de la voix (signal) et du texte (transcription)
    Tout se calcule dans la page. Aucun audio n'est envoyé nulle part.
@@ -3340,6 +3340,7 @@ function fillSettings() {
 
 /* ---------- après chaque affichage ---------- */
 function pwaAfterRender() {
+  if (pwa.updPending && !st.rec && !st.timerOn && !st.busy) updShow();
   try {
     if (view.tab === 'studio') { if (!view.sub) refreshLib(); else { var ra = byIdEl('resAudio'); if (ra) playInto(ra.querySelector('.rplay'), ra.getAttribute('data-aid')); } }
     if (view.tab === 'proofs') {
@@ -3427,11 +3428,12 @@ function swInit() {
   if (!('serviceWorker' in navigator)) return;
   navigator.serviceWorker.register('sw.js').then(function (reg) {
     pwa.swReg = reg;
-    if (reg.waiting && navigator.serviceWorker.controller) pwa.updateReady = true;
+    if (reg.waiting && navigator.serviceWorker.controller) { pwa.updateReady = true; updShow(); }
+    try { if (navigator.onLine !== false) reg.update().catch(function () {}); } catch (e) {}
     reg.addEventListener('updatefound', function () {
       var w = reg.installing; if (!w) return;
       w.addEventListener('statechange', function () {
-        if (w.state === 'installed' && navigator.serviceWorker.controller) { pwa.updateReady = true; toast('Mise à jour prête : Réglages', true); if (view.tab === 'home' || view.tab === 'settings') render(); }
+        if (w.state === 'installed' && navigator.serviceWorker.controller) { pwa.updateReady = true; updShow(); if (view.tab === 'home' || view.tab === 'settings') render(); }
       });
     });
   }).catch(function () {});
@@ -3443,6 +3445,19 @@ function swCheck() {
   pwa.swReg.update().then(function () {
     setTimeout(function () { pwa.msg = pwa.updateReady || pwa.swReg.waiting ? 'Une nouvelle version est prête.' : 'Tu as déjà la dernière version.'; if (pwa.swReg.waiting) pwa.updateReady = true; render(); }, 1200);
   }).catch(function () { pwa.msg = 'Vérification impossible (hors ligne ?).'; render(); });
+}
+function updShow() {
+  if (!pwa.updateReady || pwa.updDismissed || byIdEl('updScreen')) return;
+  if (st.rec || st.timerOn || st.busy) { pwa.updPending = true; return; }
+  pwa.updPending = false;
+  var d = document.createElement('div'); d.id = 'updScreen'; d.className = 'updscreen'; d.setAttribute('role', 'alertdialog'); d.setAttribute('aria-modal', 'true'); d.setAttribute('aria-labelledby', 'updT');
+  d.innerHTML = '<div class="updbox"><svg class="updico" viewBox="0 0 64 64" width="84" height="84" aria-hidden="true"><path d="M52 32a20 20 0 1 1-6-14.2" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M48 8v12H36" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    + '<h1 id="updT">Mise à jour disponible</h1><p>Une nouvelle version d’Agora est prête.<br>Tes données restent sur ton téléphone, rien n’est perdu.</p>'
+    + '<button class="updgo" id="updGo" type="button">Mettre à jour maintenant</button><button class="updlater" id="updLater" type="button">Plus tard</button><div class="updby">Agora · by Stephen</div></div>';
+  document.body.appendChild(d);
+  byIdEl('updGo').onclick = function () { this.disabled = true; this.textContent = 'Mise à jour…'; swApply(); };
+  byIdEl('updLater').onclick = function () { pwa.updDismissed = true; var e = byIdEl('updScreen'); if (e && e.parentNode) e.parentNode.removeChild(e); };
+  try { byIdEl('updGo').focus(); } catch (e) {}
 }
 function swApply() {
   var w = pwa.swReg && pwa.swReg.waiting; if (!w) { location.reload(); return; }
