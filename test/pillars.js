@@ -1,0 +1,10 @@
+const A = require('../src/analysis.js'); let fails = 0; const ok = (n, c, x) => { console.log((c ? 'OK   ' : 'FAIL ') + n + (x !== undefined && !c ? ' → ' + JSON.stringify(x) : '')); if (!c) fails++; };
+const P = (t) => A.pillars(null, A.analyzeText(t, 60));
+let r = P('Je pense que le luxe est important.'); ok('texte court : aucun jugement', r.logos === null && r.ethos === null && r.pathos === null && r.partial.length === 1, r);
+r = A.pillars({ ok: true, pauses: { blank: 0, long: 0 }, endings: {}, pitch: { sdSemitones: 5 }, volume: { sdDb: 9 } }, null); ok('voix seule : ni logos, ni ethos, ni pathos inventés', r.logos === null && r.ethos === null && r.pathos === null, r);
+const plat = 'Le marché évolue vite et les marques s’adaptent à leurs clients chaque saison de l’année pour rester présentes dans les boutiques et sur les réseaux de manière régulière avec des collections renouvelées souvent selon les périodes de vente et les attentes du public cible';
+r = P(plat); ok('texte plat sans preuve ni émotion : pathos et ethos non observés', r.pathos === null && r.ethos === null, r);
+const riche = 'Je voudrais défendre trois points. D’abord, en tant que responsable marketing depuis plusieurs ans, j’ai constaté que les clients achètent par émotion. Par exemple, en 2024, 60 % des clients ont répondu avec joie à notre campagne, selon une étude interne. Ensuite, imaginez la fierté d’un artisan qui voit son travail reconnu : cette peur de l’oubli disparaît. Donc, pourquoi hésiter ? Parce que la confiance se construit.';
+r = P(riche); ok('texte riche : les trois indices apparaissent', r.logos > 40 && r.ethos > 40 && r.pathos > 20, r);
+const ev = A.evidenceLines(A.analyzeText(plat, 60)); ok('preuves affichées : zéro quand rien n’est dit', /^0 connecteur/.test(ev.logos) || /0 /.test(ev.pathos), ev);
+console.log(fails ? 'ÉCHECS : ' + fails : 'PILIERS OK'); process.exit(fails ? 1 : 0);

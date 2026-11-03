@@ -314,8 +314,12 @@
     'par conséquent', 'toutefois', 'néanmoins', 'en revanche', "d'abord", 'premièrement', 'deuxièmement',
     'troisièmement', 'ensuite', 'en conclusion', 'pour conclure', 'en résumé', 'par exemple', 'notamment',
     'autrement dit', "c'est-à-dire", 'de plus', 'd’un côté', 'de l’autre'];
-  var EVIDENCE = ['par exemple', 'selon', "d'après", 'étude', 'statistique', 'pour cent', 'pourcent', 'chiffre', 'preuve', 'exemple'];
+  var EVIDENCE = ['par exemple', 'étude', 'statistique', 'pour cent', 'pourcent', 'chiffre', 'preuve', 'exemple'];
   var STORY = ['il y a', 'un jour', 'quand j', 'je me souviens', 'imaginez', 'imagine', 'ce jour-là', 'à ce moment', 'soudain', 'alors que'];
+  var EXPERIENCE = ['en tant que', 'mon expérience', 'mon parcours', 'ma formation', 'mon métier', "j'ai travaillé", "j'ai fondé", "j'ai dirigé", "j'ai créé", "j'ai géré", "j'ai vécu", "j'ai constaté", "j'ai observé", "j'ai appris", "j'ai formé",
+    'je travaille', 'je dirige', 'je gère', 'ans d\'expérience', 'depuis plusieurs ans', 'depuis des années', 'diplômé', 'diplômée', 'spécialiste', 'responsable', 'président', 'présidente', 'fondateur', 'fondatrice'];
+  var EMOTION = ['peur', 'joie', 'fier', 'fière', 'fierté', 'espoir', 'colère', 'triste', 'tristesse', 'passion', 'passionné', 'rêve', 'rêver', 'honte', 'amour', 'aimer', "j'aime", 'souffrance', 'bonheur', 'heureux', 'heureuse', 'inquiet', 'inquiète', 'angoisse', 'courage',
+    'émotion', 'ému', 'émue', 'larmes', 'cœur', 'frustré', 'frustration', 'révolte', 'indigné', 'indignation', 'enthousiasme', 'confiance', 'inquiétude', 'douleur', 'rire', 'ravi', 'ravie', 'déçu', 'déception'];
   var CLOSERS = ['voilà', 'quoi', 'bref', 'je sais pas', 'tout ça', 'enfin voilà', 'voilà quoi'];
   var STOP = 'le la les un une des de du d l et en à au aux a je tu il elle on nous vous ils elles ce cet cette ces se sa son ses mon ma mes ton ta tes notre nos votre vos leur leurs que qui quoi dont où ne pas plus pour par sur sous dans avec sans est sont été être avoir ai as avons avez ont c est y m t s n qu j très mais ou donc car si comme aussi cela ça ceci'.split(' ');
 
@@ -348,6 +352,10 @@
     var c = countList(text, CONNECTORS);
     var e = countList(text, EVIDENCE);
     var st = countList(text, STORY);
+    var ex = countList(text, EXPERIENCE);
+    var em = countList(text, EMOTION);
+    var named = (text.match(/(?:selon|d['’]après)\s+(?:l['’]|le\s|la\s|les\s|un\s|une\s)?[A-ZÉÈ][\p{L}]+/gu) || []).length;
+    var cites = { total: named + countList(text, ['étude', 'études', 'rapport', 'sondage', 'enquête', 'statistique', 'statistiques', 'source', 'sources']).total };
     var digits = (text.match(/\d+/g) || []).length;
     var sentences = text.split(/(?<=[.!?…])\s+|\n+/).map(function (x) { return x.trim(); }).filter(Boolean);
     var hasPunct = /[.!?…]/.test(text);
@@ -383,8 +391,11 @@
       hedges: { total: h.total, per100: per100(h.total), top: top(h.found, 5) },
       vague: { total: v.total, per100: per100(v.total), top: top(v.found, 4) },
       connectors: { total: c.total, per100: per100(c.total), top: top(c.found, 5) },
-      evidence: { total: e.total + digits, per100: per100(e.total + digits), digits: digits },
+      evidence: { total: e.total + named + digits, per100: per100(e.total + named + digits), digits: digits },
       story: { total: st.total, per100: per100(st.total) },
+      experience: { total: ex.total, top: top(ex.found, 4) },
+      emotion: { total: em.total, per100: per100(em.total), top: top(em.found, 4) },
+      cites: cites.total,
       closers: closers,
       planAnnounced: plan,
       steps: stepsOf(text),
@@ -429,47 +440,33 @@
      Ce sont des indices de travail, pas la mesure d'un effet réel.
      ============================================================ */
   function clamp01(x) { return Math.max(0, Math.min(1, x)); }
+  var MIN_WORDS = 40;
+  /* Indices de PRÉSENCE : ils comptent ce qui est réellement dans ton texte. Aucune base de départ :
+     rien dit = rien observé (null). Sans texte assez long, aucun jugement n'est porté. */
   function pillars(sig, txt) {
     var out = { logos: null, ethos: null, pathos: null, partial: [] };
-    if (txt && txt.ok) {
-      var lg = 40 * clamp01(txt.connectors.per100 / 5) +
-        20 * (txt.planAnnounced ? 1 : 0) +
-        25 * clamp01(txt.evidence.per100 / 2) +
-        15 * (1 - clamp01(txt.vague.per100 / 2));
-      out.logos = Math.round(lg);
-    } else out.partial.push('logos');
-    var eth = 100, any = false;
-    if (txt && txt.ok) {
-      eth -= Math.min(30, txt.fillers.per100 * 6);
-      eth -= Math.min(20, txt.hedges.per100 * 3);
-      any = true;
-    }
-    if (sig && sig.ok) {
-      eth -= Math.min(15, sig.pauses.blank * 5 + sig.pauses.long * 2);
-      eth -= 15 * (sig.endings.risingShare || 0);
-      eth -= 10 * (sig.endings.fadingShare || 0);
-      any = true;
-    }
-    if (any) out.ethos = Math.round(Math.max(0, eth)); else out.partial.push('ethos');
-    var parts = [], wts = [];
-    if (sig && sig.ok && sig.pitch) {
-      parts.push(clamp01((sig.pitch.sdSemitones - 1) / 3)); wts.push(0.45);
-      parts.push(clamp01((sig.volume.sdDb - 3) / 5)); wts.push(0.20);
-    }
-    if (txt && txt.ok) {
-      parts.push(clamp01(txt.story.per100 / 1.5)); wts.push(0.20);
-      parts.push(clamp01(txt.address.vousPer100 / 4)); wts.push(0.15);
-    }
-    if (parts.length) {
-      var tw = 0, sc = 0;
-      for (var i = 0; i < parts.length; i++) { sc += parts[i] * wts[i]; tw += wts[i]; }
-      out.pathos = Math.round(100 * sc / tw);
-    } else out.partial.push('pathos');
+    if (!txt || !txt.ok) { out.partial.push('texte absent ou trop court : aucun jugement possible'); return out; }
+    if (txt.words < MIN_WORDS) { out.partial.push('texte trop court (' + txt.words + ' mots, il en faut ' + MIN_WORDS + ')'); return out; }
+    var lg = 30 * clamp01(txt.connectors.total / 4) + 30 * clamp01(txt.evidence.total / 3) + 20 * (txt.planAnnounced ? 1 : 0) + 20 * clamp01(txt.steps.count / 3);
+    if (txt.connectors.total + txt.evidence.total + (txt.planAnnounced ? 1 : 0) + txt.steps.count > 0) out.logos = Math.round(lg);
+    var ex = txt.experience ? txt.experience.total : 0, ci = txt.cites || 0;
+    if (ex + ci > 0) out.ethos = Math.round(60 * clamp01(ex / 2) + 25 * clamp01(ci / 2) + 15 * (1 - clamp01((txt.hedges.per100 + txt.fillers.per100) / 8)));
+    var em = txt.emotion ? txt.emotion.total : 0;
+    if (em + txt.story.total + txt.questions > 0) out.pathos = Math.round(50 * clamp01((txt.emotion ? txt.emotion.per100 : 0) / 2) + 30 * clamp01(txt.story.total / 2) + 20 * clamp01(txt.questions / 2));
     return out;
+  }
+  function evidenceLines(txt) {
+    if (!txt || !txt.ok) return null;
+    var n = function (k, one, many) { return k + ' ' + (k > 1 ? many : one); };
+    return {
+      logos: n(txt.connectors.total, 'connecteur', 'connecteurs') + ' · ' + n(txt.evidence.total, 'exemple/preuve/chiffre', 'exemples/preuves/chiffres') + ' · plan ' + (txt.planAnnounced ? 'annoncé' : 'non annoncé'),
+      ethos: n(txt.experience ? txt.experience.total : 0, 'élément d’expérience', 'éléments d’expérience') + ' · ' + n(txt.cites || 0, 'source citée', 'sources citées') + ' · ' + n(txt.hedges.total + txt.fillers.total, 'hésitation', 'hésitations'),
+      pathos: n(txt.emotion ? txt.emotion.total : 0, 'mot d’émotion', 'mots d’émotion') + ' · ' + n(txt.story.total, 'repère de récit', 'repères de récit') + ' · ' + n(txt.questions, 'question', 'questions')
+    };
   }
 
   var api = {
-    SR: SR, analyzeSignal: analyzeSignal, analyzeText: analyzeText, markTics: markTics, pillars: pillars,
+    SR: SR, analyzeSignal: analyzeSignal, analyzeText: analyzeText, markTics: markTics, pillars: pillars, evidenceLines: evidenceLines,
     _internals: { yin: yin, percentile: percentile }
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

@@ -37,7 +37,8 @@ const INIT = () => {
   await p.click('[data-act=st-dur][data-v="30"]'); await p.click('[data-act=rec-toggle]'); box = await live(p); await p.waitForTimeout(900);
   const sp = await p.evaluate(() => ({ s: window.__spoken, pa: window.__pause, re: window.__resume }));
   ok('voix : l’objection est lue', sp.s.length >= 1 && G.some(g => sp.s[0] === g), sp);
-  ok('voix : l’enregistrement fait pause puis reprend', sp.pa >= 1 && sp.re >= 1, sp);
+  ok('voix : l’enregistrement n’est jamais mis en pause', sp.pa === 0 && sp.re === 0, sp);
+  ok('voix : l’enregistrement continue pendant l’objection', await p.isVisible('[data-act=rec-toggle].live'));
   await p.click('[data-act=rec-toggle]'); await p.waitForTimeout(800); ok('voix : aucune erreur JS', p.errs.length === 0, p.errs);
   // --- niveau 2 : selon les mots
   p = await mk({ on: true, mode: 'kw', voice: false, fast: true });

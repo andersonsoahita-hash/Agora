@@ -1,8 +1,9 @@
 /* Objections pendant l'enregistrement : niveau 1 (au hasard, texte + voix optionnelle) et niveau 2 (selon ce que tu dis ou ne dis pas,
    par repérage de mots dans la transcription). Aucun envoi de données, aucune IA. */
 var obj = { on: true, mode: 'rand', voice: false, fast: false };
+var IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 var oRun = null;
-function objLoad() { try { var o = JSON.parse(lsGet('ao_obj') || 'null'); if (o && typeof o === 'object') { obj.on = o.on !== false; obj.mode = o.mode === 'kw' ? 'kw' : 'rand'; obj.voice = !!o.voice; obj.fast = !!o.fast; } } catch (e) {} }
+function objLoad() { try { var o = JSON.parse(lsGet('ao_obj') || 'null'); if (o && typeof o === 'object') { obj.on = o.on !== false; obj.mode = o.mode === 'kw' ? 'kw' : 'rand'; obj.voice = !!o.voice && !IOS; obj.fast = !!o.fast; } } catch (e) {} }
 function objSave() { lsSet('ao_obj', JSON.stringify(obj)); }
 function objKwOk() { return !!(SR_API && S.set && S.set.sr); }
 function objPanelHtml() {
@@ -12,7 +13,8 @@ function objPanelHtml() {
     h += '<p class="muted small" style="margin:0">Pendant que tu parles, une objection apparaît. Réponds-y sans t’arrêter.</p>';
     h += '<div class="row"><button class="chip' + (obj.mode === 'rand' ? ' on' : '') + '" data-act="obj-mode" data-v="rand">Au hasard</button><button class="chip' + (obj.mode === 'kw' ? ' on' : '') + '" data-act="obj-mode" data-v="kw"' + (SR_API ? '' : ' disabled') + '>Selon ce que je dis</button></div>';
     if (obj.mode === 'kw') h += '<p class="muted small" style="margin:0">' + (objKwOk() ? 'L’objection réagit à tes mots (« toujours », « je pense que »…) et à ce qui manque (exemple, chiffre). Elle repère des mots, elle ne comprend pas le sens de ton argument.' : 'Demande la transcription automatique (Réglages).') + '</p>';
-    if (window.speechSynthesis) h += '<label class="row" style="flex-wrap:nowrap;align-items:flex-start;gap:10px"><input type="checkbox" data-act="obj-voice"' + (obj.voice ? ' checked' : '') + ' style="margin-top:4px"><span class="small"><b>Lire l’objection à voix haute</b><br><span class="muted">Voix de ton téléphone. L’enregistrement se met en pause pendant qu’elle parle, pour ne pas fausser l’analyse de ta voix.</span></span></label>';
+    if (IOS) h += '<p class="muted small" style="margin:0">Sur iPhone, l’objection reste écrite : la lire à voix haute coupe le micro et fait perdre ce que tu dis.</p>';
+    else if (window.speechSynthesis) h += '<label class="row" style="flex-wrap:nowrap;align-items:flex-start;gap:10px"><input type="checkbox" data-act="obj-voice"' + (obj.voice ? ' checked' : '') + ' style="margin-top:4px"><span class="small"><b>Lire l’objection à voix haute (expérimental)</b><br><span class="muted">L’enregistrement continue. Pendant la lecture, ta transcription est ignorée et ce passage est retiré de l’analyse de ta voix.</span></span></label>';
   }
   return h + '</div>';
 }
@@ -23,14 +25,14 @@ function objAct(a, v, el) {
       if (v === 'kw' && !SR_API) return true;
       if (v === 'kw' && !objKwOk()) { S.set = S.set || {}; S.set.sr = true; persist(); toast('Transcription automatique activée : le son est envoyé au service de reconnaissance de ton navigateur. Tu peux la couper dans Réglages.', true); }
       obj.mode = v === 'kw' ? 'kw' : 'rand'; objSave(); render(); return true;
-    case 'obj-voice': obj.voice = !!el.checked; objSave(); if (obj.voice) objPrime(); return true;
+    case 'obj-voice': obj.voice = !!el.checked && !IOS; objSave(); if (obj.voice) objPrime(); return true;
   }
   return false;
 }
 function objVoice() {
   try { var vs = speechSynthesis.getVoices() || [], f = vs.filter(function (x) { return /^fr/i.test(x.lang); }); return f.filter(function (x) { return x.localService && /fr[-_]FR/i.test(x.lang); })[0] || f.filter(function (x) { return x.localService; })[0] || f[0] || null; } catch (e) { return null; }
 }
-function objPrime() { try { if (obj.voice && window.speechSynthesis) { var u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } } catch (e) {} }
+function objPrime() { try { if (obj.voice && !IOS && window.speechSynthesis) { var u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } } catch (e) {} }
 function objMute() { return !!(oRun && (oRun.speaking || Date.now() < oRun.muteUntil)); }
 function objBox() {
   var b = byIdEl('objLive'); if (!b) { b = document.createElement('div'); b.id = 'objLive'; b.className = 'objlive'; b.setAttribute('role', 'status'); b.setAttribute('aria-live', 'assertive'); document.body.appendChild(b); }
@@ -41,7 +43,7 @@ function objScale(s) { return obj.fast ? s / 10 : s; }
 function objMax() { var d = st.dur; return d <= 30 ? 1 : d <= 60 ? 2 : d <= 120 ? 3 : 5; }
 function objStart() {
   if (!obj.on) { oRun = null; return; }
-  oRun = { t0: Date.now(), n: 0, last: 0, timer: 0, hide: 0, speaking: false, muteUntil: 0, used: {}, log: [], fired: false, reps: {}, paused: false };
+  oRun = { spans: [], t0: Date.now(), n: 0, last: 0, timer: 0, hide: 0, speaking: false, muteUntil: 0, used: {}, log: [], fired: false, reps: {}, paused: false };
   var d = st.dur, first = Math.min(Math.max(10, d * (0.28 + Math.random() * 0.12)), Math.max(10, d - 10));
   oRun.timer = setTimeout(objDue, objScale(first) * 1000);
 }
@@ -83,11 +85,10 @@ function objFire(text, kind, snip) {
   objSay(text, done);
 }
 function objSay(text, done) {
-  if (!obj.voice || !window.speechSynthesis) { done(); return; }
-  var fin = false, wasRec = !!(mr && mr.state === 'recording'), w = 0;
-  var finish = function () { if (fin) return; fin = true; clearTimeout(w); if (wasRec) { try { if (mr && mr.state === 'paused') mr.resume(); } catch (e) {} } if (oRun) { oRun.speaking = false; oRun.muteUntil = Date.now() + 900; } done(); };
+  if (!obj.voice || IOS || !window.speechSynthesis || !oRun) { done(); return; }
+  var fin = false, w = 0, a = Math.max(0, objSec() - 0.2);
+  var finish = function () { if (fin) return; fin = true; clearTimeout(w); if (oRun) { oRun.speaking = false; oRun.muteUntil = Date.now() + 900; oRun.spans.push({ a: a, b: objSec() + 0.6 }); } done(); };
   try {
-    if (wasRec) { try { mr.pause(); } catch (e) { wasRec = false; } }
     oRun.speaking = true;
     var u = new SpeechSynthesisUtterance(text); u.lang = 'fr-FR'; var v = objVoice(); if (v) u.voice = v; u.rate = 1;
     u.onend = finish; u.onerror = function () { toast('La voix est bloquée par le navigateur : l’objection reste affichée.', true); finish(); };
@@ -97,9 +98,9 @@ function objSay(text, done) {
 }
 function objStop() {
   var log = oRun ? oRun.log : [];
+  st.objSpans = oRun && oRun.spans.length ? oRun.spans : null;
   if (oRun) { clearTimeout(oRun.timer); clearTimeout(oRun.hide); }
-  try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {}
-  try { if (oRun && mr && mr.state === 'paused') mr.resume(); } catch (e) {}
+  try { if (window.speechSynthesis && !IOS) speechSynthesis.cancel(); } catch (e) {}
   oRun = null; objHide(); return log;
 }
 function objResultHtml(s) {
@@ -109,3 +110,11 @@ function objResultHtml(s) {
   return h + '<p class="muted small" style="margin:0">Réécoute ton enregistrement : as-tu vraiment répondu à chaque objection ?</p></div>';
 }
 objLoad();
+
+function objCut(pcm, spans) {
+  if (!pcm || !spans || !spans.length) return pcm;
+  var SRt = 16000, keep = [], pos = 0, total = 0, S2 = spans.slice().sort(function (x, y) { return x.a - y.a; });
+  S2.forEach(function (sp) { var a = Math.max(pos, Math.floor(sp.a * SRt)), b = Math.min(pcm.length, Math.ceil(sp.b * SRt)); if (a > pos) { keep.push(pcm.subarray(pos, a)); total += a - pos; } if (b > pos) pos = b; });
+  if (pos < pcm.length) { keep.push(pcm.subarray(pos)); total += pcm.length - pos; }
+  var out = new Float32Array(total), o = 0; keep.forEach(function (k) { out.set(k, o); o += k.length; }); return out;
+}

@@ -134,9 +134,16 @@ function goalsHtml() {
   h += '<div class="row" style="margin-top:8px;flex-wrap:nowrap"><input type="text" id="goalIn" placeholder="Nouvel objectif" maxlength="80"><button class="btn small" data-act="goal-add">Ajouter</button></div></div>';
   return h;
 }
+function pilEvHtml(s) {
+  var ev = A.evidenceLines(s.txt), p = s.pil || {}, h = '';
+  if (ev) h += '<div class="small" style="margin-top:8px"><div><b style="color:var(--logos)">Logos</b> · ' + esc(ev.logos) + '</div><div><b style="color:var(--ethos)">Ethos</b> · ' + esc(ev.ethos) + '</div><div><b style="color:var(--pathos)">Pathos</b> · ' + esc(ev.pathos) + '</div></div>';
+  h += '<p class="muted small" style="margin:10px 0 0">Ces indices comptent ce que tu as réellement dit, d’après le texte transcrit : raisonnement (connecteurs, exemples, chiffres), crédibilité (ton expérience, tes sources), émotion (mots d’émotion, récit, questions). « Non observé » veut dire que rien n’a été trouvé : il n’y a pas de note par défaut. Une transcription incomplète donne un résultat incomplet. Ils ne mesurent pas l’effet sur un public.</p>';
+  if ((p.partial || []).length) h += '<p class="small tag-warn">Pas de jugement : ' + esc(p.partial.join(', ')) + '.</p>';
+  return h;
+}
 function pillarsHtml(p) {
   if (!p) return '';
-  function c(l, v, col) { return '<div class="pil"><b style="color:' + col + '">' + (v == null ? '–' : v) + '</b><span class="small muted">' + l + '</span></div>'; }
+  function c(l, v, col) { return '<div class="pil"><b style="color:' + col + '">' + (v == null ? '<span class="small">Non observé</span>' : v) + '</b><span class="small muted">' + l + '</span></div>'; }
   return '<div class="pillars" style="margin-top:8px">' + c('Logos', p.logos, 'var(--logos)') + c('Ethos', p.ethos, 'var(--ethos)') + c('Pathos', p.pathos, 'var(--pathos)') + '</div>';
 }
 
@@ -215,7 +222,7 @@ function endTimer(timeUp) {
 }
 function studioAfterRender() {
   exAfterRender();
-  var f = document.getElementById('fileIn'); if (f) f.onchange = function () { if (f.files && f.files[0]) setBlob(f.files[0]); };
+  var f = document.getElementById('fileIn'); if (f) f.onchange = function () { if (f.files && f.files[0]) { st.objSpans = null; setBlob(f.files[0]); } };
   var t = document.getElementById('trIn'); if (t) t.oninput = function () { st.transcript = t.value; var b = document.getElementById('goAnalyse'); if (b) b.disabled = !(st.blob || st.transcript.trim()); };
 }
 function setStatus(s) { st.status = s; var e = document.getElementById('stStatus'); if (e) e.textContent = s; }
@@ -285,12 +292,12 @@ function doAnalyse() {
     touchDay(); addXp(10 + exBonus(rec) + (sig ? 10 : 0) + (t ? 5 : 0) + (st.type === 'connecteurs' && t && t.steps ? t.steps.count * 3 : 0)); autoGoals();
     if (lvAfter.lvl > lvBefore) toast('Niveau ' + lvAfter.lvl + ' : ' + lvAfter.name + ' · ' + byId(D.exerciseTypes, st.type).nom, true);
     persist();
-    st.busy = false; st.blob = null; st.pcm = null; st.audioId = null; if (rec.ex) exReset(); st.transcript = ''; st.recSec = 0; st.ended = false; st.timerOn = false; st.status = '';
+    st.busy = false; st.blob = null; st.pcm = null; st.objSpans = null; st.audioId = null; if (rec.ex) exReset(); st.transcript = ''; st.recSec = 0; st.ended = false; st.timerOn = false; st.status = '';
     view = { tab: 'studio', sub: { result: rec.id } }; render(); window.scrollTo(0, 0);
   }
   if (st.pcm) {
     setStatus('Analyse en cours…');
-    A.analyzeSignal(st.pcm, { onProgress: function (p) { setStatus('Analyse en cours… ' + Math.round(p * 100) + ' %'); } }).then(finish).catch(function () { setStatus('Analyse impossible sur ce fichier.'); st.busy = false; });
+    A.analyzeSignal(objCut(st.pcm, st.objSpans), { onProgress: function (p) { setStatus('Analyse en cours… ' + Math.round(p * 100) + ' %'); } }).then(finish).catch(function () { setStatus('Analyse impossible sur ce fichier.'); st.busy = false; });
   } else finish(null);
 }
 function slim(sig) { var s = JSON.parse(JSON.stringify(sig)); s.pauses.list = s.pauses.list.slice(0, 12); return s; }
@@ -318,7 +325,7 @@ function vResult(id) {
   var s = byId(S.sessions, id);
   if (!s) return '<p>Séance introuvable.</p><button class="btn" data-act="back">Retour</button>';
   var a = s.sig, t = s.txt, h = '<div class="top"><div><div class="eyebrow">' + esc(s.date) + ' · ' + esc(durLabel(s.dur)) + '</div><h1>Résultat</h1></div><button class="btn small ghost" data-act="back">Fermer</button></div><div class="stack">';
-  h += '<div class="card"><h3>' + esc(s.sujet) + '</h3>' + pillarsHtml(s.pil) + '<p class="muted small" style="margin:10px 0 0">Indices de 0 à 100 calculés par l’appli à partir de ta voix et de ton texte. Ils orientent ton travail ; ils ne mesurent pas l’effet réel sur un public.</p>' + ((s.pil.partial || []).length ? '<p class="small tag-warn">Non calculé faute de données : ' + s.pil.partial.join(', ') + '.</p>' : '') + '</div>';
+  h += '<div class="card"><h3>' + esc(s.sujet) + '</h3>' + pillarsHtml(s.pil) + pilEvHtml(s) + '</div>';
   h += exResultHtml(s);
   h += objResultHtml(s);
   h += '<div class="card"><h3>À travailler en premier</h3>' + adviceList(a, t).map(function (x) { return '<div class="metric"><span><b>' + esc(x[0]) + '</b><br><span class="muted small">' + esc(x[1]) + '</span></span></div>'; }).join('') + '</div>';

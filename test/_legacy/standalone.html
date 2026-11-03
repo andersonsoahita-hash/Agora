@@ -217,7 +217,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .updlater{background:transparent;border:0;color:#fff8f0;opacity:.8;text-decoration:underline;font-size:.95rem;padding:10px 16px;min-height:44px;cursor:pointer}
 .updby{margin-top:10px;font-family:'Dancing Script','Fraunces',cursive;font-weight:700;font-size:1.4rem;color:#E8C46E}
 @media (prefers-reduced-motion:no-preference){.updico{animation:spin 6s linear infinite}.updscreen{animation:cin .3s ease-out both}}
-</style><div id="app"></div><nav id="tabbar" class="tabbar"></nav><script>window.AGORA_BUILD='996569b6d5';
+</style><div id="app"></div><nav id="tabbar" class="tabbar"></nav><script>window.AGORA_BUILD='42e8517cb0';
 /* ============================================================
    Analyse de la voix (signal) et du texte (transcription)
    Tout se calcule dans la page. Aucun audio n'est envoyé nulle part.
@@ -534,8 +534,12 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     'par conséquent', 'toutefois', 'néanmoins', 'en revanche', "d'abord", 'premièrement', 'deuxièmement',
     'troisièmement', 'ensuite', 'en conclusion', 'pour conclure', 'en résumé', 'par exemple', 'notamment',
     'autrement dit', "c'est-à-dire", 'de plus', 'd’un côté', 'de l’autre'];
-  var EVIDENCE = ['par exemple', 'selon', "d'après", 'étude', 'statistique', 'pour cent', 'pourcent', 'chiffre', 'preuve', 'exemple'];
+  var EVIDENCE = ['par exemple', 'étude', 'statistique', 'pour cent', 'pourcent', 'chiffre', 'preuve', 'exemple'];
   var STORY = ['il y a', 'un jour', 'quand j', 'je me souviens', 'imaginez', 'imagine', 'ce jour-là', 'à ce moment', 'soudain', 'alors que'];
+  var EXPERIENCE = ['en tant que', 'mon expérience', 'mon parcours', 'ma formation', 'mon métier', "j'ai travaillé", "j'ai fondé", "j'ai dirigé", "j'ai créé", "j'ai géré", "j'ai vécu", "j'ai constaté", "j'ai observé", "j'ai appris", "j'ai formé",
+    'je travaille', 'je dirige', 'je gère', 'ans d\'expérience', 'depuis plusieurs ans', 'depuis des années', 'diplômé', 'diplômée', 'spécialiste', 'responsable', 'président', 'présidente', 'fondateur', 'fondatrice'];
+  var EMOTION = ['peur', 'joie', 'fier', 'fière', 'fierté', 'espoir', 'colère', 'triste', 'tristesse', 'passion', 'passionné', 'rêve', 'rêver', 'honte', 'amour', 'aimer', "j'aime", 'souffrance', 'bonheur', 'heureux', 'heureuse', 'inquiet', 'inquiète', 'angoisse', 'courage',
+    'émotion', 'ému', 'émue', 'larmes', 'cœur', 'frustré', 'frustration', 'révolte', 'indigné', 'indignation', 'enthousiasme', 'confiance', 'inquiétude', 'douleur', 'rire', 'ravi', 'ravie', 'déçu', 'déception'];
   var CLOSERS = ['voilà', 'quoi', 'bref', 'je sais pas', 'tout ça', 'enfin voilà', 'voilà quoi'];
   var STOP = 'le la les un une des de du d l et en à au aux a je tu il elle on nous vous ils elles ce cet cette ces se sa son ses mon ma mes ton ta tes notre nos votre vos leur leurs que qui quoi dont où ne pas plus pour par sur sous dans avec sans est sont été être avoir ai as avons avez ont c est y m t s n qu j très mais ou donc car si comme aussi cela ça ceci'.split(' ');
 
@@ -568,6 +572,10 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     var c = countList(text, CONNECTORS);
     var e = countList(text, EVIDENCE);
     var st = countList(text, STORY);
+    var ex = countList(text, EXPERIENCE);
+    var em = countList(text, EMOTION);
+    var named = (text.match(/(?:selon|d['’]après)\s+(?:l['’]|le\s|la\s|les\s|un\s|une\s)?[A-ZÉÈ][\p{L}]+/gu) || []).length;
+    var cites = { total: named + countList(text, ['étude', 'études', 'rapport', 'sondage', 'enquête', 'statistique', 'statistiques', 'source', 'sources']).total };
     var digits = (text.match(/\d+/g) || []).length;
     var sentences = text.split(/(?<=[.!?…])\s+|\n+/).map(function (x) { return x.trim(); }).filter(Boolean);
     var hasPunct = /[.!?…]/.test(text);
@@ -603,8 +611,11 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
       hedges: { total: h.total, per100: per100(h.total), top: top(h.found, 5) },
       vague: { total: v.total, per100: per100(v.total), top: top(v.found, 4) },
       connectors: { total: c.total, per100: per100(c.total), top: top(c.found, 5) },
-      evidence: { total: e.total + digits, per100: per100(e.total + digits), digits: digits },
+      evidence: { total: e.total + named + digits, per100: per100(e.total + named + digits), digits: digits },
       story: { total: st.total, per100: per100(st.total) },
+      experience: { total: ex.total, top: top(ex.found, 4) },
+      emotion: { total: em.total, per100: per100(em.total), top: top(em.found, 4) },
+      cites: cites.total,
       closers: closers,
       planAnnounced: plan,
       steps: stepsOf(text),
@@ -649,47 +660,33 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
      Ce sont des indices de travail, pas la mesure d'un effet réel.
      ============================================================ */
   function clamp01(x) { return Math.max(0, Math.min(1, x)); }
+  var MIN_WORDS = 40;
+  /* Indices de PRÉSENCE : ils comptent ce qui est réellement dans ton texte. Aucune base de départ :
+     rien dit = rien observé (null). Sans texte assez long, aucun jugement n'est porté. */
   function pillars(sig, txt) {
     var out = { logos: null, ethos: null, pathos: null, partial: [] };
-    if (txt && txt.ok) {
-      var lg = 40 * clamp01(txt.connectors.per100 / 5) +
-        20 * (txt.planAnnounced ? 1 : 0) +
-        25 * clamp01(txt.evidence.per100 / 2) +
-        15 * (1 - clamp01(txt.vague.per100 / 2));
-      out.logos = Math.round(lg);
-    } else out.partial.push('logos');
-    var eth = 100, any = false;
-    if (txt && txt.ok) {
-      eth -= Math.min(30, txt.fillers.per100 * 6);
-      eth -= Math.min(20, txt.hedges.per100 * 3);
-      any = true;
-    }
-    if (sig && sig.ok) {
-      eth -= Math.min(15, sig.pauses.blank * 5 + sig.pauses.long * 2);
-      eth -= 15 * (sig.endings.risingShare || 0);
-      eth -= 10 * (sig.endings.fadingShare || 0);
-      any = true;
-    }
-    if (any) out.ethos = Math.round(Math.max(0, eth)); else out.partial.push('ethos');
-    var parts = [], wts = [];
-    if (sig && sig.ok && sig.pitch) {
-      parts.push(clamp01((sig.pitch.sdSemitones - 1) / 3)); wts.push(0.45);
-      parts.push(clamp01((sig.volume.sdDb - 3) / 5)); wts.push(0.20);
-    }
-    if (txt && txt.ok) {
-      parts.push(clamp01(txt.story.per100 / 1.5)); wts.push(0.20);
-      parts.push(clamp01(txt.address.vousPer100 / 4)); wts.push(0.15);
-    }
-    if (parts.length) {
-      var tw = 0, sc = 0;
-      for (var i = 0; i < parts.length; i++) { sc += parts[i] * wts[i]; tw += wts[i]; }
-      out.pathos = Math.round(100 * sc / tw);
-    } else out.partial.push('pathos');
+    if (!txt || !txt.ok) { out.partial.push('texte absent ou trop court : aucun jugement possible'); return out; }
+    if (txt.words < MIN_WORDS) { out.partial.push('texte trop court (' + txt.words + ' mots, il en faut ' + MIN_WORDS + ')'); return out; }
+    var lg = 30 * clamp01(txt.connectors.total / 4) + 30 * clamp01(txt.evidence.total / 3) + 20 * (txt.planAnnounced ? 1 : 0) + 20 * clamp01(txt.steps.count / 3);
+    if (txt.connectors.total + txt.evidence.total + (txt.planAnnounced ? 1 : 0) + txt.steps.count > 0) out.logos = Math.round(lg);
+    var ex = txt.experience ? txt.experience.total : 0, ci = txt.cites || 0;
+    if (ex + ci > 0) out.ethos = Math.round(60 * clamp01(ex / 2) + 25 * clamp01(ci / 2) + 15 * (1 - clamp01((txt.hedges.per100 + txt.fillers.per100) / 8)));
+    var em = txt.emotion ? txt.emotion.total : 0;
+    if (em + txt.story.total + txt.questions > 0) out.pathos = Math.round(50 * clamp01((txt.emotion ? txt.emotion.per100 : 0) / 2) + 30 * clamp01(txt.story.total / 2) + 20 * clamp01(txt.questions / 2));
     return out;
+  }
+  function evidenceLines(txt) {
+    if (!txt || !txt.ok) return null;
+    var n = function (k, one, many) { return k + ' ' + (k > 1 ? many : one); };
+    return {
+      logos: n(txt.connectors.total, 'connecteur', 'connecteurs') + ' · ' + n(txt.evidence.total, 'exemple/preuve/chiffre', 'exemples/preuves/chiffres') + ' · plan ' + (txt.planAnnounced ? 'annoncé' : 'non annoncé'),
+      ethos: n(txt.experience ? txt.experience.total : 0, 'élément d’expérience', 'éléments d’expérience') + ' · ' + n(txt.cites || 0, 'source citée', 'sources citées') + ' · ' + n(txt.hedges.total + txt.fillers.total, 'hésitation', 'hésitations'),
+      pathos: n(txt.emotion ? txt.emotion.total : 0, 'mot d’émotion', 'mots d’émotion') + ' · ' + n(txt.story.total, 'repère de récit', 'repères de récit') + ' · ' + n(txt.questions, 'question', 'questions')
+    };
   }
 
   var api = {
-    SR: SR, analyzeSignal: analyzeSignal, analyzeText: analyzeText, markTics: markTics, pillars: pillars,
+    SR: SR, analyzeSignal: analyzeSignal, analyzeText: analyzeText, markTics: markTics, pillars: pillars, evidenceLines: evidenceLines,
     _internals: { yin: yin, percentile: percentile }
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
@@ -3020,8 +3017,9 @@ function exHero() {
 /* Objections pendant l'enregistrement : niveau 1 (au hasard, texte + voix optionnelle) et niveau 2 (selon ce que tu dis ou ne dis pas,
    par repérage de mots dans la transcription). Aucun envoi de données, aucune IA. */
 var obj = { on: true, mode: 'rand', voice: false, fast: false };
+var IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 var oRun = null;
-function objLoad() { try { var o = JSON.parse(lsGet('ao_obj') || 'null'); if (o && typeof o === 'object') { obj.on = o.on !== false; obj.mode = o.mode === 'kw' ? 'kw' : 'rand'; obj.voice = !!o.voice; obj.fast = !!o.fast; } } catch (e) {} }
+function objLoad() { try { var o = JSON.parse(lsGet('ao_obj') || 'null'); if (o && typeof o === 'object') { obj.on = o.on !== false; obj.mode = o.mode === 'kw' ? 'kw' : 'rand'; obj.voice = !!o.voice && !IOS; obj.fast = !!o.fast; } } catch (e) {} }
 function objSave() { lsSet('ao_obj', JSON.stringify(obj)); }
 function objKwOk() { return !!(SR_API && S.set && S.set.sr); }
 function objPanelHtml() {
@@ -3031,7 +3029,8 @@ function objPanelHtml() {
     h += '<p class="muted small" style="margin:0">Pendant que tu parles, une objection apparaît. Réponds-y sans t’arrêter.</p>';
     h += '<div class="row"><button class="chip' + (obj.mode === 'rand' ? ' on' : '') + '" data-act="obj-mode" data-v="rand">Au hasard</button><button class="chip' + (obj.mode === 'kw' ? ' on' : '') + '" data-act="obj-mode" data-v="kw"' + (SR_API ? '' : ' disabled') + '>Selon ce que je dis</button></div>';
     if (obj.mode === 'kw') h += '<p class="muted small" style="margin:0">' + (objKwOk() ? 'L’objection réagit à tes mots (« toujours », « je pense que »…) et à ce qui manque (exemple, chiffre). Elle repère des mots, elle ne comprend pas le sens de ton argument.' : 'Demande la transcription automatique (Réglages).') + '</p>';
-    if (window.speechSynthesis) h += '<label class="row" style="flex-wrap:nowrap;align-items:flex-start;gap:10px"><input type="checkbox" data-act="obj-voice"' + (obj.voice ? ' checked' : '') + ' style="margin-top:4px"><span class="small"><b>Lire l’objection à voix haute</b><br><span class="muted">Voix de ton téléphone. L’enregistrement se met en pause pendant qu’elle parle, pour ne pas fausser l’analyse de ta voix.</span></span></label>';
+    if (IOS) h += '<p class="muted small" style="margin:0">Sur iPhone, l’objection reste écrite : la lire à voix haute coupe le micro et fait perdre ce que tu dis.</p>';
+    else if (window.speechSynthesis) h += '<label class="row" style="flex-wrap:nowrap;align-items:flex-start;gap:10px"><input type="checkbox" data-act="obj-voice"' + (obj.voice ? ' checked' : '') + ' style="margin-top:4px"><span class="small"><b>Lire l’objection à voix haute (expérimental)</b><br><span class="muted">L’enregistrement continue. Pendant la lecture, ta transcription est ignorée et ce passage est retiré de l’analyse de ta voix.</span></span></label>';
   }
   return h + '</div>';
 }
@@ -3042,14 +3041,14 @@ function objAct(a, v, el) {
       if (v === 'kw' && !SR_API) return true;
       if (v === 'kw' && !objKwOk()) { S.set = S.set || {}; S.set.sr = true; persist(); toast('Transcription automatique activée : le son est envoyé au service de reconnaissance de ton navigateur. Tu peux la couper dans Réglages.', true); }
       obj.mode = v === 'kw' ? 'kw' : 'rand'; objSave(); render(); return true;
-    case 'obj-voice': obj.voice = !!el.checked; objSave(); if (obj.voice) objPrime(); return true;
+    case 'obj-voice': obj.voice = !!el.checked && !IOS; objSave(); if (obj.voice) objPrime(); return true;
   }
   return false;
 }
 function objVoice() {
   try { var vs = speechSynthesis.getVoices() || [], f = vs.filter(function (x) { return /^fr/i.test(x.lang); }); return f.filter(function (x) { return x.localService && /fr[-_]FR/i.test(x.lang); })[0] || f.filter(function (x) { return x.localService; })[0] || f[0] || null; } catch (e) { return null; }
 }
-function objPrime() { try { if (obj.voice && window.speechSynthesis) { var u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } } catch (e) {} }
+function objPrime() { try { if (obj.voice && !IOS && window.speechSynthesis) { var u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } } catch (e) {} }
 function objMute() { return !!(oRun && (oRun.speaking || Date.now() < oRun.muteUntil)); }
 function objBox() {
   var b = byIdEl('objLive'); if (!b) { b = document.createElement('div'); b.id = 'objLive'; b.className = 'objlive'; b.setAttribute('role', 'status'); b.setAttribute('aria-live', 'assertive'); document.body.appendChild(b); }
@@ -3060,7 +3059,7 @@ function objScale(s) { return obj.fast ? s / 10 : s; }
 function objMax() { var d = st.dur; return d <= 30 ? 1 : d <= 60 ? 2 : d <= 120 ? 3 : 5; }
 function objStart() {
   if (!obj.on) { oRun = null; return; }
-  oRun = { t0: Date.now(), n: 0, last: 0, timer: 0, hide: 0, speaking: false, muteUntil: 0, used: {}, log: [], fired: false, reps: {}, paused: false };
+  oRun = { spans: [], t0: Date.now(), n: 0, last: 0, timer: 0, hide: 0, speaking: false, muteUntil: 0, used: {}, log: [], fired: false, reps: {}, paused: false };
   var d = st.dur, first = Math.min(Math.max(10, d * (0.28 + Math.random() * 0.12)), Math.max(10, d - 10));
   oRun.timer = setTimeout(objDue, objScale(first) * 1000);
 }
@@ -3102,11 +3101,10 @@ function objFire(text, kind, snip) {
   objSay(text, done);
 }
 function objSay(text, done) {
-  if (!obj.voice || !window.speechSynthesis) { done(); return; }
-  var fin = false, wasRec = !!(mr && mr.state === 'recording'), w = 0;
-  var finish = function () { if (fin) return; fin = true; clearTimeout(w); if (wasRec) { try { if (mr && mr.state === 'paused') mr.resume(); } catch (e) {} } if (oRun) { oRun.speaking = false; oRun.muteUntil = Date.now() + 900; } done(); };
+  if (!obj.voice || IOS || !window.speechSynthesis || !oRun) { done(); return; }
+  var fin = false, w = 0, a = Math.max(0, objSec() - 0.2);
+  var finish = function () { if (fin) return; fin = true; clearTimeout(w); if (oRun) { oRun.speaking = false; oRun.muteUntil = Date.now() + 900; oRun.spans.push({ a: a, b: objSec() + 0.6 }); } done(); };
   try {
-    if (wasRec) { try { mr.pause(); } catch (e) { wasRec = false; } }
     oRun.speaking = true;
     var u = new SpeechSynthesisUtterance(text); u.lang = 'fr-FR'; var v = objVoice(); if (v) u.voice = v; u.rate = 1;
     u.onend = finish; u.onerror = function () { toast('La voix est bloquée par le navigateur : l’objection reste affichée.', true); finish(); };
@@ -3116,9 +3114,9 @@ function objSay(text, done) {
 }
 function objStop() {
   var log = oRun ? oRun.log : [];
+  st.objSpans = oRun && oRun.spans.length ? oRun.spans : null;
   if (oRun) { clearTimeout(oRun.timer); clearTimeout(oRun.hide); }
-  try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {}
-  try { if (oRun && mr && mr.state === 'paused') mr.resume(); } catch (e) {}
+  try { if (window.speechSynthesis && !IOS) speechSynthesis.cancel(); } catch (e) {}
   oRun = null; objHide(); return log;
 }
 function objResultHtml(s) {
@@ -3128,6 +3126,14 @@ function objResultHtml(s) {
   return h + '<p class="muted small" style="margin:0">Réécoute ton enregistrement : as-tu vraiment répondu à chaque objection ?</p></div>';
 }
 objLoad();
+
+function objCut(pcm, spans) {
+  if (!pcm || !spans || !spans.length) return pcm;
+  var SRt = 16000, keep = [], pos = 0, total = 0, S2 = spans.slice().sort(function (x, y) { return x.a - y.a; });
+  S2.forEach(function (sp) { var a = Math.max(pos, Math.floor(sp.a * SRt)), b = Math.min(pcm.length, Math.ceil(sp.b * SRt)); if (a > pos) { keep.push(pcm.subarray(pos, a)); total += a - pos; } if (b > pos) pos = b; });
+  if (pos < pcm.length) { keep.push(pcm.subarray(pos)); total += pcm.length - pos; }
+  var out = new Float32Array(total), o = 0; keep.forEach(function (k) { out.set(k, o); o += k.length; }); return out;
+}
 
 /* ============================================================
    PWA : données locales, enregistrements, corbeille, réglages,
@@ -3802,9 +3808,16 @@ function goalsHtml() {
   h += '<div class="row" style="margin-top:8px;flex-wrap:nowrap"><input type="text" id="goalIn" placeholder="Nouvel objectif" maxlength="80"><button class="btn small" data-act="goal-add">Ajouter</button></div></div>';
   return h;
 }
+function pilEvHtml(s) {
+  var ev = A.evidenceLines(s.txt), p = s.pil || {}, h = '';
+  if (ev) h += '<div class="small" style="margin-top:8px"><div><b style="color:var(--logos)">Logos</b> · ' + esc(ev.logos) + '</div><div><b style="color:var(--ethos)">Ethos</b> · ' + esc(ev.ethos) + '</div><div><b style="color:var(--pathos)">Pathos</b> · ' + esc(ev.pathos) + '</div></div>';
+  h += '<p class="muted small" style="margin:10px 0 0">Ces indices comptent ce que tu as réellement dit, d’après le texte transcrit : raisonnement (connecteurs, exemples, chiffres), crédibilité (ton expérience, tes sources), émotion (mots d’émotion, récit, questions). « Non observé » veut dire que rien n’a été trouvé : il n’y a pas de note par défaut. Une transcription incomplète donne un résultat incomplet. Ils ne mesurent pas l’effet sur un public.</p>';
+  if ((p.partial || []).length) h += '<p class="small tag-warn">Pas de jugement : ' + esc(p.partial.join(', ')) + '.</p>';
+  return h;
+}
 function pillarsHtml(p) {
   if (!p) return '';
-  function c(l, v, col) { return '<div class="pil"><b style="color:' + col + '">' + (v == null ? '–' : v) + '</b><span class="small muted">' + l + '</span></div>'; }
+  function c(l, v, col) { return '<div class="pil"><b style="color:' + col + '">' + (v == null ? '<span class="small">Non observé</span>' : v) + '</b><span class="small muted">' + l + '</span></div>'; }
   return '<div class="pillars" style="margin-top:8px">' + c('Logos', p.logos, 'var(--logos)') + c('Ethos', p.ethos, 'var(--ethos)') + c('Pathos', p.pathos, 'var(--pathos)') + '</div>';
 }
 
@@ -3883,7 +3896,7 @@ function endTimer(timeUp) {
 }
 function studioAfterRender() {
   exAfterRender();
-  var f = document.getElementById('fileIn'); if (f) f.onchange = function () { if (f.files && f.files[0]) setBlob(f.files[0]); };
+  var f = document.getElementById('fileIn'); if (f) f.onchange = function () { if (f.files && f.files[0]) { st.objSpans = null; setBlob(f.files[0]); } };
   var t = document.getElementById('trIn'); if (t) t.oninput = function () { st.transcript = t.value; var b = document.getElementById('goAnalyse'); if (b) b.disabled = !(st.blob || st.transcript.trim()); };
 }
 function setStatus(s) { st.status = s; var e = document.getElementById('stStatus'); if (e) e.textContent = s; }
@@ -3953,12 +3966,12 @@ function doAnalyse() {
     touchDay(); addXp(10 + exBonus(rec) + (sig ? 10 : 0) + (t ? 5 : 0) + (st.type === 'connecteurs' && t && t.steps ? t.steps.count * 3 : 0)); autoGoals();
     if (lvAfter.lvl > lvBefore) toast('Niveau ' + lvAfter.lvl + ' : ' + lvAfter.name + ' · ' + byId(D.exerciseTypes, st.type).nom, true);
     persist();
-    st.busy = false; st.blob = null; st.pcm = null; st.audioId = null; if (rec.ex) exReset(); st.transcript = ''; st.recSec = 0; st.ended = false; st.timerOn = false; st.status = '';
+    st.busy = false; st.blob = null; st.pcm = null; st.objSpans = null; st.audioId = null; if (rec.ex) exReset(); st.transcript = ''; st.recSec = 0; st.ended = false; st.timerOn = false; st.status = '';
     view = { tab: 'studio', sub: { result: rec.id } }; render(); window.scrollTo(0, 0);
   }
   if (st.pcm) {
     setStatus('Analyse en cours…');
-    A.analyzeSignal(st.pcm, { onProgress: function (p) { setStatus('Analyse en cours… ' + Math.round(p * 100) + ' %'); } }).then(finish).catch(function () { setStatus('Analyse impossible sur ce fichier.'); st.busy = false; });
+    A.analyzeSignal(objCut(st.pcm, st.objSpans), { onProgress: function (p) { setStatus('Analyse en cours… ' + Math.round(p * 100) + ' %'); } }).then(finish).catch(function () { setStatus('Analyse impossible sur ce fichier.'); st.busy = false; });
   } else finish(null);
 }
 function slim(sig) { var s = JSON.parse(JSON.stringify(sig)); s.pauses.list = s.pauses.list.slice(0, 12); return s; }
@@ -3986,7 +3999,7 @@ function vResult(id) {
   var s = byId(S.sessions, id);
   if (!s) return '<p>Séance introuvable.</p><button class="btn" data-act="back">Retour</button>';
   var a = s.sig, t = s.txt, h = '<div class="top"><div><div class="eyebrow">' + esc(s.date) + ' · ' + esc(durLabel(s.dur)) + '</div><h1>Résultat</h1></div><button class="btn small ghost" data-act="back">Fermer</button></div><div class="stack">';
-  h += '<div class="card"><h3>' + esc(s.sujet) + '</h3>' + pillarsHtml(s.pil) + '<p class="muted small" style="margin:10px 0 0">Indices de 0 à 100 calculés par l’appli à partir de ta voix et de ton texte. Ils orientent ton travail ; ils ne mesurent pas l’effet réel sur un public.</p>' + ((s.pil.partial || []).length ? '<p class="small tag-warn">Non calculé faute de données : ' + s.pil.partial.join(', ') + '.</p>' : '') + '</div>';
+  h += '<div class="card"><h3>' + esc(s.sujet) + '</h3>' + pillarsHtml(s.pil) + pilEvHtml(s) + '</div>';
   h += exResultHtml(s);
   h += objResultHtml(s);
   h += '<div class="card"><h3>À travailler en premier</h3>' + adviceList(a, t).map(function (x) { return '<div class="metric"><span><b>' + esc(x[0]) + '</b><br><span class="muted small">' + esc(x[1]) + '</span></span></div>'; }).join('') + '</div>';
