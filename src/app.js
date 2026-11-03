@@ -39,6 +39,7 @@ function streak() {
 }
 /*@@LEVELS@@*/
 /*@@EXPRESS@@*/
+/*@@OBJ@@*/
 /*@@PWA@@*/
 
 /* ---------- navigation ---------- */
@@ -144,7 +145,7 @@ var st = { type: 'argumenter', dur: 60, sujet: null, rec: null, blob: null, audi
 function newSubject() {
   if (st.type === 'express') { st.sujet = ex.theme; return; }
   if (st.type === 'mot') { st.sujet = pick(D.wordBank); return; }
-  var t = byId(D.exerciseTypes, st.type); st.sujet = pick(t.sujets);
+  var t = byId(D.exerciseTypes, st.type); st.sujet = pick(t.sujets); if (st.type === 'debat') st.stance = pick(['POUR', 'CONTRE']);
 }
 function vStudio() {
   if (view.sub && view.sub.result) return vResult(view.sub.result);
@@ -154,12 +155,13 @@ function vStudio() {
   h += exHero();
   h += '<div class="card stack"><div class="eyebrow">Exercice</div><div class="hscroll">' + exOrdered().map(function (x) { return '<button class="chip' + (x.id === st.type ? ' on' : '') + (x.id === 'express' ? ' hot' : '') + '" data-act="st-type" data-v="' + x.id + '">' + esc(x.nom) + '</button>'; }).join('') + '</div>';
   if (st.type !== 'express') h += '<div class="row">' + D.durations.map(function (d) { return '<button class="chip' + (d === st.dur ? ' on' : '') + '" data-act="st-dur" data-v="' + d + '">' + durLabel(d) + '</button>'; }).join('') + '</div>';
-  if (st.type !== 'express') h += '<div><div class="eyebrow">' + (st.type === 'mot' ? 'Ton mot' : 'Sujet') + '</div><h2>' + esc(st.sujet) + '</h2><div class="row" style="margin-top:6px"><button class="btn small ghost" data-act="st-new">' + (st.type === 'mot' ? 'Tirer au sort un autre mot' : 'Autre sujet') + '</button></div></div>';
+  if (st.type !== 'express') h += '<div><div class="eyebrow">' + (st.type === 'mot' ? 'Ton mot' : 'Sujet') + '</div><h2>' + esc(st.sujet) + '</h2>' + (st.type === 'debat' && st.stance ? '<p style="margin:6px 0 0">Tu défends : <span class="pill stance ' + (st.stance === 'POUR' ? 'pour' : 'contre') + '">' + st.stance + '</span></p>' : '') + '<div class="row" style="margin-top:6px"><button class="btn small ghost" data-act="st-new">' + (st.type === 'mot' ? 'Tirer au sort un autre mot' : st.type === 'debat' ? 'Autre sujet et autre camp' : 'Autre sujet') + '</button></div></div>';
   h += '<div class="callout"><b>' + esc(t.modele) + '</b> — ' + esc(t.aide) + '</div>';
   h += exLevelHtml(st.type);
   if (st.type === 'discours') h += '<div class="small">' + D.speechSteps.map(function (s, i) { return '<div class="metric"><span>' + (i + 1) + '. <b>' + esc(s.nom) + '</b> — ' + esc(s.objectif) + '</span></div>'; }).join('') + '</div>';
   h += '</div>';
   if (st.type === 'express') { h += exPhaseHtml(); if (ex.phase !== 'speak') return h + '</div>'; }
+  h += objPanelHtml();
   h += '<div class="card stack" id="recCard">' + recHtml() + '</div>';
   h += '<div class="card stack" id="recLib"></div>';
   h += '<div class="card stack"><div class="eyebrow">Transcription (pour analyser les mots)</div><textarea id="trIn" placeholder="' + (SR_API && CAN_MIC && S.set && S.set.sr ? 'Elle se remplit pendant l’enregistrement (transcription en ligne activée). Tu peux la corriger.' : 'Écris ou colle ici le texte de ce que tu as dit. Sans texte, seule la voix est analysée.') + '">' + esc(st.transcript) + '</textarea></div>';
@@ -246,11 +248,11 @@ function startRec() {
     mr = pwaRecorder(s);
     mr.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
     mr.onstop = function () { s.getTracks().forEach(function (t) { t.stop(); }); var bb = new Blob(chunks, { type: mr.mimeType || 'audio/webm' }); setBlob(bb); pwaSaveRec(bb); };
-    mr.start(); st.rec = true; startTimer();
+    mr.start(); st.rec = true; st.objLog = null; objStart(); startTimer();
     if (SR_API && S.set && S.set.sr) {
       try {
         var rc = new SR_API(); rc.lang = 'fr-FR'; rc.continuous = true; rc.interimResults = false;
-        rc.onresult = function (ev) { var t = ''; for (var i = ev.resultIndex; i < ev.results.length; i++) t += ev.results[i][0].transcript + ' '; st.transcript = (st.transcript + ' ' + t).trim(); var ta = document.getElementById('trIn'); if (ta) ta.value = st.transcript; };
+        rc.onresult = function (ev) { if (objMute()) return; var t = ''; for (var i = ev.resultIndex; i < ev.results.length; i++) t += ev.results[i][0].transcript + ' '; st.transcript = (st.transcript + ' ' + t).trim(); objOnText(t); var ta = document.getElementById('trIn'); if (ta) ta.value = st.transcript; };
         rc.onend = function () { if (st.rec) { try { rc.start(); } catch (e) {} } };
         rc.start(); st.recog = rc;
       } catch (e) { st.recog = null; }
@@ -258,7 +260,7 @@ function startRec() {
     refreshRec();
   }).catch(function () { setStatus('Micro refusé ou indisponible. Importe un enregistrement à la place.'); });
 }
-function stopRec() { st.rec = false; clearInterval(tick); tick = null; st.timerOn = false; try { if (st.recog) st.recog.stop(); } catch (e) {} st.recog = null; try { mr.stop(); } catch (e) {} refreshRec(); }
+function stopRec() { st.objLog = objStop(); st.rec = false; clearInterval(tick); tick = null; st.timerOn = false; try { if (st.recog) st.recog.stop(); } catch (e) {} st.recog = null; try { mr.stop(); } catch (e) {} refreshRec(); }
 
 function doAnalyse() {
   if (st.busy) return; st.busy = true;
@@ -276,7 +278,7 @@ function doAnalyse() {
     }
     var pil = A.pillars(sig, t);
     var exd = st.type === 'express' ? exSessionData(sig) : null;
-    var rec = { id: uid(), ex: exd || undefined, audioId: st.audioId || null, date: today(), sujet: st.sujet, type: st.type, dur: st.dur, sig: sig ? slim(sig) : null, txt: t, transcript: txt, pil: pil };
+    var rec = { id: uid(), ex: exd || undefined, audioId: st.audioId || null, date: today(), sujet: st.sujet, stance: st.type === 'debat' ? st.stance : undefined, objs: st.objLog && st.objLog.length ? st.objLog.slice(0, 8) : undefined, type: st.type, dur: st.dur, sig: sig ? slim(sig) : null, txt: t, transcript: txt, pil: pil };
     var lvBefore = exLevel(st.type).lvl;
     S.sessions.unshift(rec); S.sessions = S.sessions.slice(0, 200);
     var lvAfter = exLevel(st.type);
@@ -318,6 +320,7 @@ function vResult(id) {
   var a = s.sig, t = s.txt, h = '<div class="top"><div><div class="eyebrow">' + esc(s.date) + ' · ' + esc(durLabel(s.dur)) + '</div><h1>Résultat</h1></div><button class="btn small ghost" data-act="back">Fermer</button></div><div class="stack">';
   h += '<div class="card"><h3>' + esc(s.sujet) + '</h3>' + pillarsHtml(s.pil) + '<p class="muted small" style="margin:10px 0 0">Indices de 0 à 100 calculés par l’appli à partir de ta voix et de ton texte. Ils orientent ton travail ; ils ne mesurent pas l’effet réel sur un public.</p>' + ((s.pil.partial || []).length ? '<p class="small tag-warn">Non calculé faute de données : ' + s.pil.partial.join(', ') + '.</p>' : '') + '</div>';
   h += exResultHtml(s);
+  h += objResultHtml(s);
   h += '<div class="card"><h3>À travailler en premier</h3>' + adviceList(a, t).map(function (x) { return '<div class="metric"><span><b>' + esc(x[0]) + '</b><br><span class="muted small">' + esc(x[1]) + '</span></span></div>'; }).join('') + '</div>';
   if (a) {
     h += '<div class="card"><h3>Voix</h3>';
@@ -472,7 +475,7 @@ function briefText(t) {
 document.addEventListener('click', function (ev) {
   var el = ev.target.closest('[data-act]'); if (!el) return;
   var act = el.getAttribute('data-act'), v = el.getAttribute('data-v');
-  if (exAct(act, v, el) || pwaAct(act, v, el, ev) || prepAct(act, v, el) || eristAct(act, v)) return;
+  if (exAct(act, v, el) || objAct(act, v, el) || pwaAct(act, v, el, ev) || prepAct(act, v, el) || eristAct(act, v)) return;
   switch (act) {
     case 'tab': go(v); break;
     case 'reco': var g = JSON.parse(v); go(g[0], g[1]); break;
@@ -483,7 +486,7 @@ document.addEventListener('click', function (ev) {
     case 'st-type': if (st.rec || st.timerOn) break; st.type = v; if (v === 'express') { if (ex.phase === 'speak') exEnterSpeak(); } else if (D.durations.indexOf(st.dur) < 0) st.dur = 60; newSubject(); st.ended = false; st.recSec = 0; render(); break;
     case 'st-dur': if (st.rec || st.timerOn) break; st.dur = +v; st.ended = false; st.recSec = 0; render(); break;
     case 'st-new': newSubject(); render(); break;
-    case 'rec-toggle': st.rec ? endTimer(false) : startRec(); break;
+    case 'rec-toggle': if (!st.rec) objPrime(); st.rec ? endTimer(false) : startRec(); break;
     case 'chrono-toggle': if (st.timerOn) endTimer(false); else { beep0(); startTimer(); refreshRec(); } break;
     case 'analyse': doAnalyse(); break;
     case 'back': view = { tab: view.tab === 'studio' || view.tab === 'settings' ? 'home' : view.tab, sub: null }; render(); break;

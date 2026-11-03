@@ -190,7 +190,20 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .tabbar{background:color-mix(in srgb,var(--surface) 92%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .exhero,.cover{background-clip:padding-box}
 .cover::before{content:none}
-</style><div id="app"></div><nav id="tabbar" class="tabbar"></nav><script>window.AGORA_BUILD='9cc6d211b8';
+
+/* ===== Objections ===== */
+.sw{position:relative;display:inline-block;width:46px;height:28px;flex:none}
+.sw input{position:absolute;inset:0;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
+.sw span{position:absolute;inset:0;border-radius:999px;background:var(--line);transition:background .15s}
+.sw span::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.35);transition:transform .15s}
+.sw input:checked+span{background:var(--accent)}.sw input:checked+span::after{transform:translateX(18px)}
+.sw input:focus-visible+span{outline:3px solid var(--gold);outline-offset:2px}
+.pill.stance{font-weight:700;letter-spacing:.06em}.pill.stance.pour{color:#1f6b3a;border-color:#1f6b3a}.pill.stance.contre{color:#9E2B16;border-color:#9E2B16}
+.chip[disabled]{opacity:.45;cursor:not-allowed}
+.objlive{position:fixed;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 84px);z-index:120;background:#101826;color:#fff8f0;border-radius:16px;padding:14px 16px;border-left:5px solid #C9A24B;box-shadow:0 10px 30px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:6px}
+.objlive .eyebrow{color:#E8C46E}.objlive .otxt{font-family:'Fraunces',Georgia,serif;font-size:1.2rem;line-height:1.3}
+@media (prefers-reduced-motion:no-preference){.objlive{animation:cin .25s ease-out both}}
+</style><div id="app"></div><nav id="tabbar" class="tabbar"></nav><script>window.AGORA_BUILD='8c73c5d02d';
 /* ============================================================
    Analyse de la voix (signal) et du texte (transcription)
    Tout se calcule dans la page. Aucun audio n'est envoyé nulle part.
@@ -2578,8 +2591,8 @@ window.AO_DATA.exerciseTypes = [
     sujets: ['Confiance', 'Héritage', 'Rareté', 'Patience', 'Frontière', 'Lenteur', 'Élégance', 'Risque', 'Mémoire', 'Silence'] },
   { id: 'recit', nom: 'Raconter une histoire', modele: 'Situation → Obstacle → Action → Leçon', aide: 'Une scène, un détail concret, une leçon.',
     sujets: ['Une fois où j’ai eu peur de parler', 'Un échec qui m’a appris quelque chose', 'La rencontre qui a changé mon parcours', 'Un voyage qui m’a marqué', 'Mon premier jour dans un lieu inconnu'] },
-  { id: 'debat', nom: 'Défendre un camp', modele: 'Thèse → 2 arguments → Réfutation → Conclusion', aide: 'Anticipe l’objection la plus forte.',
-    sujets: ['Pour ou contre l’IA dans la création artistique', 'Pour ou contre la semaine de quatre jours', 'Pour ou contre le luxe durable', 'Pour ou contre l’obligation de parler en public à l’école'] },
+  { id: 'debat', nom: 'Défendre un camp', modele: 'Thèse → 2 arguments → Réfutation → Conclusion', aide: 'Un camp t’est imposé (POUR ou CONTRE), même s’il n’est pas le tien. Anticipe l’objection la plus forte.',
+    sujets: ['Les émissions de télé-réalité devraient être diffusées après 22 h', 'L’intelligence artificielle devrait être autorisée dans la création artistique', 'La semaine de travail devrait durer quatre jours', 'Le luxe peut être durable', 'La prise de parole en public devrait être obligatoire à l’école', 'Les réseaux sociaux devraient être interdits avant 15 ans', 'Le télétravail devrait être un droit', 'Les marques de luxe devraient publier leurs prix de fabrication', 'Il faut rendre le vote obligatoire', 'L’uniforme devrait être obligatoire à l’école', 'La publicité devrait être interdite dans l’espace public', 'Les stages non rémunérés devraient être interdits', 'Il faut limiter le tourisme de masse', 'Les études supérieures devraient être gratuites', 'Les influenceurs devraient être soumis aux mêmes règles que les médias', 'Les cryptomonnaies sont l’avenir de l’argent', 'Il faut apprendre à coder dès le primaire', 'La seconde main devrait remplacer le neuf dans la mode', 'Les entreprises devraient imposer des quotas de diversité', 'Le salaire de chacun devrait être public', 'Le téléphone devrait être interdit en réunion', 'Les notes à l’école devraient être supprimées', 'Il faut taxer davantage les produits de luxe', 'La contrefaçon fait du bien aux grandes marques', 'Madagascar devrait miser d’abord sur le tourisme', 'Les jeunes diplômés devraient d’abord travailler à l’étranger', 'Le service civique devrait être obligatoire', 'Les voitures devraient être interdites en centre-ville', 'On devrait pouvoir noter son employeur publiquement', 'L’expérience compte plus que le diplôme', 'Les musées devraient être gratuits', 'Le bénévolat devrait compter dans les études', 'Il faut limiter les écrans à la maison', 'Le client n’a pas toujours raison', 'La concurrence est plus utile que la coopération'] },
   { id: 'qr', nom: 'Répondre à une question', modele: 'Reformuler → Répondre → Conclure', aide: 'Une idée centrale, pas plus.',
     sujets: ['Pourquoi devrions-nous vous écouter ?', 'Quelle est votre plus grande faiblesse ?', 'Qu’est-ce qui vous différencie ?', 'Pourquoi ce projet maintenant ?', 'Et si vous vous trompiez ?'] },
   { id: 'connecteurs', nom: 'Relier ses idées (5 étapes)', modele: 'Annoncer → Prévenir → Concéder → Illustrer → Reformuler', aide: 'Un connecteur par étape : « je voudrais dire… », « attention, je ne dis pas que… », « certes… mais », « prenons le cas de… », « autrement dit… ».',
@@ -2678,6 +2691,37 @@ window.AO_DATA = window.AO_DATA || {};
   ['idees', 'objets'].forEach(function (id) { window.AO_DATA.themeCats.filter(function (c) { return c.id === id; })[0].l.forEach(function (t) { if (t.indexOf(' ') < 0 && t.indexOf('’') < 0) words.push(t); }); });
   window.AO_DATA.wordBank = words.concat(['Confiance', 'Rareté', 'Frontière', 'Lenteur', 'Élégance', 'Risque', 'Murmure', 'Seuil', 'Racine', 'Vitrine', 'Détour', 'Promesse', 'Équilibre', 'Rivalité', 'Ombre', 'Horizon', 'Marge', 'Rituel', 'Fragilité', 'Audace']).filter(function (w, i, a) { return a.indexOf(w) === i; });
 })();
+
+;
+/* Objections : banque de relances pour s'entraîner à répondre. Aucune IA : tirage au sort et repérage de mots. */
+window.AO_DATA = window.AO_DATA || {};
+window.AO_DATA.objections = {
+  generic: [
+    'Un exemple concret, s’il te plaît ?', 'Et si on te répondait exactement l’inverse ?', 'Qui te dit que tu as raison ?', 'Pourquoi devrait-on te croire ?',
+    'Tu as une preuve, un chiffre, une source ?', 'Et si ce n’était qu’une exception ?', 'Quel est le plus gros risque de ce que tu proposes ?', 'Qui y perd, dans ton raisonnement ?',
+    'Résume-moi ça en une phrase. Maintenant.', 'Tu tournes autour : quelle est ta thèse, exactement ?', 'Et dans dix ans, est-ce que ça tient encore ?', 'Si tu avais tort, ce serait sur quel point ?',
+    'Quel argument ton adversaire utiliserait-il contre toi ?', 'Tu parles pour qui ? Pour tout le monde, vraiment ?', 'Et concrètement, qui paie ?', 'Ça marche peut-être ailleurs. Pourquoi ici ?',
+    'Belle idée. Comment la met-on en œuvre lundi matin ?', 'Tu confonds peut-être cause et conséquence. Démontre-moi le contraire.', 'Admettons. Et alors ?', 'On dirait que tu te contredis. Lequel des deux tient ?',
+    'Donne-moi un contre-exemple à ton propre argument.', 'Qu’est-ce que tu ne dis pas, et qui pourrait changer la conclusion ?', 'On t’a déjà répondu ça mille fois. Qu’est-ce que tu ajoutes ?', 'Qu’est-ce qui me ferait changer d’avis ?',
+    'Trop abstrait. Un visage, une histoire, un lieu.', 'Comment saurait-on que tu as raison ? Quelle mesure ?', 'Tu as dix secondes : pourquoi est-ce important pour moi ?', 'Et si on t’interdisait cet argument, que te resterait-il ?'
+  ],
+  noExample: ['Tu n’as pas encore donné d’exemple. Un cas précis, maintenant.', 'Je n’ai entendu aucun exemple. Raconte-moi une situation réelle.'],
+  noNumber: ['Je n’ai entendu aucun chiffre. Donne-moi un ordre de grandeur.', 'Rien de chiffré jusqu’ici. Quelle donnée soutient ton propos ?'],
+  /* re : mots repérés dans ta transcription ; {m} = le mot que tu as dit */
+  kw: [
+    { id: 'gen', re: '\\b(toujours|jamais|tout le monde|tous les|personne ne|aucun|systématiquement|forcément|partout)\\b', lines: ['Tu as dit « {m} ». Un seul contre-exemple suffit à te contredire. Tu en as un en tête ?', '« {m} » : c’est un mot fort. Tu es sûr qu’il n’y a aucune exception ?'] },
+    { id: 'avis', re: '\\b(je pense que|je crois que|à mon avis|je trouve que|pour moi|j’ai l’impression)\\b', lines: ['Tu as dit « {m} ». C’est ton avis. Qu’est-ce qui te permet de l’affirmer ?', '« {m} »… et les faits, qu’est-ce qu’ils disent ?'] },
+    { id: 'evid', re: '\\b(évidemment|bien sûr|c’est évident|clairement|il est clair|naturellement|tout le monde sait)\\b', lines: ['Tu as dit « {m} ». Si c’est si évident, démontre-le.', '« {m} » : ce qui est évident pour toi ne l’est pas pour moi. Explique.'] },
+    { id: 'quant', re: '\\b(beaucoup|énormément|de plus en plus|la plupart|une majorité|souvent|de nombreux)\\b', lines: ['Tu as dit « {m} ». Combien exactement ? Cite un chiffre ou une source.', '« {m} », c’est vague. Quel ordre de grandeur ?'] },
+    { id: 'hes', re: '\\b(un peu|peut-être|on va dire|en quelque sorte|disons|plus ou moins)\\b', lines: ['Tu as dit « {m} ». Tu hésites. Quelle est ta position, sans détour ?', '« {m} » : on ne te suit pas si tu n’es pas sûr. Affirme.'] },
+    { id: 'auto', re: '\\b(les experts|des études|une étude|les spécialistes|il paraît|on dit que|les scientifiques)\\b', lines: ['Tu as dit « {m} ». Lesquels ? Nomme-les.', '« {m} » : cite la source précise, sinon ça ne compte pas.'] },
+    { id: 'caus', re: '\\b(donc|par conséquent|c’est pour ça que|c’est pourquoi|à cause de|grâce à)\\b', lines: ['Tu as dit « {m} ». Qu’est-ce qui prouve que l’un cause l’autre, et que ce n’est pas une coïncidence ?', '« {m} » : ton raisonnement saute une étape. Laquelle ?'] },
+    { id: 'arg', re: '\\b(gratuit|gratuitement|moins cher|économies?|coûte|rentable|rentabilité|investir)\\b', lines: ['Tu as dit « {m} ». Qui paie, au final ? Chiffre-moi ça.', '« {m} » : sur quelle durée, et avec quel retour ?'] },
+    { id: 'devoir', re: '\\b(il faut|on doit|il faudrait|on devrait|on devra|il faudra)\\b', lines: ['Tu as dit « {m} ». Qui décide de ce qu’il faut ? Et si on refuse ?', '« {m} » : pourquoi ce serait un devoir ?'] },
+    { id: 'sup', re: '\\b(le meilleur|la meilleure|le pire|le plus grand|la seule|le seul|unique|incontournable)\\b', lines: ['Tu as dit « {m} ». Par rapport à quoi ? Compare.', '« {m} » : selon quel critère ?'] },
+    { id: 'tics', re: '\\b(du coup|en fait|voilà|genre|bref|enfin)\\b', lines: ['Tu as dit « {m} ». Va droit au but : la phrase suivante, sans remplissage.'], rep: 3 }
+  ]
+};
 
 ;
 var LOGO='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100.0" cy="22.0" r="11" fill="#C9A24B"/><circle cx="142.2" cy="34.4" r="11" fill="#C2391F"/><circle cx="171.0" cy="67.6" r="11" fill="#C2391F"/><circle cx="177.2" cy="111.1" r="11" fill="#C2391F"/><circle cx="158.9" cy="151.1" r="11" fill="#C2391F"/><circle cx="122.0" cy="174.8" r="11" fill="#C2391F"/><circle cx="78.0" cy="174.8" r="11" fill="#C2391F"/><circle cx="41.1" cy="151.1" r="11" fill="#C2391F"/><circle cx="22.8" cy="111.1" r="11" fill="#C2391F"/><circle cx="29.0" cy="67.6" r="11" fill="#C2391F"/><circle cx="57.8" cy="34.4" r="11" fill="#C2391F"/><circle cx="100" cy="100" r="27" fill="#C2391F"/></svg>';
@@ -2959,6 +3003,118 @@ function exHero() {
   return '<button class="exhero" data-act="' + (live ? 'ex-resume' : 'st-type') + '" data-v="express"><div class="exbadge">' + (live ? 'En cours' : 'Nouveau') + '</div><h2>Recherche express</h2>' + steps + '<p>' + (live ? 'Reprends ta recherche sur « ' + esc(ex.theme) + ' ».' : 'Tire un thème, cherche sans IA pendant ' + exLab(p.search) + ', structure ' + exLab(p.struct) + ', puis explique en ' + exLab(p.speak) + '.') + '</p><span class="exgo">' + (live ? 'Reprendre' : 'Essayer maintenant') + ' →</span></button>';
 }
 
+/* Objections pendant l'enregistrement : niveau 1 (au hasard, texte + voix optionnelle) et niveau 2 (selon ce que tu dis ou ne dis pas,
+   par repérage de mots dans la transcription). Aucun envoi de données, aucune IA. */
+var obj = { on: true, mode: 'rand', voice: false, fast: false };
+var oRun = null;
+function objLoad() { try { var o = JSON.parse(lsGet('ao_obj') || 'null'); if (o && typeof o === 'object') { obj.on = o.on !== false; obj.mode = o.mode === 'kw' ? 'kw' : 'rand'; obj.voice = !!o.voice; obj.fast = !!o.fast; } } catch (e) {} }
+function objSave() { lsSet('ao_obj', JSON.stringify(obj)); }
+function objKwOk() { return !!(SR_API && S.set && S.set.sr); }
+function objPanelHtml() {
+  var h = '<div class="card stack" id="objCard"><div class="row" style="justify-content:space-between;flex-wrap:nowrap"><div><div class="eyebrow">Objections</div><h3 style="margin:0">Quelqu’un te coupe la parole</h3></div>';
+  h += '<label class="sw"><input type="checkbox" data-act="obj-toggle"' + (obj.on ? ' checked' : '') + ' aria-label="Activer les objections"><span></span></label></div>';
+  if (obj.on) {
+    h += '<p class="muted small" style="margin:0">Pendant que tu parles, une objection apparaît. Réponds-y sans t’arrêter.</p>';
+    h += '<div class="row"><button class="chip' + (obj.mode === 'rand' ? ' on' : '') + '" data-act="obj-mode" data-v="rand">Au hasard</button><button class="chip' + (obj.mode === 'kw' ? ' on' : '') + '" data-act="obj-mode" data-v="kw"' + (SR_API ? '' : ' disabled') + '>Selon ce que je dis</button></div>';
+    if (obj.mode === 'kw') h += '<p class="muted small" style="margin:0">' + (objKwOk() ? 'L’objection réagit à tes mots (« toujours », « je pense que »…) et à ce qui manque (exemple, chiffre). Elle repère des mots, elle ne comprend pas le sens de ton argument.' : 'Demande la transcription automatique (Réglages).') + '</p>';
+    if (window.speechSynthesis) h += '<label class="row" style="flex-wrap:nowrap;align-items:flex-start;gap:10px"><input type="checkbox" data-act="obj-voice"' + (obj.voice ? ' checked' : '') + ' style="margin-top:4px"><span class="small"><b>Lire l’objection à voix haute</b><br><span class="muted">Voix de ton téléphone. L’enregistrement se met en pause pendant qu’elle parle, pour ne pas fausser l’analyse de ta voix.</span></span></label>';
+  }
+  return h + '</div>';
+}
+function objAct(a, v, el) {
+  switch (a) {
+    case 'obj-toggle': obj.on = !!el.checked; objSave(); render(); return true;
+    case 'obj-mode':
+      if (v === 'kw' && !SR_API) return true;
+      if (v === 'kw' && !objKwOk()) { S.set = S.set || {}; S.set.sr = true; persist(); toast('Transcription automatique activée : le son est envoyé au service de reconnaissance de ton navigateur. Tu peux la couper dans Réglages.', true); }
+      obj.mode = v === 'kw' ? 'kw' : 'rand'; objSave(); render(); return true;
+    case 'obj-voice': obj.voice = !!el.checked; objSave(); if (obj.voice) objPrime(); return true;
+  }
+  return false;
+}
+function objVoice() {
+  try { var vs = speechSynthesis.getVoices() || [], f = vs.filter(function (x) { return /^fr/i.test(x.lang); }); return f.filter(function (x) { return x.localService && /fr[-_]FR/i.test(x.lang); })[0] || f.filter(function (x) { return x.localService; })[0] || f[0] || null; } catch (e) { return null; }
+}
+function objPrime() { try { if (obj.voice && window.speechSynthesis) { var u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } } catch (e) {} }
+function objMute() { return !!(oRun && (oRun.speaking || Date.now() < oRun.muteUntil)); }
+function objBox() {
+  var b = byIdEl('objLive'); if (!b) { b = document.createElement('div'); b.id = 'objLive'; b.className = 'objlive'; b.setAttribute('role', 'status'); b.setAttribute('aria-live', 'assertive'); document.body.appendChild(b); }
+  return b;
+}
+function objHide() { var b = byIdEl('objLive'); if (b && b.parentNode) b.parentNode.removeChild(b); }
+function objScale(s) { return obj.fast ? s / 10 : s; }
+function objMax() { var d = st.dur; return d <= 30 ? 1 : d <= 60 ? 2 : d <= 120 ? 3 : 5; }
+function objStart() {
+  if (!obj.on) { oRun = null; return; }
+  oRun = { t0: Date.now(), n: 0, last: 0, timer: 0, hide: 0, speaking: false, muteUntil: 0, used: {}, log: [], fired: false, reps: {}, paused: false };
+  var d = st.dur, first = Math.min(Math.max(10, d * (0.28 + Math.random() * 0.12)), Math.max(10, d - 10));
+  oRun.timer = setTimeout(objDue, objScale(first) * 1000);
+}
+function objSec() { return oRun ? (Date.now() - oRun.t0) / 1000 : 0; }
+function objDue() {
+  if (!oRun || !st.rec || oRun.n >= objMax()) return;
+  var q = obj.mode === 'kw' && objKwOk() ? objAbsence() : null;
+  if (q) objFire(q.text, 'absent', ''); else objFire(pick(D.objections.generic), 'rand', '');
+}
+function objAbsence() {
+  var tx = (st.transcript || '').toLowerCase(), O = D.objections;
+  if (tx.length > 80 && !oRun.used.noex && !/\b(par exemple|prenons|exemple|imaginez|ainsi|quand j’|quand j'|un jour|hier)\b/.test(tx)) { oRun.used.noex = 1; return { text: pick(O.noExample) }; }
+  if (tx.length > 140 && !oRun.used.nonum && !/\d|\b(pour cent|pourcent|million|milliard|millier)\b/.test(tx)) { oRun.used.nonum = 1; return { text: pick(O.noNumber) }; }
+  return null;
+}
+function objSchedule() {
+  if (!oRun || oRun.n >= objMax()) return;
+  var left = st.dur - objSec(), wait = 22 + Math.random() * 14;
+  if (left - wait < 8) return;
+  clearTimeout(oRun.timer); oRun.timer = setTimeout(objDue, objScale(wait) * 1000);
+}
+function objOnText(chunk) {
+  if (!oRun || obj.mode !== 'kw' || !st.rec || oRun.n >= objMax() || oRun.speaking) return;
+  var now = objSec(); if (now < objScale(8) || (oRun.n && now - oRun.last < objScale(18))) return;
+  var low = String(chunk || '').toLowerCase(), K = D.objections.kw;
+  for (var i = 0; i < K.length; i++) {
+    var r = K[i], m = low.match(new RegExp(r.re)); if (!m || oRun.used[r.id]) continue;
+    if (r.rep) { oRun.reps[r.id] = (oRun.reps[r.id] || 0) + (low.match(new RegExp(r.re, 'g')) || []).length; if (oRun.reps[r.id] < r.rep) continue; }
+    oRun.used[r.id] = 1; objFire(pick(r.lines).replace('{m}', m[1] || m[0]), 'kw', m[1] || m[0]); return;
+  }
+}
+function objFire(text, kind, snip) {
+  if (!oRun) return;
+  clearTimeout(oRun.timer); clearTimeout(oRun.hide);
+  oRun.n++; oRun.last = objSec(); oRun.log.push({ t: Math.round(objSec()), text: text, kind: kind, m: snip || '' });
+  var b = objBox(); b.innerHTML = '<div class="eyebrow">Objection' + (kind === 'kw' ? ' · tirée de tes mots' : kind === 'absent' ? ' · ce que tu n’as pas dit' : '') + '</div><div class="otxt">' + esc(text) + '</div><div class="small" style="opacity:.8">Réponds sans t’arrêter.</div>';
+  try { if (navigator.vibrate) navigator.vibrate(60); } catch (e) {}
+  var done = function () { if (!oRun) return; oRun.hide = setTimeout(objHide, objScale(5) * 1000); objSchedule(); };
+  objSay(text, done);
+}
+function objSay(text, done) {
+  if (!obj.voice || !window.speechSynthesis) { done(); return; }
+  var fin = false, wasRec = !!(mr && mr.state === 'recording'), w = 0;
+  var finish = function () { if (fin) return; fin = true; clearTimeout(w); if (wasRec) { try { if (mr && mr.state === 'paused') mr.resume(); } catch (e) {} } if (oRun) { oRun.speaking = false; oRun.muteUntil = Date.now() + 900; } done(); };
+  try {
+    if (wasRec) { try { mr.pause(); } catch (e) { wasRec = false; } }
+    oRun.speaking = true;
+    var u = new SpeechSynthesisUtterance(text); u.lang = 'fr-FR'; var v = objVoice(); if (v) u.voice = v; u.rate = 1;
+    u.onend = finish; u.onerror = function () { toast('La voix est bloquée par le navigateur : l’objection reste affichée.', true); finish(); };
+    w = setTimeout(finish, 14000);
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  } catch (e) { finish(); }
+}
+function objStop() {
+  var log = oRun ? oRun.log : [];
+  if (oRun) { clearTimeout(oRun.timer); clearTimeout(oRun.hide); }
+  try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {}
+  try { if (oRun && mr && mr.state === 'paused') mr.resume(); } catch (e) {}
+  oRun = null; objHide(); return log;
+}
+function objResultHtml(s) {
+  if (!s.objs || !s.objs.length) return '';
+  var h = '<div class="card stack"><h3>Objections reçues</h3>';
+  s.objs.forEach(function (o) { h += '<div class="metric"><span><span class="muted small">' + esc(fmt(o.t || 0)) + '</span> · ' + esc(o.text) + '</span></div>'; });
+  return h + '<p class="muted small" style="margin:0">Réécoute ton enregistrement : as-tu vraiment répondu à chaque objection ?</p></div>';
+}
+objLoad();
+
 /* ============================================================
    PWA : données locales, enregistrements, corbeille, réglages,
    mise à jour, couverture. Aucun appel réseau vers un service tiers.
@@ -3117,7 +3273,9 @@ function cleanState(o) {
   c.sessions = a(o.sessions).filter(function (s) { return s && isId(s.id) && typeof s.date === 'string' && typeof s.sujet === 'string'; }).slice(0, 300).map(function (s) {
     if (s.ex && typeof s.ex === 'object') { var e = s.ex; s.ex = { theme: str(e.theme, 120), cat: str(e.cat, 20), T: +e.T || 5, search: +e.search || 0, struct: +e.struct || 0, speak: +e.speak || 0, actual: +e.actual || 0, notes: str(e.notes, 4000), chk: Array.isArray(e.chk) ? e.chk.filter(function (i) { return i >= 0 && i < 4; }).slice(0, 4) : [], xpd: Array.isArray(e.xpd) ? e.xpd.filter(function (i) { return i >= 0 && i < 4; }).slice(0, 4) : [] }; } else delete s.ex;
     s.date = str(s.date, 10); s.sujet = str(s.sujet, 300); if (s.transcript != null) s.transcript = str(s.transcript, 30000); if (s.note != null) s.note = str(s.note, 4000);
-    if (s.audioId != null && !isId(s.audioId)) s.audioId = null; return s;
+    if (s.audioId != null && !isId(s.audioId)) s.audioId = null;
+    s.objs = Array.isArray(s.objs) ? s.objs.slice(0, 8).filter(function (o) { return o && typeof o.text === 'string'; }).map(function (o) { return { t: Math.max(0, Math.min(36000, +o.t || 0)), text: str(o.text, 200), kind: str(o.kind, 8), m: str(o.m, 40) }; }) : undefined;
+    if (s.stance != null) s.stance = s.stance === 'POUR' || s.stance === 'CONTRE' ? s.stance : undefined; return s;
   });
   c.proofs = a(o.proofs).filter(function (p) { return p && isId(p.id) && typeof p.fait === 'string'; }).slice(0, 1000).map(function (p) {
     return { id: p.id, sujet: str(p.sujet, 120), fait: str(p.fait, 1200), url: str(p.url, 400), tags: str(p.tags, 120), date: str(p.date, 10) || today() };
@@ -3626,7 +3784,7 @@ var st = { type: 'argumenter', dur: 60, sujet: null, rec: null, blob: null, audi
 function newSubject() {
   if (st.type === 'express') { st.sujet = ex.theme; return; }
   if (st.type === 'mot') { st.sujet = pick(D.wordBank); return; }
-  var t = byId(D.exerciseTypes, st.type); st.sujet = pick(t.sujets);
+  var t = byId(D.exerciseTypes, st.type); st.sujet = pick(t.sujets); if (st.type === 'debat') st.stance = pick(['POUR', 'CONTRE']);
 }
 function vStudio() {
   if (view.sub && view.sub.result) return vResult(view.sub.result);
@@ -3636,12 +3794,13 @@ function vStudio() {
   h += exHero();
   h += '<div class="card stack"><div class="eyebrow">Exercice</div><div class="hscroll">' + exOrdered().map(function (x) { return '<button class="chip' + (x.id === st.type ? ' on' : '') + (x.id === 'express' ? ' hot' : '') + '" data-act="st-type" data-v="' + x.id + '">' + esc(x.nom) + '</button>'; }).join('') + '</div>';
   if (st.type !== 'express') h += '<div class="row">' + D.durations.map(function (d) { return '<button class="chip' + (d === st.dur ? ' on' : '') + '" data-act="st-dur" data-v="' + d + '">' + durLabel(d) + '</button>'; }).join('') + '</div>';
-  if (st.type !== 'express') h += '<div><div class="eyebrow">' + (st.type === 'mot' ? 'Ton mot' : 'Sujet') + '</div><h2>' + esc(st.sujet) + '</h2><div class="row" style="margin-top:6px"><button class="btn small ghost" data-act="st-new">' + (st.type === 'mot' ? 'Tirer au sort un autre mot' : 'Autre sujet') + '</button></div></div>';
+  if (st.type !== 'express') h += '<div><div class="eyebrow">' + (st.type === 'mot' ? 'Ton mot' : 'Sujet') + '</div><h2>' + esc(st.sujet) + '</h2>' + (st.type === 'debat' && st.stance ? '<p style="margin:6px 0 0">Tu défends : <span class="pill stance ' + (st.stance === 'POUR' ? 'pour' : 'contre') + '">' + st.stance + '</span></p>' : '') + '<div class="row" style="margin-top:6px"><button class="btn small ghost" data-act="st-new">' + (st.type === 'mot' ? 'Tirer au sort un autre mot' : st.type === 'debat' ? 'Autre sujet et autre camp' : 'Autre sujet') + '</button></div></div>';
   h += '<div class="callout"><b>' + esc(t.modele) + '</b> — ' + esc(t.aide) + '</div>';
   h += exLevelHtml(st.type);
   if (st.type === 'discours') h += '<div class="small">' + D.speechSteps.map(function (s, i) { return '<div class="metric"><span>' + (i + 1) + '. <b>' + esc(s.nom) + '</b> — ' + esc(s.objectif) + '</span></div>'; }).join('') + '</div>';
   h += '</div>';
   if (st.type === 'express') { h += exPhaseHtml(); if (ex.phase !== 'speak') return h + '</div>'; }
+  h += objPanelHtml();
   h += '<div class="card stack" id="recCard">' + recHtml() + '</div>';
   h += '<div class="card stack" id="recLib"></div>';
   h += '<div class="card stack"><div class="eyebrow">Transcription (pour analyser les mots)</div><textarea id="trIn" placeholder="' + (SR_API && CAN_MIC && S.set && S.set.sr ? 'Elle se remplit pendant l’enregistrement (transcription en ligne activée). Tu peux la corriger.' : 'Écris ou colle ici le texte de ce que tu as dit. Sans texte, seule la voix est analysée.') + '">' + esc(st.transcript) + '</textarea></div>';
@@ -3728,11 +3887,11 @@ function startRec() {
     mr = pwaRecorder(s);
     mr.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
     mr.onstop = function () { s.getTracks().forEach(function (t) { t.stop(); }); var bb = new Blob(chunks, { type: mr.mimeType || 'audio/webm' }); setBlob(bb); pwaSaveRec(bb); };
-    mr.start(); st.rec = true; startTimer();
+    mr.start(); st.rec = true; st.objLog = null; objStart(); startTimer();
     if (SR_API && S.set && S.set.sr) {
       try {
         var rc = new SR_API(); rc.lang = 'fr-FR'; rc.continuous = true; rc.interimResults = false;
-        rc.onresult = function (ev) { var t = ''; for (var i = ev.resultIndex; i < ev.results.length; i++) t += ev.results[i][0].transcript + ' '; st.transcript = (st.transcript + ' ' + t).trim(); var ta = document.getElementById('trIn'); if (ta) ta.value = st.transcript; };
+        rc.onresult = function (ev) { if (objMute()) return; var t = ''; for (var i = ev.resultIndex; i < ev.results.length; i++) t += ev.results[i][0].transcript + ' '; st.transcript = (st.transcript + ' ' + t).trim(); objOnText(t); var ta = document.getElementById('trIn'); if (ta) ta.value = st.transcript; };
         rc.onend = function () { if (st.rec) { try { rc.start(); } catch (e) {} } };
         rc.start(); st.recog = rc;
       } catch (e) { st.recog = null; }
@@ -3740,7 +3899,7 @@ function startRec() {
     refreshRec();
   }).catch(function () { setStatus('Micro refusé ou indisponible. Importe un enregistrement à la place.'); });
 }
-function stopRec() { st.rec = false; clearInterval(tick); tick = null; st.timerOn = false; try { if (st.recog) st.recog.stop(); } catch (e) {} st.recog = null; try { mr.stop(); } catch (e) {} refreshRec(); }
+function stopRec() { st.objLog = objStop(); st.rec = false; clearInterval(tick); tick = null; st.timerOn = false; try { if (st.recog) st.recog.stop(); } catch (e) {} st.recog = null; try { mr.stop(); } catch (e) {} refreshRec(); }
 
 function doAnalyse() {
   if (st.busy) return; st.busy = true;
@@ -3758,7 +3917,7 @@ function doAnalyse() {
     }
     var pil = A.pillars(sig, t);
     var exd = st.type === 'express' ? exSessionData(sig) : null;
-    var rec = { id: uid(), ex: exd || undefined, audioId: st.audioId || null, date: today(), sujet: st.sujet, type: st.type, dur: st.dur, sig: sig ? slim(sig) : null, txt: t, transcript: txt, pil: pil };
+    var rec = { id: uid(), ex: exd || undefined, audioId: st.audioId || null, date: today(), sujet: st.sujet, stance: st.type === 'debat' ? st.stance : undefined, objs: st.objLog && st.objLog.length ? st.objLog.slice(0, 8) : undefined, type: st.type, dur: st.dur, sig: sig ? slim(sig) : null, txt: t, transcript: txt, pil: pil };
     var lvBefore = exLevel(st.type).lvl;
     S.sessions.unshift(rec); S.sessions = S.sessions.slice(0, 200);
     var lvAfter = exLevel(st.type);
@@ -3800,6 +3959,7 @@ function vResult(id) {
   var a = s.sig, t = s.txt, h = '<div class="top"><div><div class="eyebrow">' + esc(s.date) + ' · ' + esc(durLabel(s.dur)) + '</div><h1>Résultat</h1></div><button class="btn small ghost" data-act="back">Fermer</button></div><div class="stack">';
   h += '<div class="card"><h3>' + esc(s.sujet) + '</h3>' + pillarsHtml(s.pil) + '<p class="muted small" style="margin:10px 0 0">Indices de 0 à 100 calculés par l’appli à partir de ta voix et de ton texte. Ils orientent ton travail ; ils ne mesurent pas l’effet réel sur un public.</p>' + ((s.pil.partial || []).length ? '<p class="small tag-warn">Non calculé faute de données : ' + s.pil.partial.join(', ') + '.</p>' : '') + '</div>';
   h += exResultHtml(s);
+  h += objResultHtml(s);
   h += '<div class="card"><h3>À travailler en premier</h3>' + adviceList(a, t).map(function (x) { return '<div class="metric"><span><b>' + esc(x[0]) + '</b><br><span class="muted small">' + esc(x[1]) + '</span></span></div>'; }).join('') + '</div>';
   if (a) {
     h += '<div class="card"><h3>Voix</h3>';
@@ -4278,7 +4438,7 @@ function eristAct(act, v) {
 document.addEventListener('click', function (ev) {
   var el = ev.target.closest('[data-act]'); if (!el) return;
   var act = el.getAttribute('data-act'), v = el.getAttribute('data-v');
-  if (exAct(act, v, el) || pwaAct(act, v, el, ev) || prepAct(act, v, el) || eristAct(act, v)) return;
+  if (exAct(act, v, el) || objAct(act, v, el) || pwaAct(act, v, el, ev) || prepAct(act, v, el) || eristAct(act, v)) return;
   switch (act) {
     case 'tab': go(v); break;
     case 'reco': var g = JSON.parse(v); go(g[0], g[1]); break;
@@ -4289,7 +4449,7 @@ document.addEventListener('click', function (ev) {
     case 'st-type': if (st.rec || st.timerOn) break; st.type = v; if (v === 'express') { if (ex.phase === 'speak') exEnterSpeak(); } else if (D.durations.indexOf(st.dur) < 0) st.dur = 60; newSubject(); st.ended = false; st.recSec = 0; render(); break;
     case 'st-dur': if (st.rec || st.timerOn) break; st.dur = +v; st.ended = false; st.recSec = 0; render(); break;
     case 'st-new': newSubject(); render(); break;
-    case 'rec-toggle': st.rec ? endTimer(false) : startRec(); break;
+    case 'rec-toggle': if (!st.rec) objPrime(); st.rec ? endTimer(false) : startRec(); break;
     case 'chrono-toggle': if (st.timerOn) endTimer(false); else { beep0(); startTimer(); refreshRec(); } break;
     case 'analyse': doAnalyse(); break;
     case 'back': view = { tab: view.tab === 'studio' || view.tab === 'settings' ? 'home' : view.tab, sub: null }; render(); break;

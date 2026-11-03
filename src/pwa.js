@@ -156,7 +156,9 @@ function cleanState(o) {
   c.sessions = a(o.sessions).filter(function (s) { return s && isId(s.id) && typeof s.date === 'string' && typeof s.sujet === 'string'; }).slice(0, 300).map(function (s) {
     if (s.ex && typeof s.ex === 'object') { var e = s.ex; s.ex = { theme: str(e.theme, 120), cat: str(e.cat, 20), T: +e.T || 5, search: +e.search || 0, struct: +e.struct || 0, speak: +e.speak || 0, actual: +e.actual || 0, notes: str(e.notes, 4000), chk: Array.isArray(e.chk) ? e.chk.filter(function (i) { return i >= 0 && i < 4; }).slice(0, 4) : [], xpd: Array.isArray(e.xpd) ? e.xpd.filter(function (i) { return i >= 0 && i < 4; }).slice(0, 4) : [] }; } else delete s.ex;
     s.date = str(s.date, 10); s.sujet = str(s.sujet, 300); if (s.transcript != null) s.transcript = str(s.transcript, 30000); if (s.note != null) s.note = str(s.note, 4000);
-    if (s.audioId != null && !isId(s.audioId)) s.audioId = null; return s;
+    if (s.audioId != null && !isId(s.audioId)) s.audioId = null;
+    s.objs = Array.isArray(s.objs) ? s.objs.slice(0, 8).filter(function (o) { return o && typeof o.text === 'string'; }).map(function (o) { return { t: Math.max(0, Math.min(36000, +o.t || 0)), text: str(o.text, 200), kind: str(o.kind, 8), m: str(o.m, 40) }; }) : undefined;
+    if (s.stance != null) s.stance = s.stance === 'POUR' || s.stance === 'CONTRE' ? s.stance : undefined; return s;
   });
   c.proofs = a(o.proofs).filter(function (p) { return p && isId(p.id) && typeof p.fait === 'string'; }).slice(0, 1000).map(function (p) {
     return { id: p.id, sujet: str(p.sujet, 120), fait: str(p.fait, 1200), url: str(p.url, 400), tags: str(p.tags, 120), date: str(p.date, 10) || today() };
