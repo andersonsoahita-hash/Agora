@@ -160,6 +160,7 @@ function vStudio() {
   var t = byId(D.exerciseTypes, st.type);
   var h = '<div class="top"><h1>Studio</h1></div><div class="stack">';
   h += exHero();
+  h += '<div class="card">' + AGDISC.cardsHTML() + '</div>';
   h += '<div class="card stack"><div class="eyebrow">Exercice</div><div class="hscroll">' + exOrdered().map(function (x) { return '<button class="chip' + (x.id === st.type ? ' on' : '') + (x.id === 'express' ? ' hot' : '') + '" data-act="st-type" data-v="' + x.id + '">' + esc(x.nom) + '</button>'; }).join('') + '</div>';
   if (st.type !== 'express') h += '<div class="row">' + D.durations.map(function (d) { return '<button class="chip' + (d === st.dur ? ' on' : '') + '" data-act="st-dur" data-v="' + d + '">' + durLabel(d) + '</button>'; }).join('') + '</div>';
   if (st.type !== 'express') h += '<div><div class="eyebrow">' + (st.type === 'mot' ? 'Ton mot' : 'Sujet') + '</div><h2>' + esc(st.sujet) + '</h2>' + (st.type === 'debat' && st.stance ? '<p style="margin:6px 0 0">Tu défends : <span class="pill stance ' + (st.stance === 'POUR' ? 'pour' : 'contre') + '">' + st.stance + '</span></p>' : '') + '<div class="row" style="margin-top:6px"><button class="btn small ghost" data-act="st-new">' + (st.type === 'mot' ? 'Tirer au sort un autre mot' : st.type === 'debat' ? 'Autre sujet et autre camp' : 'Autre sujet') + '</button></div></div>';
