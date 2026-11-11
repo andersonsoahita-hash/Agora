@@ -227,7 +227,7 @@ function studioAfterRender() {
   var f = document.getElementById('fileIn'); if (f) f.onchange = function () { if (f.files && f.files[0]) { st.objSpans = null; setBlob(f.files[0]); } };
   var t = document.getElementById('trIn'); if (t) t.oninput = function () { st.transcript = t.value; var b = document.getElementById('goAnalyse'); if (b) b.disabled = !(st.blob || st.transcript.trim()); };
 }
-function setStatus(s) { st.status = s; var e = document.getElementById('stStatus'); if (e) e.textContent = s; }
+function setStatus(s) { if (st.discSelf && /impossible|trop court|Aucune voix|Il me faut/i.test(s)) { toast('Analyse impossible : enregistrement trop court ou sans voix.'); st.discSelf = null; } st.status = s; var e = document.getElementById('stStatus'); if (e) e.textContent = s; }
 function setBlob(b) {
   st.blob = b; st.audioLen = 0; setStatus('Lecture du fichier…');
   var r = new FileReader();
@@ -287,20 +287,46 @@ function doAnalyse() {
     }
     var pil = A.pillars(sig, t);
     var exd = st.type === 'express' ? exSessionData(sig) : null;
-    var rec = { id: uid(), ex: exd || undefined, audioId: st.audioId || null, date: today(), sujet: st.sujet, stance: st.type === 'debat' ? st.stance : undefined, objs: st.objLog && st.objLog.length ? st.objLog.slice(0, 8) : undefined, type: st.type, dur: st.dur, sig: sig ? slim(sig) : null, txt: t, transcript: txt, pil: pil };
+    var rec = { id: uid(), ex: exd || undefined, audioId: st.audioId || null, date: today(), sujet: st.sujet, stance: st.type === 'debat' ? st.stance : undefined, objs: st.objLog && st.objLog.length ? st.objLog.slice(0, 8) : undefined, type: st.type, dur: st.dur, sig: sig ? slim(sig) : null, txt: t, transcript: txt, pil: pil, disc: st.discSelf || undefined };
     var lvBefore = exLevel(st.type).lvl;
     S.sessions.unshift(rec); S.sessions = S.sessions.slice(0, 200);
     var lvAfter = exLevel(st.type);
     touchDay(); addXp(10 + exBonus(rec) + (sig ? 10 : 0) + (t ? 5 : 0) + (st.type === 'connecteurs' && t && t.steps ? t.steps.count * 3 : 0)); autoGoals();
     if (lvAfter.lvl > lvBefore) toast('Niveau ' + lvAfter.lvl + ' : ' + lvAfter.name + ' · ' + byId(D.exerciseTypes, st.type).nom, true);
     persist();
-    st.busy = false; st.blob = null; st.pcm = null; st.objSpans = null; st.audioId = null; if (rec.ex) exReset(); st.transcript = ''; st.recSec = 0; st.ended = false; st.timerOn = false; st.status = '';
+    st.busy = false; st.blob = null; st.pcm = null; st.objSpans = null; st.audioId = null; if (rec.ex) exReset(); st.transcript = ''; st.recSec = 0; st.ended = false; st.timerOn = false; st.status = ''; st.discSelf = null;
     view = { tab: 'studio', sub: { result: rec.id } }; render(); window.scrollTo(0, 0);
   }
   if (st.pcm) {
     setStatus('Analyse en cours…');
     A.analyzeSignal(objCut(st.pcm, st.objSpans), { onProgress: function (p) { setStatus('Analyse en cours… ' + Math.round(p * 100) + ' %'); } }).then(finish).catch(function () { setStatus('Analyse impossible sur ce fichier.'); st.busy = false; });
   } else finish(null);
+}
+
+window.AGDISC_HOST = {
+  analyse: function (p, done) {
+    var r = new FileReader();
+    r.onerror = function () { done(false); };
+    r.onload = function () {
+      decode(r.result).then(function (pcm) {
+        if (pcm.length < 16000 * 3) { toast('Enregistrement trop court pour être analysé.'); done(false); return; }
+        st.busy = false; st.type = 'lecture'; st.sujet = p.d.t; st.transcript = ''; st.stance = undefined; st.blob = p.blob; st.pcm = pcm; st.audioLen = pcm.length / 16000; st.recSec = Math.round(pcm.length / 16000); st.objLog = null; st.objSpans = null; st.audioId = null;
+        st.discSelf = { id: p.d.id, t: p.d.t, but: p.d.but, ctl: p.d.controle, checks: p.self.checks, feel: p.self.feel };
+        toast('Analyse de ta voix en cours…'); done(true); doAnalyse();
+      }).catch(function () { toast('Ce son n’est pas lisible ici.'); done(false); });
+    };
+    r.readAsArrayBuffer(p.blob);
+  }
+};
+function discResultHtml(s) {
+  var d = s.disc; if (!d) return '';
+  var FE = ['', 'Très tendu', 'Tendu', 'Ça va', 'À l’aise', 'Très à l’aise'], n = d.checks.filter(Boolean).length;
+  var h = '<div class="card stack"><div class="eyebrow">Discours à jouer</div><h3>' + esc(d.t) + '</h3><p class="muted small" style="margin:0">' + esc(d.but) + '</p>';
+  h += '<div class="eyebrow" style="margin-top:6px">1 · Ton auto-évaluation</div>';
+  h += d.ctl.map(function (c, i) { return m(esc(c), d.checks[i] ? '✓ réussi' : '✗ à retravailler', d.checks[i] ? 'tag-ok' : 'tag-warn'); }).join('');
+  h += m('Ressenti', esc(FE[d.feel] || '—')) + m('Critères réussis', n + ' / ' + d.ctl.length);
+  h += '<div class="eyebrow" style="margin-top:6px">2 · L’évaluation de ta voix</div><p class="muted small" style="margin:0">Le texte était fourni : l’analyse mesure ta façon de le dire (hauteur, volume, débit, pauses, fins de phrase), pas le choix des mots. Compare avec ce que tu as coché.</p></div>';
+  return h;
 }
 function slim(sig) { var s = JSON.parse(JSON.stringify(sig)); s.pauses.list = s.pauses.list.slice(0, 12); return s; }
 function autoGoals() { /* les objectifs sont cochés à la main */ }
@@ -328,6 +354,7 @@ function vResult(id) {
   if (!s) return '<p>Séance introuvable.</p><button class="btn" data-act="back">Retour</button>';
   var a = s.sig, t = s.txt, h = '<div class="top"><div><div class="eyebrow">' + esc(s.date) + ' · ' + esc(durLabel(s.dur)) + '</div><h1>Résultat</h1></div><button class="btn small ghost" data-act="back">Fermer</button></div><div class="stack">';
   h += '<div class="card"><h3>' + esc(s.sujet) + '</h3>' + pillarsHtml(s.pil) + pilEvHtml(s) + '</div>';
+  h += discResultHtml(s);
   h += exResultHtml(s);
   h += objResultHtml(s);
   h += '<div class="card"><h3>À travailler en premier</h3>' + adviceList(a, t).map(function (x) { return '<div class="metric"><span><b>' + esc(x[0]) + '</b><br><span class="muted small">' + esc(x[1]) + '</span></span></div>'; }).join('') + '</div>';
