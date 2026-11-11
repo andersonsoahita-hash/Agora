@@ -1,4 +1,4 @@
-window.AGORA_BUILD='b4ef752e03';
+window.AGORA_BUILD='7042268e75';
 /* ============================================================
    Analyse de la voix (signal) et du texte (transcription)
    Tout se calcule dans la page. Aucun audio n'est envoyé nulle part.
@@ -2542,9 +2542,10 @@ var P=null;
 function close(){if(!P)return;stop();killRec();try{if(P.wl)P.wl.release()}catch(e){}document.removeEventListener('keydown',key);var e=document.getElementById('dcP');if(e)e.remove();P=null}
 function key(e){if(!P)return;if(e.key==='Escape')close();else if(e.key===' '&&P.mode==='run'){e.preventDefault();toggle()}else if(e.key==='ArrowLeft')back()}
 function el(sel){return document.querySelector('#dcP '+sel)}
+var SRC=window.SpeechRecognition||window.webkitSpeechRecognition;
 function open(id){
   var d=byId(id);if(!d)return;close();
-  P={d:d,i:-1,sp:1,mode:'intro',t:0,rec:null,blob:null,chunks:[]};
+  P={d:d,i:-1,sp:1,mode:'intro',t:0,rec:null,blob:null,chunks:[],tr:'',sr:null,useSR:true};
   var r=document.createElement('div');r.id='dcP';r.setAttribute('role','dialog');r.setAttribute('aria-modal','true');r.setAttribute('aria-label',d.t);
   r.innerHTML='<div class="dc-top"><button class="dc-x" type="button" aria-label="Fermer" data-dc="x">×</button><div class="dc-tt">'+esc(d.t)+'</div></div><div class="dc-bar"><i></i></div><div class="dc-win"><div class="dc-txt">'+d.l.map(function(l,i){return '<p class="dc-b'+(isDir(l)?' dir':'')+'" data-i="'+i+'">'+esc(l)+'</p>'}).join('')+'</div><div class="dc-pill"></div></div><div class="dc-ctl"><button class="dc-btn" type="button" data-dc="back" aria-label="Phrase précédente">⏮</button><button class="dc-btn pl" type="button" data-dc="play">Lecture</button><button class="dc-btn dc-sm" type="button" data-dc="spm" aria-label="Plus lent">−</button><button class="dc-btn dc-sp" type="button" data-dc="sp" aria-label="Vitesse">1×</button><button class="dc-btn dc-sm" type="button" data-dc="spp" aria-label="Plus rapide">+</button><button class="dc-btn rc" type="button" data-dc="rec">● Enregistrer</button></div>';
   document.body.appendChild(r);r.querySelector('.dc-txt').style.paddingTop=Math.round(r.querySelector('.dc-win').clientHeight*.34)+'px';r.addEventListener('click',onClick);document.addEventListener('keydown',key);
@@ -2553,7 +2554,7 @@ function open(id){
 }
 function ov(h){var o=el('.dc-ov');if(o)o.remove();var w=document.createElement('div');w.className='dc-ov';w.innerHTML=h;el('.dc-win').parentNode.appendChild(w);w.style.position='absolute';w.style.zIndex=2;w.style.top=el('.dc-top').offsetHeight+3+'px'}
 function intro(){var d=P.d;P.mode='intro';
-  ov('<span class="dc-eb">Niveau '+d.n+' · '+fmt(mins(d))+'</span><h2>'+esc(d.t)+'</h2><p><b>Objectif.</b> '+esc(d.but)+'</p><div><b>Ce que tu travailles dans Agora</b><ul>'+d.appris.map(function(a){return '<li>'+esc(a[0]+' · '+a[1])+'</li>'}).join('')+'</ul></div><p>Lis à voix haute. Les lignes en bleu sont des consignes de jeu : respire, marque le silence, regarde quelqu’un. Ne cherche pas à aller vite.</p>'+(window.AGDISC_HOST?'<p class="dc-nt"><b>Ta voix est enregistrée</b> pendant la lecture, sur ton appareil, pour l’analyse à la fin. Pour ne pas l’enregistrer, appuie sur « ■ Arrêter » en bas.</p>':'')+'<div class="dc-row"><button class="dc-btn pl" type="button" data-dc="go">Je suis prêt</button><button class="dc-btn" type="button" data-dc="x">Fermer</button></div>')}
+  ov('<span class="dc-eb">Niveau '+d.n+' · '+fmt(mins(d))+'</span><h2>'+esc(d.t)+'</h2><p><b>Objectif.</b> '+esc(d.but)+'</p><div><b>Ce que tu travailles dans Agora</b><ul>'+d.appris.map(function(a){return '<li>'+esc(a[0]+' · '+a[1])+'</li>'}).join('')+'</ul></div><p>Lis à voix haute. Les lignes en bleu sont des consignes de jeu : respire, marque le silence, regarde quelqu’un. Ne cherche pas à aller vite.</p>'+(window.AGDISC_HOST?'<p class="dc-nt"><b>Ta voix est enregistrée</b> pendant la lecture, sur ton appareil, pour l’analyse à la fin. Pour ne pas l’enregistrer, appuie sur « ■ Arrêter » en bas.</p>'+(SRC?'<label class="dc-nt"><input type="checkbox" id="dcSR" checked> <span>Transcrire aussi ce que je dis, pour analyser les mots (ethos, pathos, logos, tics). Le navigateur peut envoyer l’audio à son service de reconnaissance vocale.</span></label>':''):'')+'<div class="dc-row"><button class="dc-btn pl" type="button" data-dc="go">Je suis prêt</button><button class="dc-btn" type="button" data-dc="x">Fermer</button></div>')}
 function pill(t){var p=el('.dc-pill');if(!p)return;if(t){p.textContent=t;p.className='dc-pill on'}else p.className='dc-pill'}
 function stop(){if(P){clearTimeout(P.tm);clearInterval(P.iv);P.tm=0;P.iv=0}}
 function show(i){
@@ -2569,7 +2570,7 @@ function step(i){
   if(isDir(l)&&dirSec(l)>=2){var left=Math.round(dirSec(l)/P.sp);pill('Silence · '+left);clearInterval(P.iv);P.iv=setInterval(function(){left--;pill(left>0?'Silence · '+left:'')},1000)}else{pill('');clearInterval(P.iv)}
   clearTimeout(P.tm);P.tm=setTimeout(function(){step(i+1)},dur(i)*1000);
 }
-function go(){var o=el('.dc-ov');if(o)o.remove();P.mode='run';if(window.AGDISC_HOST&&!P.rec&&!P.blob)rec();var b=el('[data-dc="play"]');if(b)b.textContent='Pause';
+function go(){var ck=document.getElementById('dcSR');if(ck)P.useSR=!!ck.checked;var o=el('.dc-ov');if(o)o.remove();P.mode='run';if(window.AGDISC_HOST&&!P.rec&&!P.blob)rec();var b=el('[data-dc="play"]');if(b)b.textContent='Pause';
   var n=3;pill('Prêt · '+n);P.iv=setInterval(function(){n--;if(n>0)pill('Prêt · '+n);else{clearInterval(P.iv);pill('');step(0)}},900)}
 function toggle(){
   if(P.mode==='run'){P.mode='pause';stop();pill('');el('[data-dc="play"]').textContent='Reprendre'}
@@ -2579,12 +2580,12 @@ function toggle(){
 function back(){if(!P||P.mode==='intro'||P.mode==='end')return;var i=Math.max(0,P.i-(isDir(P.d.l[P.i])?2:1));stop();if(P.mode==='run')step(i);else{P.i=i;show(i)}}
 function spTxt(){var v=Math.round(P.sp*100)/100;return String(v).replace('.',',')+'×'}
 function speed(dir){P.sp=Math.min(4,Math.max(.25,Math.round((P.sp+dir*.25)*100)/100));el('[data-dc="sp"]').textContent=spTxt();if(P.mode==='run'){stop();step(Math.max(0,P.i))}}
-function killRec(){try{if(P&&P.rec&&P.rec.state!=='inactive')P.rec.stop()}catch(e){}try{if(P&&P.stream)P.stream.getTracks().forEach(function(t){t.stop()})}catch(e){}if(P){P.rec=null;P.stream=null}}
+function killRec(){try{if(P&&P.sr){P.sr.onend=null;P.sr.stop()}}catch(e){}try{if(P&&P.rec&&P.rec.state!=='inactive')P.rec.stop()}catch(e){}try{if(P&&P.stream)P.stream.getTracks().forEach(function(t){t.stop()})}catch(e){}if(P){P.rec=null;P.stream=null;P.sr=null}}
 function rec(){
   var b=el('[data-dc="rec"]');
   if(P.rec){killRec();b.className='dc-btn rc';b.textContent='● Enregistrer';return}
   if(!navigator.mediaDevices||!window.MediaRecorder){pill('Enregistrement indisponible ici');setTimeout(function(){pill('')},2200);return}
-  navigator.mediaDevices.getUserMedia({audio:true}).then(function(s){if(!P){s.getTracks().forEach(function(t){t.stop()});return}P.stream=s;P.chunks=[];var r=new MediaRecorder(s);P.rec=r;r.ondataavailable=function(e){if(e.data&&e.data.size)P.chunks.push(e.data)};r.onstop=function(){if(P&&P.chunks.length)P.blob=new Blob(P.chunks,{type:r.mimeType||'audio/webm'})};r.start();b.className='dc-btn rc on';b.textContent='■ Arrêter'}).catch(function(){pill('Micro refusé');setTimeout(function(){pill('')},2200)})
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(s){if(!P){s.getTracks().forEach(function(t){t.stop()});return}P.stream=s;P.chunks=[];var r=new MediaRecorder(s);P.rec=r;r.ondataavailable=function(e){if(e.data&&e.data.size)P.chunks.push(e.data)};r.onstop=function(){if(P&&P.chunks.length)P.blob=new Blob(P.chunks,{type:r.mimeType||'audio/webm'})};r.start();if(SRC&&P.useSR&&window.AGDISC_HOST){try{var rc=new SRC();rc.lang='fr-FR';rc.continuous=true;rc.interimResults=false;rc.onresult=function(ev){var t='';for(var i=ev.resultIndex;i<ev.results.length;i++)t+=ev.results[i][0].transcript+' ';if(P)P.tr=(P.tr+' '+t).trim()};rc.onend=function(){if(P&&P.rec&&P.sr===rc){try{rc.start()}catch(e){}}};P.sr=rc;rc.start()}catch(e){P.sr=null}}b.className='dc-btn rc on';b.textContent='■ Arrêter'}).catch(function(){pill('Micro refusé');setTimeout(function(){pill('')},2200)})
 }
 function end(){
   P.mode='end';stop();pill('');var d=P.d;var had=!!P.rec;if(P.rec)rec();
@@ -2598,8 +2599,8 @@ function showSelf(){var d=P.d,H=window.AGDISC_HOST;
 function readSelf(){var o=el('.dc-ov'),ck=[],f=0;if(o){o.querySelectorAll('[data-dcck]').forEach(function(c){ck.push(!!c.checked)});var on=o.querySelector('[data-dc="feel"].on');if(on)f=+on.getAttribute('data-v')}return{checks:ck,feel:f}}
 function analyse(){var H=window.AGDISC_HOST;if(!H||!P||!P.blob)return;var sf=readSelf();if(!sf.feel){pill('Choisis comment tu t’es senti');setTimeout(function(){pill('')},1800);return}
   var b=el('[data-dc="ana"]');if(b){b.disabled=true;b.textContent='Analyse en cours…'}
-  H.analyse({d:P.d,blob:P.blob,self:sf},function(ok){if(ok)close();else{if(b){b.disabled=false;b.textContent='Voir l’analyse de ma voix'}pill('Analyse impossible sur cet enregistrement');setTimeout(function(){pill('')},2400)}})}
-function replay(){var o=el('.dc-ov');if(o)o.remove();P.i=-1;P.blob=null;P.mode='run';if(window.AGDISC_HOST&&!P.rec)rec();el('[data-dc="play"]').textContent='Pause';var tx=el('.dc-txt');tx.style.transform='translateY(0px)';step(0)}
+  H.analyse({d:P.d,blob:P.blob,self:sf,transcript:P.tr||''},function(ok){if(ok)close();else{if(b){b.disabled=false;b.textContent='Voir l’analyse de ma voix'}pill('Analyse impossible sur cet enregistrement');setTimeout(function(){pill('')},2400)}})}
+function replay(){var o=el('.dc-ov');if(o)o.remove();P.i=-1;P.blob=null;P.tr='';P.mode='run';if(window.AGDISC_HOST&&!P.rec)rec();el('[data-dc="play"]').textContent='Pause';var tx=el('.dc-txt');tx.style.transform='translateY(0px)';step(0)}
 function onClick(e){var b=e.target.closest('[data-dc]');if(!b)return;var a=b.getAttribute('data-dc');
   if(a==='x')close();else if(a==='go')go();else if(a==='play')toggle();else if(a==='back')back();else if(a==='spm')speed(-1);else if(a==='spp')speed(1);else if(a==='sp'){P.sp=1;el('[data-dc="sp"]').textContent=spTxt();if(P.mode==='run'){stop();step(Math.max(0,P.i))}}else if(a==='rec')rec();else if(a==='again')replay();else if(a==='ana')analyse();else if(a==='feel'){b.parentNode.querySelectorAll('[data-dc="feel"]').forEach(function(x){x.classList.remove('on')});b.classList.add('on')}}
 document.addEventListener('click',function(e){var c=e.target.closest&&e.target.closest('[data-disc]');if(c){e.preventDefault();e.stopPropagation();open(c.getAttribute('data-disc'))}},true);
@@ -3856,7 +3857,7 @@ window.AGDISC_HOST = {
     r.onload = function () {
       decode(r.result).then(function (pcm) {
         if (pcm.length < 16000 * 3) { toast('Enregistrement trop court pour être analysé.'); done(false); return; }
-        st.busy = false; st.type = 'lecture'; st.sujet = p.d.t; st.transcript = ''; st.stance = undefined; st.blob = p.blob; st.pcm = pcm; st.audioLen = pcm.length / 16000; st.recSec = Math.round(pcm.length / 16000); st.objLog = null; st.objSpans = null; st.audioId = null;
+        st.busy = false; st.type = 'lecture'; st.sujet = p.d.t; st.transcript = (p.transcript || '').trim(); st.stance = undefined; st.blob = p.blob; st.pcm = pcm; st.audioLen = pcm.length / 16000; st.recSec = Math.round(pcm.length / 16000); st.objLog = null; st.objSpans = null; st.audioId = null;
         st.discSelf = { id: p.d.id, t: p.d.t, but: p.d.but, ctl: p.d.controle, checks: p.self.checks, feel: p.self.feel };
         toast('Analyse de ta voix en cours…'); done(true); doAnalyse();
       }).catch(function () { toast('Ce son n’est pas lisible ici.'); done(false); });
@@ -3871,7 +3872,7 @@ function discResultHtml(s) {
   h += '<div class="eyebrow" style="margin-top:6px">1 · Ton auto-évaluation</div>';
   h += d.ctl.map(function (c, i) { return m(esc(c), d.checks[i] ? '✓ réussi' : '✗ à retravailler', d.checks[i] ? 'tag-ok' : 'tag-warn'); }).join('');
   h += m('Ressenti', esc(FE[d.feel] || '—')) + m('Critères réussis', n + ' / ' + d.ctl.length);
-  h += '<div class="eyebrow" style="margin-top:6px">2 · L’évaluation de ta voix</div><p class="muted small" style="margin:0">Le texte était fourni : l’analyse mesure ta façon de le dire (hauteur, volume, débit, pauses, fins de phrase), pas le choix des mots. Compare avec ce que tu as coché.</p></div>';
+  h += '<div class="eyebrow" style="margin-top:6px">2 · L’évaluation de ta voix</div><p class="muted small" style="margin:0">' + (s.txt ? 'Analyse de ta voix et de ce que tu as dit (transcription automatique, qui peut se tromper sur certains mots). Compare avec ce que tu as coché.' : 'Pas de transcription cette fois (reconnaissance vocale indisponible ou refusée) : seule ta voix est analysée. Compare avec ce que tu as coché.') + '</p></div>';
   return h;
 }
 function slim(sig) { var s = JSON.parse(JSON.stringify(sig)); s.pauses.list = s.pauses.list.slice(0, 12); return s; }

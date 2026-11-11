@@ -310,7 +310,7 @@ window.AGDISC_HOST = {
     r.onload = function () {
       decode(r.result).then(function (pcm) {
         if (pcm.length < 16000 * 3) { toast('Enregistrement trop court pour être analysé.'); done(false); return; }
-        st.busy = false; st.type = 'lecture'; st.sujet = p.d.t; st.transcript = ''; st.stance = undefined; st.blob = p.blob; st.pcm = pcm; st.audioLen = pcm.length / 16000; st.recSec = Math.round(pcm.length / 16000); st.objLog = null; st.objSpans = null; st.audioId = null;
+        st.busy = false; st.type = 'lecture'; st.sujet = p.d.t; st.transcript = (p.transcript || '').trim(); st.stance = undefined; st.blob = p.blob; st.pcm = pcm; st.audioLen = pcm.length / 16000; st.recSec = Math.round(pcm.length / 16000); st.objLog = null; st.objSpans = null; st.audioId = null;
         st.discSelf = { id: p.d.id, t: p.d.t, but: p.d.but, ctl: p.d.controle, checks: p.self.checks, feel: p.self.feel };
         toast('Analyse de ta voix en cours…'); done(true); doAnalyse();
       }).catch(function () { toast('Ce son n’est pas lisible ici.'); done(false); });
@@ -325,7 +325,7 @@ function discResultHtml(s) {
   h += '<div class="eyebrow" style="margin-top:6px">1 · Ton auto-évaluation</div>';
   h += d.ctl.map(function (c, i) { return m(esc(c), d.checks[i] ? '✓ réussi' : '✗ à retravailler', d.checks[i] ? 'tag-ok' : 'tag-warn'); }).join('');
   h += m('Ressenti', esc(FE[d.feel] || '—')) + m('Critères réussis', n + ' / ' + d.ctl.length);
-  h += '<div class="eyebrow" style="margin-top:6px">2 · L’évaluation de ta voix</div><p class="muted small" style="margin:0">Le texte était fourni : l’analyse mesure ta façon de le dire (hauteur, volume, débit, pauses, fins de phrase), pas le choix des mots. Compare avec ce que tu as coché.</p></div>';
+  h += '<div class="eyebrow" style="margin-top:6px">2 · L’évaluation de ta voix</div><p class="muted small" style="margin:0">' + (s.txt ? 'Analyse de ta voix et de ce que tu as dit (transcription automatique, qui peut se tromper sur certains mots). Compare avec ce que tu as coché.' : 'Pas de transcription cette fois (reconnaissance vocale indisponible ou refusée) : seule ta voix est analysée. Compare avec ce que tu as coché.') + '</p></div>';
   return h;
 }
 function slim(sig) { var s = JSON.parse(JSON.stringify(sig)); s.pauses.list = s.pauses.list.slice(0, 12); return s; }
