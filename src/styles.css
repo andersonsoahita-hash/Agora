@@ -104,4 +104,8 @@ pre.brief{white-space:pre-wrap;background:var(--surface2);border-radius:10px;pad
 .cat:hover{border-color:var(--accent)}
 .exgrp{display:flex;flex-direction:column;gap:6px}
 
-.exgrp .hscroll{flex-wrap:wrap;overflow:visible}
+
+.exsel{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:left;font:inherit;color:inherit;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer}
+.exsel small{display:block;color:var(--muted);font-size:.75rem}.exsel b{font-size:1.05rem}.exsel i{font-style:normal;color:var(--accent);font-size:.85rem;white-space:nowrap}
+.exitem{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;font:inherit;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer}
+.exitem span{color:var(--muted);font-size:.8rem}.exitem.on{border-color:var(--accent);background:var(--surface2)}.exitem.hot b{color:var(--accent)}

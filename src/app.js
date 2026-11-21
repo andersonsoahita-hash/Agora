@@ -109,7 +109,7 @@ function gestCardHtml() {
   var g = gestHist()[0]; if (!g) return '';
   return '<div class="card"><div class="eyebrow">Dernière Gestuelle · ' + esc(String(g.date).slice(0, 10)) + '</div><h3>' + g.score + ' / 100</h3>' + (g.prio && g.prio.length ? '<p class="muted small" style="margin:0 0 8px">À corriger : ' + g.prio.map(esc).join(' · ') + '</p>' : '') + '<button class="btn small ghost" data-act="gest-open">Refaire un essai</button></div>';
 }
-function setExType(v) { if (st.rec || st.timerOn) return; st.type = v; if (v === 'express') { if (ex.phase === 'speak') exEnterSpeak(); } else if (D.durations.indexOf(st.dur) < 0) st.dur = 60; newSubject(); st.ended = false; st.recSec = 0; }
+function setExType(v) { if (st.rec || st.timerOn) return; st.type = v; st.exOpen = false; if (v === 'express') { if (ex.phase === 'speak') exEnterSpeak(); } else if (D.durations.indexOf(st.dur) < 0) st.dur = 60; newSubject(); st.ended = false; st.recSec = 0; }
 var CATS = [
   ['studio', 'Parler', 'T’enregistrer et analyser ta voix et tes mots', ''],
   ['gest', 'Gestuelle', 'Te filmer : mains, posture, regard, contradictions', ''],
@@ -124,15 +124,18 @@ function catsHtml() {
   }).join('') + '</div></div>';
 }
 var EX_GROUPS = [['S’échauffer', ['mot', 'qr']], ['Structurer', ['argumenter', 'connecteurs', 'recit']], ['Convaincre', ['debat']], ['Aller plus loin', ['discours', 'lecture', 'express']]];
+function exItemBtn(x) { return '<button class="exitem' + (x.id === st.type ? ' on' : '') + '" data-act="st-type" data-v="' + x.id + '"><b>' + esc(x.nom) + '</b><span>' + esc(x.modele || '') + '</span></button>'; }
 function exGroupsHtml() {
-  var all = exOrdered(), used = {}, h = '';
+  var all = exOrdered(), used = {}, cur = byId(all, st.type), open = st.exOpen !== false;
+  var h = '<button class="exsel" data-act="ex-toggle" aria-expanded="' + open + '"><span><small>Exercice choisi</small><b>' + esc(cur ? cur.nom : 'Choisis un exercice') + '</b></span><i>' + (open ? 'Fermer ▴' : 'Changer ▾') + '</i></button>';
+  if (!open) return h;
   EX_GROUPS.forEach(function (g) {
     var items = g[1].map(function (id) { return byId(all, id); }).filter(Boolean); items.forEach(function (x) { used[x.id] = 1; });
-    if (items.length) h += '<div class="exgrp"><div class="eyebrow">' + g[0] + '</div><div class="hscroll">' + items.map(function (x) { return '<button class="chip' + (x.id === st.type ? ' on' : '') + '" data-act="st-type" data-v="' + x.id + '">' + esc(x.nom) + '</button>'; }).join('') + '</div></div>';
+    if (items.length) h += '<div class="exgrp"><div class="eyebrow">' + g[0] + '</div>' + items.map(exItemBtn).join('') + '</div>';
   });
   var rest = all.filter(function (x) { return !used[x.id]; });
-  if (rest.length) h += '<div class="exgrp"><div class="eyebrow">Autres</div><div class="hscroll">' + rest.map(function (x) { return '<button class="chip' + (x.id === st.type ? ' on' : '') + '" data-act="st-type" data-v="' + x.id + '">' + esc(x.nom) + '</button>'; }).join('') + '</div></div>';
-  h += '<div class="exgrp"><div class="eyebrow">Corps (caméra)</div><div class="hscroll"><button class="chip hot" data-act="gest-open">Gestuelle : me filmer</button></div></div>';
+  if (rest.length) h += '<div class="exgrp"><div class="eyebrow">Autres</div>' + rest.map(exItemBtn).join('') + '</div>';
+  h += '<div class="exgrp"><div class="eyebrow">Corps (caméra)</div><button class="exitem hot" data-act="gest-open"><b>Gestuelle</b><span>Te filmer : mains, posture, regard, voix et discours</span></button></div>';
   return h;
 }
 function nextExFor(adv) {
@@ -556,6 +559,7 @@ document.addEventListener('click', function (ev) {
   if (exAct(act, v, el) || objAct(act, v, el) || pwaAct(act, v, el, ev) || prepAct(act, v, el) || eristAct(act, v)) return;
   switch (act) {
     case 'tab': go(v); break;
+    case 'ex-toggle': st.exOpen = st.exOpen === false; render(); break;
     case 'ex-go': view = { tab: 'studio', sub: null }; setExType(v); render(); window.scrollTo(0, 0); break;
     case 'gest-open': location.href = 'gestuelle/'; break;
     case 'reco': var g = JSON.parse(v); go(g[0], g[1]); break;
@@ -563,7 +567,7 @@ document.addEventListener('click', function (ev) {
     case 'goal-toggle': S.goals.forEach(function (x) { if (x.id === v) { x.done = !x.done; if (x.done) addXp(20); } }); persist(); render(); break;
     case 'goal-del': S.goals = S.goals.filter(function (x) { return x.id !== v; }); persist(); render(); break;
     case 'open-session': view = { tab: 'studio', sub: { result: v } }; render(); window.scrollTo(0, 0); break;
-    case 'st-type': if (st.rec || st.timerOn) break; st.type = v; if (v === 'express') { if (ex.phase === 'speak') exEnterSpeak(); } else if (D.durations.indexOf(st.dur) < 0) st.dur = 60; newSubject(); st.ended = false; st.recSec = 0; render(); break;
+    case 'st-type': setExType(v); render(); break;
     case 'st-dur': if (st.rec || st.timerOn) break; st.dur = +v; st.ended = false; st.recSec = 0; render(); break;
     case 'st-new': newSubject(); render(); break;
     case 'rec-toggle': if (!st.rec) objPrime(); st.rec ? endTimer(false) : startRec(); break;
