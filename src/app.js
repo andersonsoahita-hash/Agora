@@ -139,7 +139,7 @@ function catsHtml() {
   }).join('') + '</div></div>';
 }
 var EX_GROUPS = [['S’échauffer', ['mot', 'qr']], ['Structurer', ['argumenter', 'connecteurs', 'recit']], ['Convaincre', ['debat']], ['Aller plus loin', ['discours', 'lecture', 'express']]];
-function exItemBtn(x) { var on = x.id === st.type; return '<button class="exitem' + (on ? ' on' : '') + '" data-act="st-type" data-v="' + x.id + '"' + (on ? ' aria-pressed="true"' : '') + '><b>' + esc(x.nom) + (on ? ' <em>✓</em>' : '') + '</b><span>' + esc(x.modele || '') + '</span></button>'; }
+function exItemBtn(x) { var on = x.id === st.type; return '<button class="exitem' + (on ? ' on' : '') + '" data-act="st-type" data-v="' + x.id + '"' + (on ? ' aria-pressed="true"' : '') + '><b>' + esc(x.nom) + (on ? ' <em>✓</em>' : '') + '</b></button>'; }
 function exGroupsHtml() {
   var all = exOrdered(), used = {}, h = '';
   EX_GROUPS.forEach(function (g) {
@@ -148,7 +148,6 @@ function exGroupsHtml() {
   });
   var rest = all.filter(function (x) { return !used[x.id]; });
   if (rest.length) h += '<div class="exgrp"><div class="eyebrow">Autres</div>' + rest.map(exItemBtn).join('') + '</div>';
-  h += '<div class="exgrp"><div class="eyebrow">Corps (caméra)</div><button class="exitem hot wide" data-act="gest-open"><b>Gestuelle</b><span>Te filmer : mains, posture, regard, voix et discours</span></button></div>';
   return h + '<div id="exDetail"></div>';
 }
 function nextExFor(adv) {
@@ -214,7 +213,7 @@ function newSubject() {
   var t = byId(D.exerciseTypes, st.type); st.sujet = pick(t.sujets); if (st.type === 'debat') st.stance = pick(['POUR', 'CONTRE']);
 }
 function gestHero() {
-  return '<button class="exhero" data-act="gest-open"><div class="exbadge">Nouveau</div><h2>Analyse de la gestuelle</h2><div class="exsteps"><span><b>1</b> Te filmer</span><i></i><span><b>2</b> Voir tes moments</span><i></i><span><b>3</b> Corriger</span></div><p>Mains, posture, regard, voix et discours : filme-toi sur n’importe quel exercice, l’appli te montre sur la vidéo ce qu’il faut améliorer.</p></button>';
+  return '<button class="exhero mini" data-act="gest-open"><div class="exbadge">Nouveau</div><h2>Analyse de la gestuelle</h2><p>Filme-toi : l’appli analyse tes gestes, ta posture, ton regard et ta voix.</p></button>';
 }
 function exResume() {
   if (st.type === 'express' || ex.phase === 'setup') return '';
@@ -226,20 +225,21 @@ function vStudio() {
   var t = byId(D.exerciseTypes, st.type);
   var h = '<div class="top"><h1>Studio</h1></div><div class="stack">';
   h += gestHero() + exResume();
-  h += '<div class="card stack"><h3>Choisis un exercice</h3>' + exGroupsHtml();
-  if (st.type === 'lecture') return h + '</div><div class="card stack"><div class="eyebrow">Avec la caméra</div><p class="muted small" style="margin:0">Lis un discours prêt à l’emploi au prompteur en te filmant : gestes, posture, regard et voix sont analysés.</p><button class="btn" data-act="gest-lec">🎥 Lire un discours avec la caméra</button></div>' + AGDISC.pickerHTML() + '</div>';
+  h += '<div class="card stack"><div class="eyebrow">Étape 1</div><h3>Choisis un exercice</h3>' + exGroupsHtml() + '</div>';
+  if (st.type === 'lecture') return h + '<div class="card stack"><div class="eyebrow">Avec la caméra</div><p class="muted small" style="margin:0">Lis un discours prêt à l’emploi au prompteur en te filmant : gestes, posture, regard et voix sont analysés.</p><button class="btn" data-act="gest-lec">🎥 Lire un discours avec la caméra</button></div>' + AGDISC.pickerHTML() + '</div>';
+  h += '<div class="card stack"><div class="eyebrow">Étape 2 · Prépare-toi</div>';
   if (st.type !== 'express') h += '<div class="row">' + D.durations.map(function (d) { return '<button class="chip' + (d === st.dur ? ' on' : '') + '" data-act="st-dur" data-v="' + d + '">' + durLabel(d) + '</button>'; }).join('') + '</div>';
   if (st.type !== 'express') h += '<div><div class="eyebrow">' + (st.type === 'mot' ? 'Ton mot' : 'Sujet') + '</div><h2>' + esc(st.sujet) + '</h2>' + (st.type === 'debat' && st.stance ? '<p style="margin:6px 0 0">Tu défends : <span class="pill stance ' + (st.stance === 'POUR' ? 'pour' : 'contre') + '">' + st.stance + '</span></p>' : '') + '<div class="row" style="margin-top:6px"><button class="btn small ghost" data-act="st-new">' + (st.type === 'mot' ? 'Tirer au sort un autre mot' : st.type === 'debat' ? 'Autre sujet et autre camp' : 'Autre sujet') + '</button></div></div>';
   h += '<div class="callout"><b>' + esc(t.modele) + '</b> — ' + esc(t.aide) + '</div>';
-  h += exLevelHtml(st.type);
-  if (st.type === 'discours') h += '<div class="small">' + D.speechSteps.map(function (s, i) { return '<div class="metric"><span>' + (i + 1) + '. <b>' + esc(s.nom) + '</b> — ' + esc(s.objectif) + '</span></div>'; }).join('') + '</div>';
   h += '</div>';
+  var info = exLevelHtml(st.type) + (st.type === 'discours' ? '<div class="small">' + D.speechSteps.map(function (s, i) { return '<div class="metric"><span>' + (i + 1) + '. <b>' + esc(s.nom) + '</b> — ' + esc(s.objectif) + '</span></div>'; }).join('') + '</div>' : '');
   if (st.type === 'express') { h += exPhaseHtml(); if (ex.phase !== 'speak') return h + '</div>'; }
-  h += objPanelHtml();
   h += '<div class="card stack" id="recCard">' + recHtml() + '</div>';
-  if (!st.vid) h += '<div class="card stack" id="recLib"></div>';
-  if (!st.vid) h += '<div class="card stack"><div class="eyebrow">Transcription (pour analyser les mots)</div><textarea id="trIn" placeholder="' + (SR_API && CAN_MIC && S.set && S.set.sr ? 'Elle se remplit pendant l’enregistrement (transcription en ligne activée). Tu peux la corriger.' : 'Écris ou colle ici le texte de ce que tu as dit. Sans texte, seule la voix est analysée.') + '">' + esc(st.transcript) + '</textarea></div>';
   if (!st.vid) h += '<button class="btn" id="goAnalyse" data-act="analyse"' + ((st.blob || st.transcript.trim()) ? '' : ' disabled') + '>Analyser</button><div id="stStatus" class="muted small">' + esc(st.status) + '</div>';
+  h += '<details class="more"><summary>Plus d’options</summary><div class="stack">' + objPanelHtml() + info;
+  if (!st.vid) h += '<div class="stack" id="recLib"></div>';
+  if (!st.vid) h += '<div class="stack"><div class="eyebrow">Transcription (pour analyser les mots)</div><textarea id="trIn" placeholder="' + (SR_API && CAN_MIC && S.set && S.set.sr ? 'Elle se remplit pendant l’enregistrement (transcription en ligne activée). Tu peux la corriger.' : 'Écris ou colle ici le texte de ce que tu as dit. Sans texte, seule la voix est analysée.') + '">' + esc(st.transcript) + '</textarea></div>';
+  h += '</div></details>';
   h += '</div>';
   return h;
 }
@@ -261,12 +261,12 @@ function gestLaunch(o) {
   if (window.AGGEST) window.AGGEST.open(o);
 }
 function recHtml() {
-  var h = vidSwitchHtml();
+  var h = '<div class="eyebrow">Étape 3 · Parle</div>' + vidSwitchHtml();
   if (st.vid) return h + '<button class="btn" data-act="gest-exo">Filmer cet exercice</button><p class="muted small" style="margin:0">Même sujet, même durée. En plus de ta voix et de tes mots, l’appli regarde tes mains, ta posture et ton regard, puis te montre sur la vidéo les moments à corriger. Le résultat revient ici.</p>';
   h += timerHtml();
   if (CAN_MIC) {
     h += '<button class="rec' + (st.rec ? ' live' : '') + '" data-act="rec-toggle" aria-label="' + (st.rec ? 'Arrêter' : 'Enregistrer') + '">' + (st.rec ? 'Stop' : 'REC') + '</button>';
-    h += '<p class="muted small" style="text-align:center;margin:0">' + esc(D.recordTips.standalone) + ' L’enregistrement s’arrête tout seul quand le temps est écoulé.</p>';
+    h += '<p class="muted small" style="text-align:center;margin:0">Appuie sur REC, parle, l’enregistrement s’arrête à la fin du temps.</p>';
   } else {
     h += '<button class="btn" data-act="chrono-toggle">' + (st.timerOn ? 'Arrêter le chrono' : 'Démarrer le chrono') + '</button>';
     h += '<p class="muted small" style="margin:0">' + esc(D.recordTips.artifact) + ' Lance le chrono ici, puis le Dictaphone : un bip sonne quand le temps est écoulé.</p>';

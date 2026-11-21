@@ -117,6 +117,19 @@ pre.brief{white-space:pre-wrap;background:var(--surface2);border-radius:10px;pad
 .vsw button{flex:1;font:inherit;color:var(--muted);background:transparent;border:0;border-radius:9px;padding:9px 6px;cursor:pointer}
 .vsw button.on{background:var(--fg);color:var(--bg)}
 
+/* Studio simplifié : une étape à la fois */
+.exitem span{display:none}
+.exitem{min-height:0;padding:12px 14px}
+.exhero.mini{padding:14px 16px}
+.exhero.mini h2{font-size:1.15rem;margin:4px 0 2px}
+.exhero.mini p{margin:0;font-size:.9rem}
+details.more{border:1px solid var(--line,rgba(255,255,255,.12));border-radius:16px;padding:0 14px}
+details.more>summary{cursor:pointer;padding:14px 0;font-weight:600;list-style:none}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary::after{content:' ▾';opacity:.6}
+details.more[open]>summary::after{content:' ▴'}
+details.more>.stack{padding-bottom:14px}
+
 /* ===== Polices hébergées (aucun appel externe) ===== */
 @font-face{font-family:'Dancing Script';font-weight:700;font-style:normal;font-display:swap;src:url(fonts/dancing-script-latin-700-normal.woff2) format('woff2')}
 @font-face{font-family:'DM Sans';font-weight:400;font-style:normal;font-display:swap;src:url(fonts/dm-sans-latin-400-normal.woff2) format('woff2')}

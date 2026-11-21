@@ -255,8 +255,9 @@ window.AO_DATA.orators = [
     genre: 'Débat universitaire', archetype: 'pedagogue',
     discours: { titre: 'Finale du concours de débat de La Haye', date: '2024', cadre: 'Concours inter-universitaire, finale contre l’Université catholique de Lille, en visioconférence' },
     contexte: 'En juin 2024, l’équipe de l’Université catholique de Madagascar (UCM) remporte le concours inter-universitaire de débat de La Haye, organisé par la Corax Foundation avec l’AUF et l’Institut français : la première victoire mondiale de l’université. L’équipe compte Mihaja Josie Andriamagnaregne, Ny Avo Sylvano Razafindrazaka et Lucas Ranaivoson, entraînés par Gaël Rafidison et Joseph Rambinintsoa.',
-    parcours: 'Étudiant en droit et science politique à l’UCM, il est présenté par la presse comme champion malgache d’éloquence en 2023 et comme l’un des trois membres de l’équipe championne du monde en 2024. Il se destine au métier d’avocat.',
+    parcours: 'Étudiant en droit et science politique à l’UCM, il est présenté par la presse comme champion malgache d’éloquence en 2023 et comme l’un des trois membres de l’équipe championne du monde en 2024. Il se destine au métier d’avocat. Il est aussi le fondateur d’Everest.',
     oeuvres: [
+      { titre: 'Everest', date: '', note: 'Fondé par Ny Avo Razafindrazaka.' },
       { titre: 'Champion du monde de débat (équipe UCM)', date: '2024', note: 'La Haye ; finale sur le thème des Jeux Olympiques, face à l’Université catholique de Lille.' }
     ],
     techniques: [
