@@ -139,7 +139,7 @@ function catsHtml() {
   }).join('') + '</div></div>';
 }
 var EX_GROUPS = [['S’échauffer', ['mot', 'qr']], ['Structurer', ['argumenter', 'connecteurs', 'recit']], ['Convaincre', ['debat']], ['Aller plus loin', ['discours', 'lecture', 'express']]];
-function exItemBtn(x) { var on = x.id === st.type; return '<button class="exitem' + (on ? ' on' : '') + '" data-act="st-type" data-v="' + x.id + '"' + (on ? ' aria-pressed="true"' : '') + '><b>' + esc(x.nom) + (on ? ' <em>✓</em>' : '') + '</b></button>'; }
+function exItemBtn(x) { var on = x.id === st.type; return '<button class="exitem' + (on ? ' on' : '') + '" data-act="st-type" data-v="' + x.id + '"' + (on ? ' aria-pressed="true"' : '') + '><b>' + esc(x.nom) + (on ? ' <em>✓</em>' : '') + '</b><span>' + esc(x.modele || '') + '</span></button>'; }
 function exGroupsHtml() {
   var all = exOrdered(), used = {}, h = '';
   EX_GROUPS.forEach(function (g) {
@@ -225,7 +225,8 @@ function vStudio() {
   var t = byId(D.exerciseTypes, st.type);
   var h = '<div class="top"><h1>Studio</h1></div><div class="stack">';
   h += gestHero() + exResume();
-  h += '<div class="card stack"><div class="eyebrow">Étape 1</div><h3>Choisis un exercice</h3>' + exGroupsHtml() + '</div>';
+  var curEx = byId(exOrdered(), st.type);
+  h += '<details class="card pick" id="exPick"><summary><span class="eyebrow">Étape 1 · Exercice</span><b>' + esc(curEx ? curEx.nom : 'Choisis un exercice') + '</b></summary><div class="stack">' + exGroupsHtml() + '</div></details>';
   if (st.type === 'lecture') return h + '<div class="card stack"><div class="eyebrow">Avec la caméra</div><p class="muted small" style="margin:0">Lis un discours prêt à l’emploi au prompteur en te filmant : gestes, posture, regard et voix sont analysés.</p><button class="btn" data-act="gest-lec">🎥 Lire un discours avec la caméra</button></div>' + AGDISC.pickerHTML() + '</div>';
   h += '<div class="card stack"><div class="eyebrow">Étape 2 · Prépare-toi</div>';
   if (st.type !== 'express') h += '<div class="row">' + D.durations.map(function (d) { return '<button class="chip' + (d === st.dur ? ' on' : '') + '" data-act="st-dur" data-v="' + d + '">' + durLabel(d) + '</button>'; }).join('') + '</div>';

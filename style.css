@@ -118,8 +118,14 @@ pre.brief{white-space:pre-wrap;background:var(--surface2);border-radius:10px;pad
 .vsw button.on{background:var(--fg);color:var(--bg)}
 
 /* Studio simplifié : une étape à la fois */
-.exitem span{display:none}
-.exitem{min-height:0;padding:12px 14px}
+.exitem span{display:block}
+details.pick{padding:0 16px}
+details.pick>summary{cursor:pointer;list-style:none;display:flex;flex-direction:column;gap:2px;padding:14px 22px 14px 0;position:relative}
+details.pick>summary::-webkit-details-marker{display:none}
+details.pick>summary b{font-size:1.1rem}
+details.pick>summary::after{content:'▾';position:absolute;right:0;top:50%;transform:translateY(-50%);opacity:.6}
+details.pick[open]>summary::after{content:'▴'}
+details.pick>.stack{padding-bottom:16px}
 .exhero.mini{padding:14px 16px}
 .exhero.mini h2{font-size:1.15rem;margin:4px 0 2px}
 .exhero.mini p{margin:0;font-size:.9rem}
