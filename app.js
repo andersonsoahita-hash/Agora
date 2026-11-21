@@ -1,4 +1,4 @@
-window.AGORA_BUILD='73ff635c32';
+window.AGORA_BUILD='949c6dbcec';
 /* ============================================================
    Analyse de la voix (signal) et du texte (transcription)
    Tout se calcule dans la page. Aucun audio n'est envoyé nulle part.
@@ -4044,7 +4044,7 @@ function mergeState(inc) {
   var dd = {}; S.days.concat(inc.days).forEach(function (d) { dd[d] = 1; }); S.days = Object.keys(dd).sort().slice(-120);
   var bb = {}; (S.badges || []).concat(inc.badges).forEach(function (b) { bb[b] = 1; }); S.badges = Object.keys(bb);
   if (!S.type && inc.type) S.type = inc.type;
-  if (!S.why && inc.why) S.why = inc.why;
+  
   if (!S.angles && inc.angles) S.angles = inc.angles;
   if (inc.since && (!S.since || inc.since < S.since)) S.since = inc.since;
   return added;
@@ -4153,8 +4153,8 @@ function homeDaily() {
   return h;
 }
 function whyHtml() {
-  var paras = S.why ? S.why.split(/\n{2,}/).filter(function (x) { return x.trim(); }) : WHY_DEFAULT;
-  return '<div class="card prose"><div class="row" style="justify-content:space-between;flex-wrap:nowrap"><h3>Pourquoi Agora ?</h3><button class="chip" data-act="why-edit">Modifier</button></div>' + paras.map(function (p, i) { return '<p' + (i === paras.length - 1 ? ' style="margin:0"' : '') + '>' + mdLite(p.trim()) + '</p>'; }).join('') + '</div>';
+  var paras = WHY_DEFAULT;
+  return '<div class="card prose"><div class="row" style="justify-content:space-between;flex-wrap:nowrap"><h3>Pourquoi Agora ?</h3></div>' + paras.map(function (p, i) { return '<p' + (i === paras.length - 1 ? ' style="margin:0"' : '') + '>' + mdLite(p.trim()) + '</p>'; }).join('') + '</div>';
 }
 
 /* ---------- retour de coach manuel (aucune IA branchée) ---------- */
@@ -4239,7 +4239,6 @@ function vSettings() {
   h += '<div class="card stack"><h3>Corbeille (24 h)</h3><p class="muted small" style="margin:0">Ce que tu supprimes (enregistrement, preuve, séance, progression d’une leçon) reste ici 24 h avant d’être effacé pour de bon.</p><div id="trashList" class="stack"></div></div>';
   h += '<div class="card stack"><h3>Apparence</h3><div class="row">' + [['auto', 'Automatique'], ['light', 'Clair'], ['dark', 'Sombre']].map(function (x) { return '<button class="chip' + (tp === x[0] ? ' on' : '') + '" data-act="theme-set" data-v="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div></div>';
   h += '<div class="card stack"><h3>Voix et transcription</h3><p class="muted small" style="margin:0">L’analyse de ta voix (hauteur, volume, pauses, rythme) est faite <b>sur ton téléphone</b> : l’audio ne quitte pas l’appareil. Pour analyser tes mots, tu écris ou colles la transcription.</p><label class="row" style="flex-wrap:nowrap;align-items:flex-start;gap:10px"><input type="checkbox" data-act="sr-toggle"' + (S.set && S.set.sr ? ' checked' : '') + (SR_API ? '' : ' disabled') + ' style="margin-top:4px"><span class="small"><b>Transcription automatique (en ligne)</b><br><span class="muted">Optionnelle. Elle utilise le service de reconnaissance vocale de ton navigateur, qui envoie le son à des serveurs distants. ' + (SR_API ? 'Désactivée par défaut.' : 'Non disponible sur ce navigateur.') + '</span></span></label></div>';
-  h += '<div class="card stack" id="whyEdit"><h3>Page « Pourquoi Agora ? »</h3><textarea id="whyText" style="min-height:160px" maxlength="6000">' + esc(S.why || WHY_DEFAULT.join('\n\n').replace(/\*\*/g, '')) + '</textarea><p class="muted small" style="margin:0">Sépare les paragraphes par une ligne vide. <b>**gras**</b> est accepté.</p><div class="row"><button class="btn small" data-act="why-save">Enregistrer</button><button class="btn small ghost" data-act="why-reset">Rétablir le texte d’origine</button></div></div>';
   h += '<div class="card stack"><h3>Application</h3>';
   h += m('Version', 'v' + VERSION + ' · ' + esc(BUILD)) + m('Hors ligne', pwa.offlineReady ? 'prêt' : (('serviceWorker' in navigator) ? 'préparation…' : 'non disponible'), pwa.offlineReady ? 'tag-ok' : '') + m('Installée', isStandalone() ? 'oui' : 'non');
   h += '<div class="row">' + (pwa.updateReady ? '<button class="btn small" data-act="update-now">Mettre à jour maintenant</button>' : '<button class="btn small ghost" data-act="update-check">Rechercher une mise à jour</button>') + (pwa.installEvt && !isStandalone() ? '<button class="btn small" data-act="install">Installer</button>' : '') + '</div>';
@@ -4306,9 +4305,6 @@ function pwaAct(act, v, el, ev) {
     case 'imp-cancel': pwa.imp = null; render(); return true;
     case 'imp-rollback': rollbackImport(); return true;
     case 'persist-ask': persistAsk(false); return true;
-    case 'why-edit': pwa.msg = ''; go('settings'); setTimeout(function () { var w = byIdEl('whyEdit'); if (w) { w.scrollIntoView(); var t = byIdEl('whyText'); if (t) t.focus(); } }, 30); return true;
-    case 'why-save': var wt = byIdEl('whyText'); S.why = wt && wt.value.trim() ? wt.value.trim().slice(0, 6000) : null; persist(); pwa.msg = 'Texte enregistré.'; render(); return true;
-    case 'why-reset': S.why = null; persist(); pwa.msg = 'Texte d’origine rétabli.'; render(); return true;
     case 'rec-play': playInto(el.closest('.ritem').querySelector('.rplay'), v); return true;
     case 'rec-ren':
       var nm = el.closest('.ritem').querySelector('.rname'); var cur = nm.querySelector('b').textContent;
