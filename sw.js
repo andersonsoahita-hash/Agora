@@ -1,5 +1,5 @@
 /* Agora — service worker (généré par build.js, ne pas éditer à la main) */
-const CACHE = 'agora-7042268e75';
+const CACHE = 'agora-85aca343a9';
 const FILES = [
  "./",
  "index.html",
@@ -17,7 +17,12 @@ const FILES = [
  "icons/icon-512.png",
  "icons/icon-maskable-512.png",
  "icons/apple-touch-icon.png",
- "icons/mark.svg"
+ "icons/mark.svg",
+ "gestuelle/",
+ "gestuelle/index.html",
+ "gestuelle/engine.js",
+ "gestuelle/analysis.js",
+ "gestuelle/voice.js"
 ];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => Promise.all(FILES.map(f => c.add(new Request(f, { cache: 'reload' }))))));
@@ -32,6 +37,14 @@ self.addEventListener('fetch', e => {
   const url = new URL(req.url);
   if (url.origin !== location.origin) return;
   if (url.pathname.endsWith('/acces.json')) return; /* toujours en direct */
+  if (url.pathname.indexOf('/gestuelle/vendor/') !== -1) { /* gros fichiers (modèle de vision) : mis en cache à la première utilisation, conservés entre les mises à jour */
+    e.respondWith(caches.open('avendor').then(c => c.match(req).then(r => r || fetch(req).then(n => { if (n.ok) c.put(req, n.clone()); return n; }))));
+    return;
+  }
+  if (req.mode === 'navigate' && url.pathname.indexOf('/gestuelle/') !== -1) {
+    e.respondWith(caches.match('./gestuelle/index.html', { ignoreSearch: true }).then(r => r || fetch(req)));
+    return;
+  }
   if (req.mode === 'navigate') {
     e.respondWith(caches.match('./index.html', { ignoreSearch: true }).then(r => r || fetch(req)));
     return;

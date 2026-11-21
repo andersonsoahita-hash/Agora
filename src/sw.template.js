@@ -14,6 +14,14 @@ self.addEventListener('fetch', e => {
   const url = new URL(req.url);
   if (url.origin !== location.origin) return;
   if (url.pathname.endsWith('/acces.json')) return; /* toujours en direct */
+  if (url.pathname.indexOf('/gestuelle/vendor/') !== -1) { /* gros fichiers (modèle de vision) : mis en cache à la première utilisation, conservés entre les mises à jour */
+    e.respondWith(caches.open('avendor').then(c => c.match(req).then(r => r || fetch(req).then(n => { if (n.ok) c.put(req, n.clone()); return n; }))));
+    return;
+  }
+  if (req.mode === 'navigate' && url.pathname.indexOf('/gestuelle/') !== -1) {
+    e.respondWith(caches.match('./gestuelle/index.html', { ignoreSearch: true }).then(r => r || fetch(req)));
+    return;
+  }
   if (req.mode === 'navigate') {
     e.respondWith(caches.match('./index.html', { ignoreSearch: true }).then(r => r || fetch(req)));
     return;

@@ -98,6 +98,14 @@ pre.brief{white-space:pre-wrap;background:var(--surface2);border-radius:10px;pad
 @keyframes tin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @media (max-width:360px){.badges{grid-template-columns:1fr}}
 
+.cats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cat{display:flex;flex-direction:column;gap:4px;text-align:left;font:inherit;color:inherit;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;min-width:0}
+.cat b{font-size:1rem}.cat span{color:var(--muted);font-size:.8rem;line-height:1.3}
+.cat:hover{border-color:var(--accent)}
+.exgrp{display:flex;flex-direction:column;gap:6px}
+
+.exgrp .hscroll{flex-wrap:wrap;overflow:visible}
+
 /* ===== Polices hébergées (aucun appel externe) ===== */
 @font-face{font-family:'Dancing Script';font-weight:700;font-style:normal;font-display:swap;src:url(fonts/dancing-script-latin-700-normal.woff2) format('woff2')}
 @font-face{font-family:'DM Sans';font-weight:400;font-style:normal;font-display:swap;src:url(fonts/dm-sans-latin-400-normal.woff2) format('woff2')}

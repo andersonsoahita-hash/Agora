@@ -103,6 +103,46 @@ function adviceList(sig, txt) {
   return out.slice(0, 5);
 }
 
+/* ---------- GESTUELLE : exercice caméra (page gestuelle/), historique partagé par le même site ---------- */
+function gestHist() { try { return JSON.parse(localStorage.getItem(location.pathname.replace(/[^\/]*$/, '') + 'agt_hist') || '[]'); } catch (e) { return []; } }
+function gestCardHtml() {
+  var g = gestHist()[0]; if (!g) return '';
+  return '<div class="card"><div class="eyebrow">Dernière Gestuelle · ' + esc(String(g.date).slice(0, 10)) + '</div><h3>' + g.score + ' / 100</h3>' + (g.prio && g.prio.length ? '<p class="muted small" style="margin:0 0 8px">À corriger : ' + g.prio.map(esc).join(' · ') + '</p>' : '') + '<button class="btn small ghost" data-act="gest-open">Refaire un essai</button></div>';
+}
+function setExType(v) { if (st.rec || st.timerOn) return; st.type = v; if (v === 'express') { if (ex.phase === 'speak') exEnterSpeak(); } else if (D.durations.indexOf(st.dur) < 0) st.dur = 60; newSubject(); st.ended = false; st.recSec = 0; }
+var CATS = [
+  ['studio', 'Parler', 'T’enregistrer et analyser ta voix et tes mots', ''],
+  ['gest', 'Gestuelle', 'Te filmer : mains, posture, regard, contradictions', ''],
+  ['ex:argumenter', 'Argumenter', 'Défendre une idée avec méthode', ''],
+  ['course', 'Apprendre', 'Les leçons, pas à pas', ''],
+  ['prep', 'Préparer', 'Écrire et structurer un discours', '']
+];
+function catsHtml() {
+  return '<div class="card stack"><div class="eyebrow">Que veux-tu travailler ?</div><div class="cats">' + CATS.map(function (c) {
+    var act = c[0] === 'gest' ? 'gest-open' : c[0].indexOf('ex:') === 0 ? 'ex-go' : 'tab', v = c[0] === 'gest' ? '' : c[0].indexOf('ex:') === 0 ? c[0].slice(3) : c[0];
+    return '<button class="cat" data-act="' + act + '" data-v="' + v + '"><b>' + c[1] + '</b><span>' + c[2] + '</span></button>';
+  }).join('') + '</div></div>';
+}
+var EX_GROUPS = [['S’échauffer', ['mot', 'qr']], ['Structurer', ['argumenter', 'connecteurs', 'recit']], ['Convaincre', ['debat']], ['Aller plus loin', ['discours', 'lecture', 'express']]];
+function exGroupsHtml() {
+  var all = exOrdered(), used = {}, h = '';
+  EX_GROUPS.forEach(function (g) {
+    var items = g[1].map(function (id) { return byId(all, id); }).filter(Boolean); items.forEach(function (x) { used[x.id] = 1; });
+    if (items.length) h += '<div class="exgrp"><div class="eyebrow">' + g[0] + '</div><div class="hscroll">' + items.map(function (x) { return '<button class="chip' + (x.id === st.type ? ' on' : '') + '" data-act="st-type" data-v="' + x.id + '">' + esc(x.nom) + '</button>'; }).join('') + '</div></div>';
+  });
+  var rest = all.filter(function (x) { return !used[x.id]; });
+  if (rest.length) h += '<div class="exgrp"><div class="eyebrow">Autres</div><div class="hscroll">' + rest.map(function (x) { return '<button class="chip' + (x.id === st.type ? ' on' : '') + '" data-act="st-type" data-v="' + x.id + '">' + esc(x.nom) + '</button>'; }).join('') + '</div></div>';
+  h += '<div class="exgrp"><div class="eyebrow">Corps (caméra)</div><div class="hscroll"><button class="chip hot" data-act="gest-open">Gestuelle : me filmer</button></div></div>';
+  return h;
+}
+function nextExFor(adv) {
+  var t = adv && adv[0] ? adv[0][0] : '';
+  if (/Tics|Atténuations|vagues/i.test(t)) return ['mot', 'Parler à partir d’un mot', 'Improvise 1 minute en remplaçant chaque tic par un silence.'];
+  if (/Plan|Preuves|Conclusion/i.test(t)) return ['argumenter', 'Argumenter une idée', 'Annonce ton plan, donne une preuve, termine par une phrase ferme.'];
+  if (/Blancs/i.test(t)) return ['qr', 'Répondre à une question', 'Entraîne-toi à enchaîner sans silence long.'];
+  if (/Voix|Fins|Débit/i.test(t)) return ['lecture', 'Discours à jouer', 'Lis un discours en travaillant la voix : hauteur, volume, rythme.'];
+  return ['discours', 'Discours complet', 'Passe à un format plus long pour consolider.'];
+}
 /* ---------- ACCUEIL ---------- */
 function vHome() {
   var r = recommend(), last = S.sessions[0];
@@ -110,7 +150,9 @@ function vHome() {
   var h = '<div class="brand"><span class="logo">'+LOGO+'</span><div><b>Agora</b><span>L’art oratoire · <i>by Stephen</i></span></div><button class="gear" data-act="settings" aria-label="Réglages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div><div class="top"><div><h1>Bonjour, Stephen</h1></div><div class="pill">' + streak() + ' j · ' + S.xp + ' pts</div></div>';
   h += '<div class="stack">';
   h += homeBanners();
-  h += '<button class="card tap" data-act="reco" data-v="' + esc(JSON.stringify(r.go)) + '"><div class="eyebrow">Prochaine étape</div><h3>' + esc(r.t) + '</h3><p class="muted small" style="margin:6px 0 0">' + esc(r.d) + '</p></button>';
+  h += '<button class="card tap" data-act="reco" data-v="' + esc(JSON.stringify(r.go)) + '"><div class="eyebrow">Commence ici</div><h3>' + esc(r.t) + '</h3><p class="muted small" style="margin:6px 0 0">' + esc(r.d) + '</p></button>';
+  h += catsHtml();
+  h += gestCardHtml();
   h += vRank();
   h += '<div class="card"><div class="row" style="justify-content:space-between"><h3>Cours</h3><span class="muted small">' + doneN + ' / ' + total + '</span></div><div class="bar" style="margin-top:8px"><i style="width:' + Math.round(100 * doneN / total) + '%"></i></div></div>';
   if (last) {
@@ -161,7 +203,7 @@ function vStudio() {
   var t = byId(D.exerciseTypes, st.type);
   var h = '<div class="top"><h1>Studio</h1></div><div class="stack">';
   h += exHero();
-  h += '<div class="card stack"><div class="eyebrow">Exercice</div><div class="hscroll">' + exOrdered().map(function (x) { return '<button class="chip' + (x.id === st.type ? ' on' : '') + (x.id === 'express' ? ' hot' : '') + '" data-act="st-type" data-v="' + x.id + '">' + esc(x.nom) + '</button>'; }).join('') + '</div>';
+  h += '<div class="card stack"><h3>Choisis un exercice</h3>' + exGroupsHtml();
   if (st.type === 'lecture') return h + '</div>' + AGDISC.pickerHTML() + '</div>';
   if (st.type !== 'express') h += '<div class="row">' + D.durations.map(function (d) { return '<button class="chip' + (d === st.dur ? ' on' : '') + '" data-act="st-dur" data-v="' + d + '">' + durLabel(d) + '</button>'; }).join('') + '</div>';
   if (st.type !== 'express') h += '<div><div class="eyebrow">' + (st.type === 'mot' ? 'Ton mot' : 'Sujet') + '</div><h2>' + esc(st.sujet) + '</h2>' + (st.type === 'debat' && st.stance ? '<p style="margin:6px 0 0">Tu défends : <span class="pill stance ' + (st.stance === 'POUR' ? 'pour' : 'contre') + '">' + st.stance + '</span></p>' : '') + '<div class="row" style="margin-top:6px"><button class="btn small ghost" data-act="st-new">' + (st.type === 'mot' ? 'Tirer au sort un autre mot' : st.type === 'debat' ? 'Autre sujet et autre camp' : 'Autre sujet') + '</button></div></div>';
@@ -357,7 +399,7 @@ function vResult(id) {
   h += discResultHtml(s);
   h += exResultHtml(s);
   h += objResultHtml(s);
-  h += '<div class="card"><h3>À travailler en premier</h3>' + adviceList(a, t).map(function (x) { return '<div class="metric"><span><b>' + esc(x[0]) + '</b><br><span class="muted small">' + esc(x[1]) + '</span></span></div>'; }).join('') + '</div>';
+  h += '<div class="card"><h3>À travailler en premier</h3>' + adviceList(a, t).slice(0, 3).map(function (x, i) { return '<div class="metric"><span><b>' + (i + 1) + '. ' + esc(x[0]) + '</b><br><span class="muted small">' + esc(x[1]) + '</span></span></div>'; }).join('') + (function () { var n = nextExFor(adviceList(a, t)); return '<div class="callout" style="margin-top:10px"><b>Exercice conseillé : ' + esc(n[1]) + '</b><br>' + esc(n[2]) + '</div><button class="btn" style="margin-top:8px" data-act="ex-go" data-v="' + n[0] + '">Faire cet exercice</button>'; })() + '</div>';
   if (a) {
     h += '<div class="card"><h3>Voix</h3>';
     h += m('Durée (parole)', fmt(a.spanSec) + ' · ' + a.speechSec + ' s de voix');
@@ -514,6 +556,8 @@ document.addEventListener('click', function (ev) {
   if (exAct(act, v, el) || objAct(act, v, el) || pwaAct(act, v, el, ev) || prepAct(act, v, el) || eristAct(act, v)) return;
   switch (act) {
     case 'tab': go(v); break;
+    case 'ex-go': view = { tab: 'studio', sub: null }; setExType(v); render(); window.scrollTo(0, 0); break;
+    case 'gest-open': location.href = 'gestuelle/'; break;
     case 'reco': var g = JSON.parse(v); go(g[0], g[1]); break;
     case 'goal-add': var gi = document.getElementById('goalIn'); if (gi && gi.value.trim()) { S.goals.push({ id: uid(), t: gi.value.trim(), done: false }); persist(); render(); } break;
     case 'goal-toggle': S.goals.forEach(function (x) { if (x.id === v) { x.done = !x.done; if (x.done) addXp(20); } }); persist(); render(); break;
