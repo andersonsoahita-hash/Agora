@@ -3,8 +3,8 @@
   var D = window.AO_DATA;
   D.modules.push({ id: 'cx', tome: 'Atelier Agora · Parler clair', titre: 'Construire et relier ses idées', sous: 'Les fondements d’une idée, les connecteurs, et les cinq étapes qui donnent envie de croire' });
   var SRC = [
-    { t: 'Wikipedia : Modèle de Toulmin', u: 'https://en.wikipedia.org/wiki/Toulmin_model' },
-    { t: 'Wikipedia : Rhétorique', u: 'https://fr.wikipedia.org/wiki/Rh%C3%A9torique' }
+    { t: 'Purdue OWL : le modèle de Toulmin', u: 'https://owl.purdue.edu/owl/general_writing/academic_writing/historical_perspectives_on_argumentation/toulmin_argument.html' },
+    { t: 'Silva Rhetoricae (Université Brigham Young) : les cinq canons', u: 'https://rhetoric.byu.edu/Canons/Canons.htm' }
   ];
 
   D.lessons.push(

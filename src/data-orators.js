@@ -39,7 +39,7 @@ window.AO_DATA.orators = [
       { nom: 'La chute', texte: 'La séquence monte jusqu’à « we shall never surrender ». La répétition de « si nécessaire pendant des années, si nécessaire seul » prépare la fin.' }
     ],
     essai: { label: 'Écrire et dire une anaphore', type: 'argumenter', duree: 60, consigne: 'Choisis une conviction. Dis-la en 1 minute avec au moins cinq phrases qui commencent par la même formule, en montant d’intensité jusqu’à une dernière phrase courte.' },
-    sources: [{ t: 'Wikipedia : We shall fight on the beaches', u: 'https://en.wikipedia.org/wiki/We_shall_fight_on_the_beaches' }]
+    sources: [{ t: 'International Churchill Society : « Fight them on the beaches »', u: 'https://winstonchurchill.org/resources/speeches/1940-the-finest-hour/fight-them-on-the-beaches/' }]
   },
   {
     id: 'degaulle', nom: 'Charles de Gaulle', epoque: '1890 – 1970', lieu: 'France', tags: ['XXe siècle', 'Guerre', 'France'],
@@ -52,7 +52,7 @@ window.AO_DATA.orators = [
       { nom: 'L’appel ciblé', texte: 'Il invite des publics précis à le rejoindre : officiers, soldats, ingénieurs, ouvriers spécialistes de l’armement.' }
     ],
     essai: { label: 'Un appel à un public précis', type: 'argumenter', duree: 60, consigne: 'Une situation semble perdue. En 1 minute : (1) explique pourquoi elle n’est pas finale, (2) donne trois ressources qui restent, (3) appelle un public précis à agir.' },
-    sources: [{ t: 'Wikipedia : Appeal of 18 June', u: 'https://en.wikipedia.org/wiki/Appeal_of_18_June' }]
+    sources: [{ t: 'info.gouv.fr : l’Appel du 18 juin 1940, un discours fondateur', u: 'https://www.info.gouv.fr/actualite/lappel-du-18-juin-1940-un-discours-fondateur' }]
   },
   {
     id: 'mlk', nom: 'Martin Luther King Jr.', epoque: '1929 – 1968', lieu: 'États-Unis', tags: ['XXe siècle', 'Droits civiques'],
@@ -80,7 +80,7 @@ window.AO_DATA.orators = [
       { nom: 'La chute mesurée', texte: 'Le qualificatif « si nécessaire » rend la phrase plus crédible qu’une déclaration absolue.' }
     ],
     essai: { label: 'Commencer par la dernière phrase', type: 'argumenter', duree: 120, consigne: 'Écris d’abord la dernière phrase de ton discours (une phrase qui engage). Puis dis 2 minutes de discours qui y mène, et prononce-la en regardant un point fixe.' },
-    sources: [{ t: 'Wikipedia : I Am Prepared to Die', u: 'https://en.wikipedia.org/wiki/I_Am_Prepared_to_Die' }]
+    sources: [{ t: 'Nations unies : déclaration de Nelson Mandela au procès de 1964', u: 'https://static.un.org/en/events/mandeladay/court_statement_1964.shtml' }]
   },
   {
     id: 'veil', nom: 'Simone Veil', epoque: '1927 – 2017', lieu: 'France', tags: ['XXe siècle', 'France', 'Parlement'],
@@ -131,7 +131,7 @@ window.AO_DATA.orators = [
       { nom: 'Le motif récurrent', texte: '« The audacity of hope » (formule reprise d’un sermon de Jeremiah Wright) devient le fil conducteur du discours.' }
     ],
     essai: { label: 'Un récit qui mène à une valeur commune', type: 'recit', duree: 90, consigne: 'Raconte en 1 min 30 un moment de ta vie, puis relie-le à une valeur que ton public partage. Termine par une phrase qui reprend un motif de ton ouverture.' },
-    sources: [{ t: 'Wikipedia : 2004 DNC keynote address', u: 'https://en.wikipedia.org/wiki/2004_Democratic_National_Convention_keynote_address' }]
+    sources: [{ t: 'American Presidency Project (UC Santa Barbara) : discours de Barack Obama, 2004', u: 'https://www.presidency.ucsb.edu/documents/keynote-address-the-2004-democratic-national-convention' }]
   },
   {
     id: 'jobs', nom: 'Steve Jobs', epoque: '1955 – 2011', lieu: 'États-Unis', tags: ['XXIe siècle', 'Entrepreneuriat'],
@@ -171,7 +171,7 @@ window.AO_DATA.orators = [
       { nom: 'L’enthymème', texte: 'C’est un syllogisme rhétorique : on part de ce que l’auditoire accepte déjà pour aller vers sa conclusion, sans tout expliciter. L’art est de choisir une prémisse que le public tient vraiment pour acquise.' }
     ],
     essai: { label: 'Les trois preuves en 2 minutes', type: 'argumenter', duree: 120, consigne: 'Choisis une idée. En 2 minutes : environ 30 secondes pour dire pourquoi on peut te croire (éthos), 30 secondes pour toucher ton auditoire (pathos), 1 minute de raisonnement clair (logos).' },
-    sources: [{ t: 'Wikipedia : Rhétorique (Aristote)', u: 'https://fr.wikipedia.org/wiki/Rh%C3%A9torique_(Aristote)' }, { t: 'Wikipedia : Aristote', u: 'https://fr.wikipedia.org/wiki/Aristote' }]
+    sources: [{ t: 'Stanford Encyclopedia of Philosophy : Aristotle’s Rhetoric', u: 'https://plato.stanford.edu/entries/aristotle-rhetoric/' }, { t: 'Stanford Encyclopedia of Philosophy : Aristotle’s Rhetoric', u: 'https://plato.stanford.edu/entries/aristotle-rhetoric/' }]
   },
   {
     id: 'schopenhauer', nom: 'Arthur Schopenhauer', epoque: '1788 – 1860', lieu: 'Dantzig, Francfort', tags: ['XIXe siècle', 'Allemagne', 'Théorie'],
@@ -193,7 +193,7 @@ window.AO_DATA.orators = [
       { nom: 'Ne pas devenir personnel', texte: 'Attaquer la personne est, selon lui, le dernier recours de celui qui a perdu sur le fond. Un bon orateur s’en tient aux arguments.' }
     ],
     essai: { label: 'Répondre sans caricaturer', type: 'debat', duree: 120, consigne: 'Prends une opinion qui t’énerve. Résume-la fidèlement en 30 secondes, sans l’étendre ni la caricaturer. Puis réponds en 1 minute 30 sans attaquer la personne.' },
-    sources: [{ t: 'Wikipedia : L’Art d’avoir toujours raison', u: 'https://fr.wikipedia.org/wiki/L%27Art_d%27avoir_toujours_raison' }, { t: 'Wikipedia : Arthur Schopenhauer', u: 'https://fr.wikipedia.org/wiki/Arthur_Schopenhauer' }]
+    sources: [{ t: 'Stanford Encyclopedia of Philosophy : Schopenhauer', u: 'https://plato.stanford.edu/entries/schopenhauer/' }, { t: 'Stanford Encyclopedia of Philosophy : Schopenhauer', u: 'https://plato.stanford.edu/entries/schopenhauer/' }]
   },
   {
     id: 'faury', nom: 'Pierre Faury', epoque: 'XXIe siècle', lieu: 'France', tags: ['Contemporain', 'France', 'Poésie'],
@@ -230,7 +230,7 @@ window.AO_DATA.orators = [
       { nom: 'Chasser les mots parasites', texte: 'Le « buzzer à mots interdits » : imaginer un son insupportable à chaque « euh », « genre », « du coup », et le remplacer par un silence.' }
     ],
     essai: { label: 'Le chroniqueur radio', type: 'debat', duree: 120, consigne: 'Choisis un fait d’actualité qui t’a marqué. Raconte-le factuellement (30 s), analyse ce qu’il révèle (45 s), puis donne ton opinion argumentée (45 s), sans texte écrit. Enregistre-toi.' },
-    sources: [{ t: 'Wikipedia : Bertrand Périer', u: 'https://fr.wikipedia.org/wiki/Bertrand_P%C3%A9rier' }]
+    sources: []
   }
 
 ];

@@ -167,7 +167,7 @@ window.AO_DATA.lessons.push(
     { q: 'Pourquoi l’ordre problème → solution est-il crucial ?', o: ['Il est plus court', 'Le public doit d’abord ressentir le problème', 'Il évite les chiffres'], a: 1, e: 'Sans avoir éprouvé le problème, personne n’écoute la solution.' },
     { q: 'Quelle structure raconte une trajectoire ?', o: ['Thèse → Antithèse → Synthèse', 'Passé → Présent → Futur', 'Question → Réponse'], a: 1, e: 'D’où nous venons, où nous sommes, où nous allons.' }
   ],
-  sources: [{ t: 'Wikipedia : Rule of three (writing)', u: 'https://en.wikipedia.org/wiki/Rule_of_three_(writing)' }] },
+  sources: [] },
 
 { id: 'c7', m: 'p2', n: 7, titre: 'Les méthodes rapides de création', min: 7, src: 'livre',
   accroche: 'Quand le temps manque, quelques méthodes éprouvées permettent de bâtir un message clair en quelques minutes.',
@@ -229,7 +229,7 @@ window.AO_DATA.lessons.push(
     { q: 'La technique la plus puissante de conclusion est…', o: ['Résumer point par point', 'La boucle', 'S’excuser d’avoir été long'], a: 1, e: 'Revenir à l’image de l’ouverture ferme le trajet.' },
     { q: 'Que faire après le dernier mot ?', o: ['Dire « voilà, c’est tout »', 'Tenir un silence de deux ou trois secondes', 'Reculer vers sa chaise'], a: 1, e: 'Le silence final fait partie de la conclusion.' }
   ],
-  sources: [{ t: 'Wikipedia : I Am Prepared to Die', u: 'https://en.wikipedia.org/wiki/I_Am_Prepared_to_Die' }, { t: 'Wikipedia : We shall fight on the beaches', u: 'https://en.wikipedia.org/wiki/We_shall_fight_on_the_beaches' }] },
+  sources: [{ t: 'Nations unies : déclaration de Nelson Mandela au procès de 1964', u: 'https://static.un.org/en/events/mandeladay/court_statement_1964.shtml' }, { t: 'International Churchill Society : « Fight them on the beaches »', u: 'https://winstonchurchill.org/resources/speeches/1940-the-finest-hour/fight-them-on-the-beaches/' }] },
 
 { id: 'c10', m: 'p2', n: 10, titre: 'Les transitions fluides', min: 6, src: 'livre',
   accroche: 'Un discours, ce n’est pas des idées posées côte à côte : c’est un fil continu. Les transitions sont les nœuds invisibles qui relient les idées.',

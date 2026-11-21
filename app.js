@@ -1,4 +1,4 @@
-window.AGORA_BUILD='f1eb6df863';
+window.AGORA_BUILD='7856b52dbc';
 /* ============================================================
    Analyse de la voix (signal) et du texte (transcription)
    Tout se calcule dans la page. Aucun audio n'est envoyé nulle part.
@@ -516,7 +516,7 @@ window.AO_DATA.orators = [
       { nom: 'La chute', texte: 'La séquence monte jusqu’à « we shall never surrender ». La répétition de « si nécessaire pendant des années, si nécessaire seul » prépare la fin.' }
     ],
     essai: { label: 'Écrire et dire une anaphore', type: 'argumenter', duree: 60, consigne: 'Choisis une conviction. Dis-la en 1 minute avec au moins cinq phrases qui commencent par la même formule, en montant d’intensité jusqu’à une dernière phrase courte.' },
-    sources: [{ t: 'Wikipedia : We shall fight on the beaches', u: 'https://en.wikipedia.org/wiki/We_shall_fight_on_the_beaches' }]
+    sources: [{ t: 'International Churchill Society : « Fight them on the beaches »', u: 'https://winstonchurchill.org/resources/speeches/1940-the-finest-hour/fight-them-on-the-beaches/' }]
   },
   {
     id: 'degaulle', nom: 'Charles de Gaulle', epoque: '1890 – 1970', lieu: 'France', tags: ['XXe siècle', 'Guerre', 'France'],
@@ -529,7 +529,7 @@ window.AO_DATA.orators = [
       { nom: 'L’appel ciblé', texte: 'Il invite des publics précis à le rejoindre : officiers, soldats, ingénieurs, ouvriers spécialistes de l’armement.' }
     ],
     essai: { label: 'Un appel à un public précis', type: 'argumenter', duree: 60, consigne: 'Une situation semble perdue. En 1 minute : (1) explique pourquoi elle n’est pas finale, (2) donne trois ressources qui restent, (3) appelle un public précis à agir.' },
-    sources: [{ t: 'Wikipedia : Appeal of 18 June', u: 'https://en.wikipedia.org/wiki/Appeal_of_18_June' }]
+    sources: [{ t: 'info.gouv.fr : l’Appel du 18 juin 1940, un discours fondateur', u: 'https://www.info.gouv.fr/actualite/lappel-du-18-juin-1940-un-discours-fondateur' }]
   },
   {
     id: 'mlk', nom: 'Martin Luther King Jr.', epoque: '1929 – 1968', lieu: 'États-Unis', tags: ['XXe siècle', 'Droits civiques'],
@@ -557,7 +557,7 @@ window.AO_DATA.orators = [
       { nom: 'La chute mesurée', texte: 'Le qualificatif « si nécessaire » rend la phrase plus crédible qu’une déclaration absolue.' }
     ],
     essai: { label: 'Commencer par la dernière phrase', type: 'argumenter', duree: 120, consigne: 'Écris d’abord la dernière phrase de ton discours (une phrase qui engage). Puis dis 2 minutes de discours qui y mène, et prononce-la en regardant un point fixe.' },
-    sources: [{ t: 'Wikipedia : I Am Prepared to Die', u: 'https://en.wikipedia.org/wiki/I_Am_Prepared_to_Die' }]
+    sources: [{ t: 'Nations unies : déclaration de Nelson Mandela au procès de 1964', u: 'https://static.un.org/en/events/mandeladay/court_statement_1964.shtml' }]
   },
   {
     id: 'veil', nom: 'Simone Veil', epoque: '1927 – 2017', lieu: 'France', tags: ['XXe siècle', 'France', 'Parlement'],
@@ -608,7 +608,7 @@ window.AO_DATA.orators = [
       { nom: 'Le motif récurrent', texte: '« The audacity of hope » (formule reprise d’un sermon de Jeremiah Wright) devient le fil conducteur du discours.' }
     ],
     essai: { label: 'Un récit qui mène à une valeur commune', type: 'recit', duree: 90, consigne: 'Raconte en 1 min 30 un moment de ta vie, puis relie-le à une valeur que ton public partage. Termine par une phrase qui reprend un motif de ton ouverture.' },
-    sources: [{ t: 'Wikipedia : 2004 DNC keynote address', u: 'https://en.wikipedia.org/wiki/2004_Democratic_National_Convention_keynote_address' }]
+    sources: [{ t: 'American Presidency Project (UC Santa Barbara) : discours de Barack Obama, 2004', u: 'https://www.presidency.ucsb.edu/documents/keynote-address-the-2004-democratic-national-convention' }]
   },
   {
     id: 'jobs', nom: 'Steve Jobs', epoque: '1955 – 2011', lieu: 'États-Unis', tags: ['XXIe siècle', 'Entrepreneuriat'],
@@ -648,7 +648,7 @@ window.AO_DATA.orators = [
       { nom: 'L’enthymème', texte: 'C’est un syllogisme rhétorique : on part de ce que l’auditoire accepte déjà pour aller vers sa conclusion, sans tout expliciter. L’art est de choisir une prémisse que le public tient vraiment pour acquise.' }
     ],
     essai: { label: 'Les trois preuves en 2 minutes', type: 'argumenter', duree: 120, consigne: 'Choisis une idée. En 2 minutes : environ 30 secondes pour dire pourquoi on peut te croire (éthos), 30 secondes pour toucher ton auditoire (pathos), 1 minute de raisonnement clair (logos).' },
-    sources: [{ t: 'Wikipedia : Rhétorique (Aristote)', u: 'https://fr.wikipedia.org/wiki/Rh%C3%A9torique_(Aristote)' }, { t: 'Wikipedia : Aristote', u: 'https://fr.wikipedia.org/wiki/Aristote' }]
+    sources: [{ t: 'Stanford Encyclopedia of Philosophy : Aristotle’s Rhetoric', u: 'https://plato.stanford.edu/entries/aristotle-rhetoric/' }, { t: 'Stanford Encyclopedia of Philosophy : Aristotle’s Rhetoric', u: 'https://plato.stanford.edu/entries/aristotle-rhetoric/' }]
   },
   {
     id: 'schopenhauer', nom: 'Arthur Schopenhauer', epoque: '1788 – 1860', lieu: 'Dantzig, Francfort', tags: ['XIXe siècle', 'Allemagne', 'Théorie'],
@@ -670,7 +670,7 @@ window.AO_DATA.orators = [
       { nom: 'Ne pas devenir personnel', texte: 'Attaquer la personne est, selon lui, le dernier recours de celui qui a perdu sur le fond. Un bon orateur s’en tient aux arguments.' }
     ],
     essai: { label: 'Répondre sans caricaturer', type: 'debat', duree: 120, consigne: 'Prends une opinion qui t’énerve. Résume-la fidèlement en 30 secondes, sans l’étendre ni la caricaturer. Puis réponds en 1 minute 30 sans attaquer la personne.' },
-    sources: [{ t: 'Wikipedia : L’Art d’avoir toujours raison', u: 'https://fr.wikipedia.org/wiki/L%27Art_d%27avoir_toujours_raison' }, { t: 'Wikipedia : Arthur Schopenhauer', u: 'https://fr.wikipedia.org/wiki/Arthur_Schopenhauer' }]
+    sources: [{ t: 'Stanford Encyclopedia of Philosophy : Schopenhauer', u: 'https://plato.stanford.edu/entries/schopenhauer/' }, { t: 'Stanford Encyclopedia of Philosophy : Schopenhauer', u: 'https://plato.stanford.edu/entries/schopenhauer/' }]
   },
   {
     id: 'faury', nom: 'Pierre Faury', epoque: 'XXIe siècle', lieu: 'France', tags: ['Contemporain', 'France', 'Poésie'],
@@ -707,7 +707,7 @@ window.AO_DATA.orators = [
       { nom: 'Chasser les mots parasites', texte: 'Le « buzzer à mots interdits » : imaginer un son insupportable à chaque « euh », « genre », « du coup », et le remplacer par un silence.' }
     ],
     essai: { label: 'Le chroniqueur radio', type: 'debat', duree: 120, consigne: 'Choisis un fait d’actualité qui t’a marqué. Raconte-le factuellement (30 s), analyse ce qu’il révèle (45 s), puis donne ton opinion argumentée (45 s), sans texte écrit. Enregistre-toi.' },
-    sources: [{ t: 'Wikipedia : Bertrand Périer', u: 'https://fr.wikipedia.org/wiki/Bertrand_P%C3%A9rier' }]
+    sources: []
   }
 
 ];
@@ -1157,7 +1157,7 @@ window.AO_DATA.lessons.push(
     { q: 'Pourquoi l’ordre problème → solution est-il crucial ?', o: ['Il est plus court', 'Le public doit d’abord ressentir le problème', 'Il évite les chiffres'], a: 1, e: 'Sans avoir éprouvé le problème, personne n’écoute la solution.' },
     { q: 'Quelle structure raconte une trajectoire ?', o: ['Thèse → Antithèse → Synthèse', 'Passé → Présent → Futur', 'Question → Réponse'], a: 1, e: 'D’où nous venons, où nous sommes, où nous allons.' }
   ],
-  sources: [{ t: 'Wikipedia : Rule of three (writing)', u: 'https://en.wikipedia.org/wiki/Rule_of_three_(writing)' }] },
+  sources: [] },
 
 { id: 'c7', m: 'p2', n: 7, titre: 'Les méthodes rapides de création', min: 7, src: 'livre',
   accroche: 'Quand le temps manque, quelques méthodes éprouvées permettent de bâtir un message clair en quelques minutes.',
@@ -1219,7 +1219,7 @@ window.AO_DATA.lessons.push(
     { q: 'La technique la plus puissante de conclusion est…', o: ['Résumer point par point', 'La boucle', 'S’excuser d’avoir été long'], a: 1, e: 'Revenir à l’image de l’ouverture ferme le trajet.' },
     { q: 'Que faire après le dernier mot ?', o: ['Dire « voilà, c’est tout »', 'Tenir un silence de deux ou trois secondes', 'Reculer vers sa chaise'], a: 1, e: 'Le silence final fait partie de la conclusion.' }
   ],
-  sources: [{ t: 'Wikipedia : I Am Prepared to Die', u: 'https://en.wikipedia.org/wiki/I_Am_Prepared_to_Die' }, { t: 'Wikipedia : We shall fight on the beaches', u: 'https://en.wikipedia.org/wiki/We_shall_fight_on_the_beaches' }] },
+  sources: [{ t: 'Nations unies : déclaration de Nelson Mandela au procès de 1964', u: 'https://static.un.org/en/events/mandeladay/court_statement_1964.shtml' }, { t: 'International Churchill Society : « Fight them on the beaches »', u: 'https://winstonchurchill.org/resources/speeches/1940-the-finest-hour/fight-them-on-the-beaches/' }] },
 
 { id: 'c10', m: 'p2', n: 10, titre: 'Les transitions fluides', min: 6, src: 'livre',
   accroche: 'Un discours, ce n’est pas des idées posées côte à côte : c’est un fil continu. Les transitions sont les nœuds invisibles qui relient les idées.',
@@ -1591,7 +1591,7 @@ window.AO_DATA.lessons.push(
     { q: 'Que dit-on honnêtement du « 55 % / 38 % / 7 % » ?', o: ['C’est une loi de la persuasion', 'C’est une généralisation abusive d’une étude sur des situations ambiguës', 'C’est faux de bout en bout'], a: 1, e: 'Il s’applique à la perception d’attitudes quand mots et ton se contredisent.' },
     { q: 'Le balancement d’un pied sur l’autre traduit…', o: ['De la nervosité et distrait', 'De l’assurance', 'Rien'], a: 0, e: 'Il vaut mieux s’ancrer.' }
   ],
-  sources: [{ t: 'Wikipedia : Albert Mehrabian (sur la règle 7-38-55)', u: 'https://en.wikipedia.org/wiki/Albert_Mehrabian' }] },
+  sources: [] },
 
 { id: 'c23', m: 'p5', n: 23, titre: 'Le regard', min: 6, src: 'app',
   accroche: 'Le regard crée le lien. Un orateur qui ne regarde personne ne parle à personne.',
@@ -2136,8 +2136,8 @@ window.AO_DATA.lessons.push(
   var D = window.AO_DATA;
   D.modules.push({ id: 'cx', tome: 'Atelier Agora · Parler clair', titre: 'Construire et relier ses idées', sous: 'Les fondements d’une idée, les connecteurs, et les cinq étapes qui donnent envie de croire' });
   var SRC = [
-    { t: 'Wikipedia : Modèle de Toulmin', u: 'https://en.wikipedia.org/wiki/Toulmin_model' },
-    { t: 'Wikipedia : Rhétorique', u: 'https://fr.wikipedia.org/wiki/Rh%C3%A9torique' }
+    { t: 'Purdue OWL : le modèle de Toulmin', u: 'https://owl.purdue.edu/owl/general_writing/academic_writing/historical_perspectives_on_argumentation/toulmin_argument.html' },
+    { t: 'Silva Rhetoricae (Université Brigham Young) : les cinq canons', u: 'https://rhetoric.byu.edu/Canons/Canons.htm' }
   ];
 
   D.lessons.push(

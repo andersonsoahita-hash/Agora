@@ -145,7 +145,7 @@ window.AO_DATA.lessons.push(
     { q: 'Que dit-on honnêtement du « 55 % / 38 % / 7 % » ?', o: ['C’est une loi de la persuasion', 'C’est une généralisation abusive d’une étude sur des situations ambiguës', 'C’est faux de bout en bout'], a: 1, e: 'Il s’applique à la perception d’attitudes quand mots et ton se contredisent.' },
     { q: 'Le balancement d’un pied sur l’autre traduit…', o: ['De la nervosité et distrait', 'De l’assurance', 'Rien'], a: 0, e: 'Il vaut mieux s’ancrer.' }
   ],
-  sources: [{ t: 'Wikipedia : Albert Mehrabian (sur la règle 7-38-55)', u: 'https://en.wikipedia.org/wiki/Albert_Mehrabian' }] },
+  sources: [] },
 
 { id: 'c23', m: 'p5', n: 23, titre: 'Le regard', min: 6, src: 'app',
   accroche: 'Le regard crée le lien. Un orateur qui ne regarde personne ne parle à personne.',
