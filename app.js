@@ -1,4 +1,4 @@
-window.AGORA_BUILD='1ed78b3f75';
+window.AGORA_BUILD='87c40970f0';
 /* ============================================================
    Analyse de la voix (signal) et du texte (transcription)
    Tout se calcule dans la page. Aucun audio n'est envoyé nulle part.
@@ -3173,8 +3173,17 @@ function paintPerm(msgs={}){$('#permList').innerHTML=permRows().map(([k,t,d])=>{
 $('#start').onclick=()=>{P={cam:'',mic:'',stt:S.stt?'':'ok',mod:''};paintPerm();$('#grant').textContent='Tout autoriser';show('s-perm');listLenses();};
 const portraitScreen=()=>matchMedia('(pointer:coarse)').matches;
 async function getStream(audio){
-  const v=Object.assign(S.fit==='fill'?{width:{ideal:1080},height:{ideal:1920},aspectRatio:{ideal:9/16},frameRate:{ideal:30}}:{width:{ideal:1440},height:{ideal:1920},frameRate:{ideal:30}},S.lens?{deviceId:{exact:S.lens}}:{facingMode:{ideal:S.cam}});
-  return navigator.mediaDevices.getUserMedia({video:v,audio:audio?{echoCancellation:true,noiseSuppression:true}:false});
+  const a=audio?{echoCancellation:true,noiseSuppression:true}:false;
+  const sz=S.fit==='fill'?{width:{ideal:1080},height:{ideal:1920},aspectRatio:{ideal:9/16},frameRate:{ideal:30}}:{width:{ideal:1440},height:{ideal:1920},frameRate:{ideal:30}};
+  const tries=[];
+  if(S.lens)tries.push(Object.assign({},sz,{deviceId:{exact:S.lens}}));
+  tries.push(Object.assign({},sz,{facingMode:{ideal:S.cam}}),{facingMode:{ideal:S.cam}},true);
+  let err;
+  for(let k=0;k<tries.length;k++){
+    try{const r=await navigator.mediaDevices.getUserMedia({video:tries[k],audio:a});if(S.lens&&k>0){S.lens='';save();}return r;}
+    catch(e){err=e;if(e&&(e.name==='NotAllowedError'||e.name==='SecurityError'))break;}
+  }
+  throw err;
 }
 $('#grant').onclick=async()=>{
   const msgs={};$('#grant').disabled=true;cleanup(true);

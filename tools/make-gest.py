@@ -41,7 +41,7 @@ js=rep(js,"addEventListener('resize',()=>{if($('#s-run').classList.contains('on'
 js=rep(js,"addEventListener('pagehide',()=>cleanup());","addEventListener('pagehide',()=>cleanup());\n__reg(()=>{cleanup();removeEventListener('resize',onWinResize);});")
 
 # ---- choix de l'exercice depuis la Gestuelle
-body=rep(body,'<div class="card" id="exoBanner" hidden>','<div class="card" id="exoPick" style="display:grid;gap:8px"><h3>Exercice</h3><select id="exoSel"><option value="">Libre : je parle de ce que je veux</option></select><div id="exoSubj" class="note" hidden></div><div><button class="btn sec" id="exoNew" style="padding:9px 14px" hidden>Autre sujet</button></div></div>\n  <div class="card" id="exoBanner" hidden>')
+body=rep(body,'<div class="card" id="exoBanner" hidden>','<div class="card" id="exoPick" style="display:grid;gap:8px"><h3>Exercice</h3><select id="exoSel"><option value="">Libre : je parle de ce que je veux</option></select><select id="discSel" hidden><option value="">Choisis un discours à lire</option></select><div id="exoSubj" class="note" hidden></div><div><button class="btn sec" id="exoNew" style="padding:9px 14px" hidden>Autre sujet</button></div></div>\n  <div class="card" id="exoBanner" hidden>')
 a=js.index("if(EXO){const sj=");b=js.index("show('s-set');}",a)+len("show('s-set');}")
 js=js[:a]+"""const exoSel=$('#exoSel');
 (opts.exos||[]).forEach(x=>{const o=document.createElement('option');o.value=x.id;o.textContent=x.nom;exoSel.appendChild(o);});
@@ -59,6 +59,15 @@ const refreshExo=()=>{
 exoSel.onchange=()=>{const v=exoSel.value;if(!v){EXO=null;}else{const s=(opts.subject&&opts.subject(v))||{};EXO={type:v,nom:exoSel.options[exoSel.selectedIndex].textContent,sujet:s.sujet||'',stance:s.stance||'',dur:S.dur||0};}refreshExo();};
 $('#exoNew').onclick=()=>{if(!EXO||!opts.subject)return;const s=opts.subject(EXO.type)||{};EXO.sujet=s.sujet||'';EXO.stance=s.stance||'';refreshExo();};
 $('#g-dur').addEventListener('click',()=>setTimeout(refreshExo,0));
+const D_=window.AGDISC&&window.AGDISC.data;
+if(D_){const o=document.createElement('option');o.value='lecture';o.textContent='Discours à jouer (texte prêt, au prompteur)';exoSel.appendChild(o);
+  D_.sections.forEach(sec=>{const g=document.createElement('optgroup');g.label=sec.t;D_.discours.filter(d=>d.s===sec.id).forEach(d=>{const op=document.createElement('option');op.value=d.id;op.textContent=d.t;g.appendChild(op);});$('#discSel').appendChild(g);});
+  if(EXO&&EXO.type==='lecture')exoSel.value='lecture';}
+const setScript=(d)=>{S.script=d.l.join('\\n');S.tpOn=true;S.dur=0;save();$('#script').value=S.script;$('#tpOn').checked=true;sync();$('#g-dur').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v==='0'));};
+const exoSel2=exoSel.onchange;
+exoSel.onchange=()=>{const lec=exoSel.value==='lecture';$('#discSel').hidden=!lec;if(lec){EXO={type:'lecture',nom:'Discours à jouer',sujet:'',stance:'',dur:0};$('#discSel').value='';refreshExo();}else exoSel2();};
+$('#discSel').onchange=()=>{const d=D_&&D_.discours.find(x=>x.id===$('#discSel').value);if(!d||!EXO)return;EXO.sujet=d.t;setScript(d);refreshExo();};
+$('#discSel').hidden=!(EXO&&EXO.type==='lecture');
 refreshExo();show('s-set');"""+js[b:]
 js=rep(js,"const EXO=opts.exo||null","let EXO=opts.exo||null") if "const EXO=opts.exo||null" in js else js
 
