@@ -19,6 +19,7 @@ let pb=null;const $=s=>root.querySelector(s);
 const ls={get(k,d){try{const v=localStorage.getItem(NS+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(NS+k,JSON.stringify(v))}catch(e){}}};
 const show=id=>{root.querySelectorAll('.scr').forEach(s=>s.classList.toggle('on',s.id===id));if(id!=='s-rep')stopPlayback();};
 const fmt=AgoraEngine.fmt,esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const LOC=f=>new URL(opts.vendor+'models/'+f,document.baseURI).href;
 const MODEL_POSE='https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task';
 const MODEL_FACE='https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task';
 const MODEL_HAND='https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task';
@@ -118,9 +119,9 @@ $('#grant').onclick=async()=>{
 async function loadModels(){
   if(pose&&hand&&face)return;
   const V=await import(new URL(opts.vendor+'vision_bundle.mjs',document.baseURI).href);const fs=await V.FilesetResolver.forVisionTasks(new URL(opts.vendor+'wasm',document.baseURI).href);
-  const mk=async(cls,url,extra)=>{for(const d of ['GPU','CPU']){try{return await V[cls].createFromOptions(fs,{baseOptions:{modelAssetPath:url,delegate:d},runningMode:'VIDEO',...extra});}catch(e){if(d==='CPU')throw e;}}};
-  pose=await mk('PoseLandmarker',MODEL_POSE,{numPoses:1});hand=await mk('HandLandmarker',MODEL_HAND,{numHands:2});
-  face=await mk('FaceLandmarker',MODEL_FACE,{numFaces:1,outputFaceBlendshapes:false});
+  const mk=async(cls,urls,extra)=>{let last;for(const url of urls){for(const d of ['GPU','CPU']){try{return await V[cls].createFromOptions(fs,{baseOptions:{modelAssetPath:url,delegate:d},runningMode:'VIDEO',...extra});}catch(e){last=e;}}}throw last;};
+  pose=await mk('PoseLandmarker',[LOC('pose_landmarker_lite.task'),MODEL_POSE],{numPoses:1});hand=await mk('HandLandmarker',[LOC('hand_landmarker.task'),MODEL_HAND],{numHands:2});
+  face=await mk('FaceLandmarker',[LOC('face_landmarker.task'),MODEL_FACE],{numFaces:1,outputFaceBlendshapes:false});
   try{FC=(V.FaceLandmarker.FACE_LANDMARKS_CONTOURS||[]).map(c=>[c.start,c.end]);FCI=[...new Set(FC.flat())];const pos={};FCI.forEach((v,i)=>pos[v]=i);FCP=FC.map(([a,b])=>[pos[a],pos[b]]);}catch(e){}
 }
 

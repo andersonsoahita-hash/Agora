@@ -35,6 +35,7 @@ js=rep(js,"if(EXO){const sj=","if(EXO){const sj=")  # présent
 js=rep(js,"location.href='../?gres='+it.id;","opts.done(it);")
 # modèles et moteur : chemins depuis la page Agora
 js=rep(js,"await import('./vendor/vision_bundle.mjs')","await import(new URL(opts.vendor+'vision_bundle.mjs',document.baseURI).href)")
+js=rep(js,"const LOC=f=>'./vendor/models/'+f;","const LOC=f=>new URL(opts.vendor+'models/'+f,document.baseURI).href;")
 js=rep(js,"forVisionTasks('./vendor/wasm')","forVisionTasks(new URL(opts.vendor+'wasm',document.baseURI).href)")
 # écouteurs globaux : sans danger après fermeture
 js=rep(js,"addEventListener('resize',()=>{if($('#s-run').classList.contains('on'))resize();});","const onWinResize=()=>{const g=$('#s-run');if(g&&g.classList.contains('on'))resize();};addEventListener('resize',onWinResize);")
