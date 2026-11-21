@@ -1,4 +1,4 @@
-window.AGORA_BUILD='4bd71ccc5f';
+window.AGORA_BUILD='73ff635c32';
 /* ============================================================
    Analyse de la voix (signal) et du texte (transcription)
    Tout se calcule dans la page. Aucun audio n'est envoyé nulle part.
@@ -3066,7 +3066,7 @@ window.AGGEST={
     document.body.appendChild(host); var clean=null;
     var close=function(){ if(!cur)return; try{clean&&clean();}catch(e){} host.remove(); cur=null; try{o.onClose&&o.onClose();}catch(e){} };
     cur={close:close};
-    var opts={exo:o.exo||null,ns:o.ns||'/',demo:!!o.demo,open:o.open||null,close:close,done:function(it){ var h={id:it.id,date:it.date,score:it.r.score.total,duree:it.r.duree,exo:it.exo}; try{o.onDone&&o.onDone(h);}catch(e){} close(); }};
+    var opts={vendor:o.vendor||'gestuelle/vendor/',exo:o.exo||null,ns:o.ns||'/',demo:!!o.demo,open:o.open||null,close:close,done:function(it){ var h={id:it.id,date:it.date,score:it.r.score.total,duree:it.r.duree,exo:it.exo}; try{o.onDone&&o.onDone(h);}catch(e){} close(); }};
     var __reg=function(f){clean=f;};
     (async function(){
 
@@ -3140,7 +3140,7 @@ $('#grant').onclick=async()=>{
 };
 async function loadModels(){
   if(pose&&hand&&face)return;
-  const V=await import(new URL('gestuelle/vendor/vision_bundle.mjs',document.baseURI).href);const fs=await V.FilesetResolver.forVisionTasks(new URL('gestuelle/vendor/wasm',document.baseURI).href);
+  const V=await import(new URL(opts.vendor+'vision_bundle.mjs',document.baseURI).href);const fs=await V.FilesetResolver.forVisionTasks(new URL(opts.vendor+'wasm',document.baseURI).href);
   const mk=async(cls,url,extra)=>{for(const d of ['GPU','CPU']){try{return await V[cls].createFromOptions(fs,{baseOptions:{modelAssetPath:url,delegate:d},runningMode:'VIDEO',...extra});}catch(e){if(d==='CPU')throw e;}}};
   pose=await mk('PoseLandmarker',MODEL_POSE,{numPoses:1});hand=await mk('HandLandmarker',MODEL_HAND,{numHands:2});
   face=await mk('FaceLandmarker',MODEL_FACE,{numFaces:1,outputFaceBlendshapes:false});

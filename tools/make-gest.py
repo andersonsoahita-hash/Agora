@@ -34,8 +34,8 @@ js=rep(js,"$('#enter').onclick=()=>show('s-set');$('#back1').onclick=()=>show('s
 js=rep(js,"if(EXO){const sj=","if(EXO){const sj=")  # présent
 js=rep(js,"location.href='../?gres='+it.id;","opts.done(it);")
 # modèles et moteur : chemins depuis la page Agora
-js=rep(js,"await import('./vendor/vision_bundle.mjs')","await import(new URL('gestuelle/vendor/vision_bundle.mjs',document.baseURI).href)")
-js=rep(js,"forVisionTasks('./vendor/wasm')","forVisionTasks(new URL('gestuelle/vendor/wasm',document.baseURI).href)")
+js=rep(js,"await import('./vendor/vision_bundle.mjs')","await import(new URL(opts.vendor+'vision_bundle.mjs',document.baseURI).href)")
+js=rep(js,"forVisionTasks('./vendor/wasm')","forVisionTasks(new URL(opts.vendor+'wasm',document.baseURI).href)")
 # écouteurs globaux : sans danger après fermeture
 js=rep(js,"addEventListener('resize',()=>{if($('#s-run').classList.contains('on'))resize();});","const onWinResize=()=>{const g=$('#s-run');if(g&&g.classList.contains('on'))resize();};addEventListener('resize',onWinResize);")
 js=rep(js,"addEventListener('pagehide',()=>cleanup());","addEventListener('pagehide',()=>cleanup());\n__reg(()=>{cleanup();removeEventListener('resize',onWinResize);});")
@@ -51,7 +51,7 @@ window.AGGEST={
     document.body.appendChild(host); var clean=null;
     var close=function(){ if(!cur)return; try{clean&&clean();}catch(e){} host.remove(); cur=null; try{o.onClose&&o.onClose();}catch(e){} };
     cur={close:close};
-    var opts={exo:o.exo||null,ns:o.ns||'/',demo:!!o.demo,open:o.open||null,close:close,done:function(it){ var h={id:it.id,date:it.date,score:it.r.score.total,duree:it.r.duree,exo:it.exo}; try{o.onDone&&o.onDone(h);}catch(e){} close(); }};
+    var opts={vendor:o.vendor||'gestuelle/vendor/',exo:o.exo||null,ns:o.ns||'/',demo:!!o.demo,open:o.open||null,close:close,done:function(it){ var h={id:it.id,date:it.date,score:it.r.score.total,duree:it.r.duree,exo:it.exo}; try{o.onDone&&o.onDone(h);}catch(e){} close(); }};
     var __reg=function(f){clean=f;};
     (async function(){
 %s
