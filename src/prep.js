@@ -229,7 +229,7 @@ function prepAct(act, v, el) {
     case 'prep-del': S.prep = S.prep.filter(function (x) { return x.id !== v; }); prepUI.cur = null; persist(); render(); return true;
     case 'prep-studio':
       var it = byId(S.prep, v); if (!it) return true;
-      st.type = it.kind === 'debat' ? 'debat' : 'discours'; st.dur = it.kind === 'debat' ? 120 : it.dur;
+      st.screen = 'ex'; st.type = it.kind === 'debat' ? 'debat' : 'discours'; st.dur = it.kind === 'debat' ? 120 : it.dur;
       st.sujet = it.kind === 'debat' ? 'Défendre le camp « ' + (it.data.mine && it.data.mine.camp || it.side) + ' » : ' + it.topic : 'Dire le discours : ' + it.topic;
       go('studio'); return true;
   }

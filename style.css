@@ -136,6 +136,22 @@ details.more>summary::after{content:' ▾';opacity:.6}
 details.more[open]>summary::after{content:' ▴'}
 details.more>.stack{padding-bottom:14px}
 
+/* Studio : liste puis écran d'exercice */
+.exlist{display:flex;flex-direction:column;gap:8px}
+.excard{display:flex;align-items:center;gap:10px;text-align:left;font:inherit;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;cursor:pointer;min-height:56px}
+.excard .excn{font-weight:600;font-size:1.02rem;flex:1;min-width:0}
+.excard .excd{color:var(--muted);font-size:.82rem}
+.excg{color:var(--muted);font-size:1.3rem;line-height:1}
+.excard:active{background:var(--surface2)}
+.top .back{background:none;border:0;color:var(--accent);font:inherit;font-weight:600;padding:8px 0;cursor:pointer;display:block}
+.optrow{display:flex;align-items:center;gap:10px;text-align:left;width:100%}
+.optrow>span.muted{flex:1}
+.tcol{flex-direction:column;align-items:flex-start;gap:2px}
+
+.exsel{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.exsel b{flex:1;font-size:1.05rem;min-width:0}.exsel .excg{color:var(--accent);font-size:.9rem}
+
+.ambbtn{display:flex;align-items:center;gap:10px;flex-wrap:wrap;text-align:left}.ambbtn b{flex:1;min-width:0}.ambbtn.on{border-color:var(--accent)}
+
 /* ===== Polices hébergées (aucun appel externe) ===== */
 @font-face{font-family:'Dancing Script';font-weight:700;font-style:normal;font-display:swap;src:url(fonts/dancing-script-latin-700-normal.woff2) format('woff2')}
 @font-face{font-family:'DM Sans';font-weight:400;font-style:normal;font-display:swap;src:url(fonts/dm-sans-latin-400-normal.woff2) format('woff2')}

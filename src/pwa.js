@@ -502,7 +502,7 @@ function pwaAct(act, v, el, ev) {
       var ti = byIdEl('topicIn'); proofTopic = ti ? ti.value.trim() : ''; if (!proofTopic) { toast('Écris d’abord un sujet.'); return true; }
       copyText('Sujet de discours : « ' + proofTopic + ' ». Propose 4 angles d’argumentation en français. Pour chacun : l’angle, et le type de preuve à aller chercher avec l’endroit où la trouver. N’invente aucun chiffre ni aucune source.', el); return true;
     case 'angles-save': S.angles = byIdEl('anglesNote').value.slice(0, 6000); persist(); toast('Notes enregistrées'); return true;
-    case 'daily-go': var dv = v.split('|'), dt2 = byId(D.exerciseTypes, dv[0]); if (dt2 && dt2.id === 'express') { if (ex.phase === 'setup') { var th = D.themeAll[+dv[1] % D.themeAll.length]; ex.theme = th.t; ex.themeCat = th.c; exSave(); } st.type = 'express'; st.sujet = ex.theme; if (ex.phase === 'speak') exEnterSpeak(); go('studio'); } else if (dt2) { st.type = dt2.id; if (D.durations.indexOf(st.dur) < 0) st.dur = 60; st.sujet = dt2.sujets[+dv[1] % dt2.sujets.length]; go('studio'); } return true;
+    case 'daily-go': var dv = v.split('|'), dt2 = byId(D.exerciseTypes, dv[0]); if (dt2 && dt2.id === 'express') { if (ex.phase === 'setup') { var th = D.themeAll[+dv[1] % D.themeAll.length]; ex.theme = th.t; ex.themeCat = th.c; exSave(); } st.screen = 'ex'; st.type = 'express'; st.sujet = ex.theme; if (ex.phase === 'speak') exEnterSpeak(); go('studio'); } else if (dt2) { st.screen = 'ex'; st.type = dt2.id; if (D.durations.indexOf(st.dur) < 0) st.dur = 60; st.sujet = dt2.sujets[+dv[1] % dt2.sujets.length]; go('studio'); } return true;
   }
   return false;
 }

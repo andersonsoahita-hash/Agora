@@ -129,7 +129,7 @@ function exAct(act, v, el) {
       var at = s.ex.chk.indexOf(i);
       if (el.checked && at < 0) { s.ex.chk.push(i); if (s.ex.xpd.indexOf(i) < 0) { s.ex.xpd.push(i); addXp(3); } } else if (!el.checked && at >= 0) s.ex.chk.splice(at, 1);
       persist(); return true;
-    case 'ex-resume': st.type = 'express'; if (ex.phase === 'speak') exEnterSpeak(); go('studio'); return true;
+    case 'ex-resume': st.type = 'express'; st.screen = 'ex'; if (ex.phase === 'speak') exEnterSpeak(); go('studio'); return true;
     case 'ex-proof': pwa.prefill = v; go('proofs'); return true;
   }
   return false;
