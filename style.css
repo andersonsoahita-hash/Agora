@@ -105,10 +105,17 @@ pre.brief{white-space:pre-wrap;background:var(--surface2);border-radius:10px;pad
 .exgrp{display:flex;flex-direction:column;gap:6px}
 
 
-.exsel{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:left;font:inherit;color:inherit;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer}
-.exsel small{display:block;color:var(--muted);font-size:.75rem}.exsel b{font-size:1.05rem}.exsel i{font-style:normal;color:var(--accent);font-size:.85rem;white-space:nowrap}
-.exitem{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;font:inherit;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer}
-.exitem span{color:var(--muted);font-size:.8rem}.exitem.on{border-color:var(--accent);background:var(--surface2)}.exitem.hot b{color:var(--accent)}
+
+.exgrp{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.exgrp .eyebrow{grid-column:1/-1;margin-top:6px}
+.exitem{display:flex;flex-direction:column;gap:2px;text-align:left;font:inherit;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;min-width:0}
+.exitem b{font-size:.95rem;line-height:1.25}.exitem b em{font-style:normal;color:var(--accent)}
+.exitem span{color:var(--muted);font-size:.75rem;line-height:1.3}
+.exitem.on{border-color:var(--accent);background:var(--surface2);box-shadow:inset 3px 0 0 var(--accent)}
+.exitem.hot b{color:var(--accent)}.exitem.wide{grid-column:1/-1}
+.vsw{display:flex;gap:6px;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:4px}
+.vsw button{flex:1;font:inherit;color:var(--muted);background:transparent;border:0;border-radius:9px;padding:9px 6px;cursor:pointer}
+.vsw button.on{background:var(--fg);color:var(--bg)}
 
 /* ===== Polices hébergées (aucun appel externe) ===== */
 @font-face{font-family:'Dancing Script';font-weight:700;font-style:normal;font-display:swap;src:url(fonts/dancing-script-latin-700-normal.woff2) format('woff2')}

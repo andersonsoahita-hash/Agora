@@ -1,5 +1,5 @@
 /* Agora — service worker (généré par build.js, ne pas éditer à la main) */
-const CACHE = 'agora-926db0f03b';
+const CACHE = 'agora-4bd71ccc5f';
 const FILES = [
  "./",
  "index.html",
@@ -17,12 +17,7 @@ const FILES = [
  "icons/icon-512.png",
  "icons/icon-maskable-512.png",
  "icons/apple-touch-icon.png",
- "icons/mark.svg",
- "gestuelle/",
- "gestuelle/index.html",
- "gestuelle/engine.js",
- "gestuelle/analysis.js",
- "gestuelle/voice.js"
+ "icons/mark.svg"
 ];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => Promise.all(FILES.map(f => c.add(new Request(f, { cache: 'reload' }))))));

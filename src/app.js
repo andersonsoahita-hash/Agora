@@ -19,7 +19,7 @@ function byId(arr, id) { for (var i = 0; i < arr.length; i++) if (arr[i].id === 
 function today() { return new Date().toISOString().slice(0, 10); }
 
 /* ---------- état + stockage ---------- */
-var S = { goals: [], sessions: [], done: {}, quiz: {}, type: null, proofs: [], prep: [], erist: { best: 0 }, xp: 0, days: [], badges: [], why: null, angles: '', set: { sr: false }, since: 0, lastExport: 0 };
+var S = { gimp: [], goals: [], sessions: [], done: {}, quiz: {}, type: null, proofs: [], prep: [], erist: { best: 0 }, xp: 0, days: [], badges: [], why: null, angles: '', set: { sr: false }, since: 0, lastExport: 0 };
 var cap = { db: null, sample: null, downloads: null, uid: null }; /* PWA : aucune IA, aucun service distant */
 Object.freeze(cap); /* verrouillé : aucun appel IA possible depuis l’appli */
 var saveTimer = null;
@@ -58,7 +58,22 @@ function drawTabs() {
     return '<button data-act="tab" data-v="' + t[0] + '" class="' + (view.tab === t[0] ? 'on' : '') + '" aria-label="' + t[1] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + t[2] + '</svg>' + t[1] + '</button>';
   }).join('');
 }
+function gestImport() {
+  var list = gestHist(), last = null;
+  list.slice().reverse().forEach(function (h) {
+    if (!h.exo || !h.an || S.gimp.indexOf(h.id) >= 0) return;
+    S.gimp.push(h.id); S.gimp = S.gimp.slice(-60);
+    var rec = { id: 'g' + h.id, date: String(h.date).slice(0, 10), sujet: h.exo.sujet || h.exo.nom || 'Exercice filmé', stance: h.exo.stance || undefined, type: h.exo.type, dur: h.exo.dur || h.duree, sig: h.an.sig || null, txt: h.an.txt || null, transcript: h.an.text || '', pil: h.an.pil || {}, gest: { id: h.id, score: h.score, prio: h.prio || [] }, audioId: null };
+    if (!byId(D.exerciseTypes, rec.type)) rec.type = 'mot';
+    S.sessions.unshift(rec); S.sessions = S.sessions.slice(0, 200); touchDay(); addXp(15 + (rec.sig ? 10 : 0) + (rec.txt ? 5 : 0)); last = rec.id;
+  });
+  if (last) persist();
+  return last;
+}
 function render() {
+  try {
+    gestImport();
+  } catch (e) {}
   drawTabs();
   var f = { home: vHome, studio: vStudio, course: vCourse, orators: vOrators, prep: vPrep, proofs: vProofs, settings: vSettings }[view.tab] || vHome;
   try { root.innerHTML = f(); } catch (e) { errLog.push('render: ' + (e && e.message)); root.innerHTML = '<div class="stack"><div class="card"><h3>Un écran n’a pas pu s’afficher</h3><p class="muted small">Tes données sont intactes.</p><button class="btn" data-act="tab" data-v="home">Retour à l’accueil</button></div></div>'; }
@@ -124,19 +139,17 @@ function catsHtml() {
   }).join('') + '</div></div>';
 }
 var EX_GROUPS = [['S’échauffer', ['mot', 'qr']], ['Structurer', ['argumenter', 'connecteurs', 'recit']], ['Convaincre', ['debat']], ['Aller plus loin', ['discours', 'lecture', 'express']]];
-function exItemBtn(x) { return '<button class="exitem' + (x.id === st.type ? ' on' : '') + '" data-act="st-type" data-v="' + x.id + '"><b>' + esc(x.nom) + '</b><span>' + esc(x.modele || '') + '</span></button>'; }
+function exItemBtn(x) { var on = x.id === st.type; return '<button class="exitem' + (on ? ' on' : '') + '" data-act="st-type" data-v="' + x.id + '"' + (on ? ' aria-pressed="true"' : '') + '><b>' + esc(x.nom) + (on ? ' <em>✓</em>' : '') + '</b><span>' + esc(x.modele || '') + '</span></button>'; }
 function exGroupsHtml() {
-  var all = exOrdered(), used = {}, cur = byId(all, st.type), open = st.exOpen !== false;
-  var h = '<button class="exsel" data-act="ex-toggle" aria-expanded="' + open + '"><span><small>Exercice choisi</small><b>' + esc(cur ? cur.nom : 'Choisis un exercice') + '</b></span><i>' + (open ? 'Fermer ▴' : 'Changer ▾') + '</i></button>';
-  if (!open) return h;
+  var all = exOrdered(), used = {}, h = '';
   EX_GROUPS.forEach(function (g) {
     var items = g[1].map(function (id) { return byId(all, id); }).filter(Boolean); items.forEach(function (x) { used[x.id] = 1; });
     if (items.length) h += '<div class="exgrp"><div class="eyebrow">' + g[0] + '</div>' + items.map(exItemBtn).join('') + '</div>';
   });
   var rest = all.filter(function (x) { return !used[x.id]; });
   if (rest.length) h += '<div class="exgrp"><div class="eyebrow">Autres</div>' + rest.map(exItemBtn).join('') + '</div>';
-  h += '<div class="exgrp"><div class="eyebrow">Corps (caméra)</div><button class="exitem hot" data-act="gest-open"><b>Gestuelle</b><span>Te filmer : mains, posture, regard, voix et discours</span></button></div>';
-  return h;
+  h += '<div class="exgrp"><div class="eyebrow">Corps (caméra)</div><button class="exitem hot wide" data-act="gest-open"><b>Gestuelle</b><span>Te filmer : mains, posture, regard, voix et discours</span></button></div>';
+  return h + '<div id="exDetail"></div>';
 }
 function nextExFor(adv) {
   var t = adv && adv[0] ? adv[0][0] : '';
@@ -193,7 +206,7 @@ function pillarsHtml(p) {
 }
 
 /* ---------- STUDIO ---------- */
-var st = { type: 'argumenter', dur: 60, sujet: null, rec: null, blob: null, audio: null, transcript: '', status: '', busy: false, result: null, recSec: 0, recMs: 0, recog: null, lastSpan: null, steps: false };
+var st = { vid: (function () { try { return localStorage.getItem('ab_vid') === '1'; } catch (e) { return false; } })(), type: 'argumenter', dur: 60, sujet: null, rec: null, blob: null, audio: null, transcript: '', status: '', busy: false, result: null, recSec: 0, recMs: 0, recog: null, lastSpan: null, steps: false };
 function newSubject() {
   if (st.type === 'lecture') return;
   if (st.type === 'express') { st.sujet = ex.theme; return; }
@@ -217,9 +230,9 @@ function vStudio() {
   if (st.type === 'express') { h += exPhaseHtml(); if (ex.phase !== 'speak') return h + '</div>'; }
   h += objPanelHtml();
   h += '<div class="card stack" id="recCard">' + recHtml() + '</div>';
-  h += '<div class="card stack" id="recLib"></div>';
-  h += '<div class="card stack"><div class="eyebrow">Transcription (pour analyser les mots)</div><textarea id="trIn" placeholder="' + (SR_API && CAN_MIC && S.set && S.set.sr ? 'Elle se remplit pendant l’enregistrement (transcription en ligne activée). Tu peux la corriger.' : 'Écris ou colle ici le texte de ce que tu as dit. Sans texte, seule la voix est analysée.') + '">' + esc(st.transcript) + '</textarea></div>';
-  h += '<button class="btn" id="goAnalyse" data-act="analyse"' + ((st.blob || st.transcript.trim()) ? '' : ' disabled') + '>Analyser</button><div id="stStatus" class="muted small">' + esc(st.status) + '</div>';
+  if (!st.vid) h += '<div class="card stack" id="recLib"></div>';
+  if (!st.vid) h += '<div class="card stack"><div class="eyebrow">Transcription (pour analyser les mots)</div><textarea id="trIn" placeholder="' + (SR_API && CAN_MIC && S.set && S.set.sr ? 'Elle se remplit pendant l’enregistrement (transcription en ligne activée). Tu peux la corriger.' : 'Écris ou colle ici le texte de ce que tu as dit. Sans texte, seule la voix est analysée.') + '">' + esc(st.transcript) + '</textarea></div>';
+  if (!st.vid) h += '<button class="btn" id="goAnalyse" data-act="analyse"' + ((st.blob || st.transcript.trim()) ? '' : ' disabled') + '>Analyser</button><div id="stStatus" class="muted small">' + esc(st.status) + '</div>';
   h += '</div>';
   return h;
 }
@@ -227,8 +240,21 @@ function remainLabel() { var r = st.timerOn ? Math.max(0, st.dur - st.recSec) : 
 function timerHtml() {
   return '<div class="timer' + (st.ended ? ' ended' : '') + '" id="tmr" aria-live="off">' + remainLabel() + '</div><div class="bar"><i id="tmrBar" style="width:' + Math.min(100, Math.round(100 * (st.recSec || 0) / st.dur)) + '%"></i></div><div class="small muted" id="tmrMsg" style="text-align:center">' + (st.ended ? 'Temps écoulé.' : 'Durée choisie : ' + durLabel(st.dur)) + '</div>';
 }
+function vidSwitchHtml() { return '<div class="vsw"><button class="' + (!st.vid ? 'on' : '') + '" data-act="vid-set" data-v="0">🎙 Audio seul</button><button class="' + (st.vid ? 'on' : '') + '" data-act="vid-set" data-v="1">🎥 Avec vidéo</button></div>'; }
+function gestExoOpts() {
+  var e = st.type === 'express', nom = (byId(D.exerciseTypes, st.type) || {}).nom || st.type;
+  return { type: st.type, nom: nom, sujet: (e ? ex.theme : st.sujet) || '', stance: st.type === 'debat' && st.stance ? st.stance : '', dur: e ? exPlan(ex.T).speak : st.dur };
+}
+function gestLaunch(o) {
+  o = o || {}; o.demo = /[?&]gdemo=1/.test(location.search); o.ns = location.pathname.replace(/[^\/]*$/, '');
+  o.onDone = function (h) { var id = gestImport(); if (id) view = { tab: 'studio', sub: { result: id } }; };
+  o.onClose = function () { render(); };
+  if (window.AGGEST) window.AGGEST.open(o);
+}
 function recHtml() {
-  var h = timerHtml();
+  var h = vidSwitchHtml();
+  if (st.vid) return h + '<button class="btn" data-act="gest-exo">Filmer cet exercice</button><p class="muted small" style="margin:0">Même sujet, même durée. En plus de ta voix et de tes mots, l’appli regarde tes mains, ta posture et ton regard, puis te montre sur la vidéo les moments à corriger. Le résultat revient ici.</p>';
+  h += timerHtml();
   if (CAN_MIC) {
     h += '<button class="rec' + (st.rec ? ' live' : '') + '" data-act="rec-toggle" aria-label="' + (st.rec ? 'Arrêter' : 'Enregistrer') + '">' + (st.rec ? 'Stop' : 'REC') + '</button>';
     h += '<p class="muted small" style="text-align:center;margin:0">' + esc(D.recordTips.standalone) + ' L’enregistrement s’arrête tout seul quand le temps est écoulé.</p>';
@@ -400,6 +426,7 @@ function vResult(id) {
   var a = s.sig, t = s.txt, h = '<div class="top"><div><div class="eyebrow">' + esc(s.date) + ' · ' + esc(durLabel(s.dur)) + '</div><h1>Résultat</h1></div><button class="btn small ghost" data-act="back">Fermer</button></div><div class="stack">';
   h += '<div class="card"><h3>' + esc(s.sujet) + '</h3>' + pillarsHtml(s.pil) + pilEvHtml(s) + '</div>';
   h += discResultHtml(s);
+  if (s.gest) h += '<div class="card"><div class="eyebrow">Gestuelle</div><h3>' + s.gest.score + ' / 100</h3>' + (s.gest.prio && s.gest.prio.length ? '<p class="muted small" style="margin:0 0 8px">À corriger : ' + s.gest.prio.map(esc).join(' · ') + '</p>' : '') + '<button class="btn" data-act="gest-view" data-v="' + s.gest.id + '">Voir la vidéo et les moments à corriger</button></div>';
   h += exResultHtml(s);
   h += objResultHtml(s);
   h += '<div class="card"><h3>À travailler en premier</h3>' + adviceList(a, t).slice(0, 3).map(function (x, i) { return '<div class="metric"><span><b>' + (i + 1) + '. ' + esc(x[0]) + '</b><br><span class="muted small">' + esc(x[1]) + '</span></span></div>'; }).join('') + (function () { var n = nextExFor(adviceList(a, t)); return '<div class="callout" style="margin-top:10px"><b>Exercice conseillé : ' + esc(n[1]) + '</b><br>' + esc(n[2]) + '</div><button class="btn" style="margin-top:8px" data-act="ex-go" data-v="' + n[0] + '">Faire cet exercice</button>'; })() + '</div>';
@@ -559,15 +586,17 @@ document.addEventListener('click', function (ev) {
   if (exAct(act, v, el) || objAct(act, v, el) || pwaAct(act, v, el, ev) || prepAct(act, v, el) || eristAct(act, v)) return;
   switch (act) {
     case 'tab': go(v); break;
-    case 'ex-toggle': st.exOpen = st.exOpen === false; render(); break;
+    case 'vid-set': st.vid = v === '1'; try { localStorage.setItem('ab_vid', st.vid ? '1' : '0'); } catch (e) {} render(); break;
+    case 'gest-exo': gestLaunch({ exo: gestExoOpts() }); break;
     case 'ex-go': view = { tab: 'studio', sub: null }; setExType(v); render(); window.scrollTo(0, 0); break;
-    case 'gest-open': location.href = 'gestuelle/'; break;
+    case 'gest-open': gestLaunch({}); break;
+    case 'gest-view': gestLaunch({ open: v }); break;
     case 'reco': var g = JSON.parse(v); go(g[0], g[1]); break;
     case 'goal-add': var gi = document.getElementById('goalIn'); if (gi && gi.value.trim()) { S.goals.push({ id: uid(), t: gi.value.trim(), done: false }); persist(); render(); } break;
     case 'goal-toggle': S.goals.forEach(function (x) { if (x.id === v) { x.done = !x.done; if (x.done) addXp(20); } }); persist(); render(); break;
     case 'goal-del': S.goals = S.goals.filter(function (x) { return x.id !== v; }); persist(); render(); break;
     case 'open-session': view = { tab: 'studio', sub: { result: v } }; render(); window.scrollTo(0, 0); break;
-    case 'st-type': setExType(v); render(); break;
+    case 'st-type': setExType(v); render(); var dd = document.getElementById('exDetail'); if (dd && dd.scrollIntoView) dd.scrollIntoView({ behavior: 'smooth', block: 'start' }); break;
     case 'st-dur': if (st.rec || st.timerOn) break; st.dur = +v; st.ended = false; st.recSec = 0; render(); break;
     case 'st-new': newSubject(); render(); break;
     case 'rec-toggle': if (!st.rec) objPrime(); st.rec ? endTimer(false) : startRec(); break;
