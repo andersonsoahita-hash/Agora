@@ -410,7 +410,7 @@ $('#go').onclick=async()=>{
   c.classList.remove('on');
   $('#flip').hidden=true;$('#orBtn').hidden=true;$('#rotBtn').hidden=true;$('#camBtn').hidden=true;$('#camSet').hidden=true;
   try{if(window.MediaRecorder&&stream.getAudioTracks){const cand=['video/mp4;codecs=avc1,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];const m=cand.find(x=>MediaRecorder.isTypeSupported(x));
-    const cs=proc.captureStream();recTrack=cs.getVideoTracks()[0]||null;const rs=new MediaStream([...cs.getVideoTracks(),...stream.getAudioTracks()]);rec=new MediaRecorder(rs,m?{mimeType:m,videoBitsPerSecond:2500000}:undefined);recMime=rec.mimeType||m||'video/webm';rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};rec.start(1000);}}catch(e){rec=null;console.error(e);}
+    const rawT=stream.getVideoTracks()[0],useRaw=!!(rawT&&vid.videoWidth&&((vid.videoWidth>vid.videoHeight)===(S.orient==='h'))&&rotUser===0&&(+S.zoom||1)<=1);/* Safari : on enregistre la caméra directement quand le cadrage ne change pas (l’enregistrement du canvas peut rester figé) */let vts;if(useRaw){vts=[rawT];recTrack=null;}else{const cs=proc.captureStream();recTrack=cs.getVideoTracks()[0]||null;vts=cs.getVideoTracks();}const rs=new MediaStream([...vts,...stream.getAudioTracks()]);rec=new MediaRecorder(rs,m?{mimeType:m,videoBitsPerSecond:2500000}:undefined);recMime=rec.mimeType||m||'video/webm';rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};rec.start(1000);}}catch(e){rec=null;console.error(e);}
   tStart=performance.now();t0perf=tStart;lastVT=-1;running=true;
   $('#stop').hidden=false;$('#stop').textContent='Terminer';startTP();
 };
