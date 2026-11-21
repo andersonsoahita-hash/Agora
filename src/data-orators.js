@@ -231,6 +231,41 @@ window.AO_DATA.orators = [
     ],
     essai: { label: 'Le chroniqueur radio', type: 'debat', duree: 120, consigne: 'Choisis un fait d’actualité qui t’a marqué. Raconte-le factuellement (30 s), analyse ce qu’il révèle (45 s), puis donne ton opinion argumentée (45 s), sans texte écrit. Enregistre-toi.' },
     sources: []
+  },
+  {
+    id: 'andriamasy', nom: 'Steve Andriamasy (Epistolier)', epoque: 'XXIe siècle', lieu: 'Madagascar', tags: ['Contemporain', 'Madagascar', 'Pédagogie', 'Débat'],
+    genre: 'Art oratoire, coaching, formation', archetype: 'pedagogue',
+    discours: { titre: 'LIFT Speaker Bureau, cabinet d’art oratoire', date: '2022', cadre: 'Cabinet de formation, de coaching et de conférences' },
+    contexte: 'Rappeur et slameur sous le nom d’Epistolier, il découvre l’art oratoire autour de 2013 lors d’un événement Madagaslam. En 2015, il remporte un concours de débat organisé par la Jeune Chambre Internationale. La presse malgache le présente comme l’une des figures de l’art oratoire à Madagascar et comme « plusieurs fois champion national ». En 2022, il crée LIFT Speaker Bureau, qui se décrit comme le premier cabinet d’art oratoire du pays.',
+    parcours: 'Étudiant en droit à l’université d’Antananarivo vers 2017, il représente Madagascar lors d’une finale mondiale du concours End Of The Weak (improvisation, a cappella, performance). En 2019, il est capitaine d’une équipe championne de débat de la région de l’océan Indien. Il anime des conférences, des formations et des coachings, et continue de publier de la musique. Les articles de presse ne précisent ni le nombre ni les années de ses titres nationaux.',
+    oeuvres: [
+      { titre: 'LIFT Speaker Bureau', date: '2022', note: 'Cabinet : formation, coaching, conférences, négociation, gestion de conflits, éducation financière.' }
+    ],
+    techniques: [
+      { nom: 'Le fond avant la forme', texte: 'Collecter des informations solides et maîtriser son sujet : la manière de dire ne compense pas un contenu vide. Il prépare chaque intervention pendant deux à trois semaines (d’après la presse).' },
+      { nom: 'S’entraîner comme on nage', texte: 'Il compare l’art oratoire à la natation : on progresse en pratiquant, le plus souvent possible, et en acceptant le regard des autres.' },
+      { nom: 'Se connaître, garder son style', texte: 'Il n’y a pas une seule bonne manière de communiquer : développer un style cohérent avec sa personnalité plutôt que copier un modèle.' },
+      { nom: 'Le corps fait partie du message', texte: 'Son travail porte sur le verbal et le non verbal : posture, respiration, gestes, regard, tenue, occupation de l’espace. C’est exactement ce que la Gestuelle d’Agora te fait voir sur ta vidéo.' }
+    ],
+    essai: { label: 'Le parcours en une minute', type: 'recit', duree: 60, consigne: 'Raconte en une minute un moment où un défi (concours, oral, rencontre) t’a fait changer de voie. Une scène précise, une décision, ce que ça a changé. Filme-toi avec la Gestuelle et regarde ce que dit ton corps.' },
+    sources: [{ t: 'L’Écho du Sud : Steve Andriamasy, pionnier de l’art oratoire malgache', u: 'https://www.lechodusud.com/post/steve-andriamasy-pionnier-de-l-art-oratoire-malgache-et-entrepreneur-assum%C3%A9' }, { t: 'no comment® : Steve Andriamasy, du mic au micro', u: 'https://www.nocomment.mg/steve-andriamasy-du-mic-au-micro' }]
+  },
+  {
+    id: 'razafindrazaka', nom: 'Ny Avo Razafindrazaka', epoque: 'XXIe siècle', lieu: 'Madagascar', tags: ['Contemporain', 'Madagascar', 'Débat', 'Droit'],
+    genre: 'Débat universitaire', archetype: 'pedagogue',
+    discours: { titre: 'Finale du concours de débat de La Haye', date: '2024', cadre: 'Concours inter-universitaire, finale contre l’Université catholique de Lille, en visioconférence' },
+    contexte: 'En juin 2024, l’équipe de l’Université catholique de Madagascar (UCM) remporte le concours inter-universitaire de débat de La Haye, organisé par la Corax Foundation avec l’AUF et l’Institut français : la première victoire mondiale de l’université. L’équipe compte Mihaja Josie Andriamagnaregne, Ny Avo Sylvano Razafindrazaka et Lucas Ranaivoson, entraînés par Gaël Rafidison et Joseph Rambinintsoa.',
+    parcours: 'Étudiant en droit et science politique à l’UCM, il est présenté par la presse comme champion malgache d’éloquence en 2023 et comme l’un des trois membres de l’équipe championne du monde en 2024. Il se destine au métier d’avocat.',
+    oeuvres: [
+      { titre: 'Champion du monde de débat (équipe UCM)', date: '2024', note: 'La Haye ; finale sur le thème des Jeux Olympiques, face à l’Université catholique de Lille.' }
+    ],
+    techniques: [
+      { nom: 'Débattre les deux côtés', texte: 'En finale, le thème était connu une semaine avant, mais le camp (pour ou contre) était tiré au sort cinq minutes avant : il faut préparer les deux positions.' },
+      { nom: 'Le travail d’équipe', texte: 'Le débat se gagne à trois : répartition des rôles et des arguments, avec l’appui de coachs. Un orateur seul ne couvre pas tout.' },
+      { nom: 'Convaincre à distance', texte: 'La finale s’est déroulée en visioconférence : regard vers la caméra, voix posée et gestes visibles à l’écran comptent autant qu’en salle.' }
+    ],
+    essai: { label: 'Le camp tiré au sort', type: 'debat', duree: 120, consigne: 'Prends un sujet, tire ton camp au sort, prépare-toi cinq minutes puis défends-le deux minutes. Refais l’exercice avec l’autre camp pour sentir la différence.' },
+    sources: [{ t: 'L’Express de Madagascar : Madagascar devient champion du monde de débat', u: 'https://www.lexpress.mg/2024/06/art-oratoire-madagascar-devient.html' }, { t: 'L’Express de Madagascar : Un futur avocat se distingue', u: 'https://www.lexpress.mg/2024/07/art-oratoire-un-futur-avocat-se.html' }]
   }
 
 ];
