@@ -227,7 +227,7 @@ function vStudio() {
   var h = '<div class="top"><h1>Studio</h1></div><div class="stack">';
   h += gestHero() + exResume();
   h += '<div class="card stack"><h3>Choisis un exercice</h3>' + exGroupsHtml();
-  if (st.type === 'lecture') return h + '</div>' + AGDISC.pickerHTML() + '</div>';
+  if (st.type === 'lecture') return h + '</div><div class="card stack"><div class="eyebrow">Avec la caméra</div><p class="muted small" style="margin:0">Lis un discours prêt à l’emploi au prompteur en te filmant : gestes, posture, regard et voix sont analysés.</p><button class="btn" data-act="gest-lec">🎥 Lire un discours avec la caméra</button></div>' + AGDISC.pickerHTML() + '</div>';
   if (st.type !== 'express') h += '<div class="row">' + D.durations.map(function (d) { return '<button class="chip' + (d === st.dur ? ' on' : '') + '" data-act="st-dur" data-v="' + d + '">' + durLabel(d) + '</button>'; }).join('') + '</div>';
   if (st.type !== 'express') h += '<div><div class="eyebrow">' + (st.type === 'mot' ? 'Ton mot' : 'Sujet') + '</div><h2>' + esc(st.sujet) + '</h2>' + (st.type === 'debat' && st.stance ? '<p style="margin:6px 0 0">Tu défends : <span class="pill stance ' + (st.stance === 'POUR' ? 'pour' : 'contre') + '">' + st.stance + '</span></p>' : '') + '<div class="row" style="margin-top:6px"><button class="btn small ghost" data-act="st-new">' + (st.type === 'mot' ? 'Tirer au sort un autre mot' : st.type === 'debat' ? 'Autre sujet et autre camp' : 'Autre sujet') + '</button></div></div>';
   h += '<div class="callout"><b>' + esc(t.modele) + '</b> — ' + esc(t.aide) + '</div>';
@@ -599,6 +599,7 @@ document.addEventListener('click', function (ev) {
     case 'gest-exo': gestLaunch({ exo: gestExoOpts() }); break;
     case 'ex-go': view = { tab: 'studio', sub: null }; setExType(v); render(); window.scrollTo(0, 0); break;
     case 'gest-open': gestLaunch({}); break;
+    case 'gest-lec': gestLaunch({ exo: { type: 'lecture', nom: 'Discours à jouer', sujet: '', stance: '', dur: 0 } }); break;
     case 'gest-view': gestLaunch({ open: v }); break;
     case 'reco': var g = JSON.parse(v); go(g[0], g[1]); break;
     case 'goal-add': var gi = document.getElementById('goalIn'); if (gi && gi.value.trim()) { S.goals.push({ id: uid(), t: gi.value.trim(), done: false }); persist(); render(); } break;
