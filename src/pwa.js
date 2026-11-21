@@ -383,7 +383,7 @@ function importProofsText(name, text) {
 }
 
 /* ---------- RÉGLAGES ---------- */
-function themePref() { return lsGet('ao_theme') || 'auto'; }
+function themePref() { return lsGet('ao_theme') || 'dark'; }
 function applyTheme(p) { var r = document.documentElement; if (p === 'light' || p === 'dark') r.setAttribute('data-theme', p); else r.removeAttribute('data-theme'); try { var m = document.querySelector('meta[name=theme-color]'); } catch (e) {} }
 function vSettings() {
   var tp = themePref();

@@ -213,12 +213,19 @@ function newSubject() {
   if (st.type === 'mot') { st.sujet = pick(D.wordBank); return; }
   var t = byId(D.exerciseTypes, st.type); st.sujet = pick(t.sujets); if (st.type === 'debat') st.stance = pick(['POUR', 'CONTRE']);
 }
+function gestHero() {
+  return '<button class="exhero" data-act="gest-open"><div class="exbadge">Nouveau</div><h2>Analyse de la gestuelle</h2><div class="exsteps"><span><b>1</b> Te filmer</span><i></i><span><b>2</b> Voir tes moments</span><i></i><span><b>3</b> Corriger</span></div><p>Mains, posture, regard, voix et discours : filme-toi sur n’importe quel exercice, l’appli te montre sur la vidéo ce qu’il faut améliorer.</p></button>';
+}
+function exResume() {
+  if (st.type === 'express' || ex.phase === 'setup') return '';
+  return '<button class="card tap" data-act="ex-resume" data-v="express"><div class="eyebrow">Recherche express en cours</div><h3>Reprendre sur « ' + esc(ex.theme) + ' »</h3></button>';
+}
 function vStudio() {
   if (view.sub && view.sub.result) return vResult(view.sub.result);
   if (!st.sujet) newSubject();
   var t = byId(D.exerciseTypes, st.type);
   var h = '<div class="top"><h1>Studio</h1></div><div class="stack">';
-  h += exHero();
+  h += gestHero() + exResume();
   h += '<div class="card stack"><h3>Choisis un exercice</h3>' + exGroupsHtml();
   if (st.type === 'lecture') return h + '</div>' + AGDISC.pickerHTML() + '</div>';
   if (st.type !== 'express') h += '<div class="row">' + D.durations.map(function (d) { return '<button class="chip' + (d === st.dur ? ' on' : '') + '" data-act="st-dur" data-v="' + d + '">' + durLabel(d) + '</button>'; }).join('') + '</div>';
@@ -246,7 +253,9 @@ function gestExoOpts() {
   return { type: st.type, nom: nom, sujet: (e ? ex.theme : st.sujet) || '', stance: st.type === 'debat' && st.stance ? st.stance : '', dur: e ? exPlan(ex.T).speak : st.dur };
 }
 function gestLaunch(o) {
-  o = o || {}; o.demo = /[?&]gdemo=1/.test(location.search); o.ns = location.pathname.replace(/[^\/]*$/, '');
+  o = o || {}; o.exos = D.exerciseTypes.filter(function (x) { return x.id !== 'express' && x.id !== 'lecture'; }).map(function (x) { return { id: x.id, nom: x.nom }; });
+  o.subject = function (type) { var t = byId(D.exerciseTypes, type) || {}; return { sujet: type === 'mot' ? pick(D.wordBank) : pick(t.sujets || ['']), stance: type === 'debat' ? pick(['POUR', 'CONTRE']) : '' }; };
+  o.demo = /[?&]gdemo=1/.test(location.search); o.ns = location.pathname.replace(/[^\/]*$/, '');
   o.onDone = function (h) { var id = gestImport(); if (id) view = { tab: 'studio', sub: { result: id } }; };
   o.onClose = function () { render(); };
   if (window.AGGEST) window.AGGEST.open(o);

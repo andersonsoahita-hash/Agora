@@ -24,7 +24,7 @@ js=rep(js,'let pb=null;','')
 js=rep(js,"const $=s=>root.querySelector(s);","let pb=null;const $=s=>root.querySelector(s);")
 # paramètres venant de l'appli (plus de lecture de l'adresse)
 a=js.index("const APP_VERSION=");b=js.index("const DEMO=")
-js=js[:a]+"const APP_VERSION='int';const EXO=opts.exo||null;const NS=opts.ns||'/';\n"+js[b:]
+js=js[:a]+"const APP_VERSION='int';let EXO=opts.exo||null;const NS=opts.ns||'/';\n"+js[b:]
 js=rep(js,"const DEMO=/[?&]demo=1/.test(location.search);","const DEMO=!!opts.demo;")
 # retour / fermeture
 a=js.index("/* ---- version ---- */");b=js.index("/* ---- réglages")
@@ -39,6 +39,29 @@ js=rep(js,"forVisionTasks('./vendor/wasm')","forVisionTasks(new URL(opts.vendor+
 # écouteurs globaux : sans danger après fermeture
 js=rep(js,"addEventListener('resize',()=>{if($('#s-run').classList.contains('on'))resize();});","const onWinResize=()=>{const g=$('#s-run');if(g&&g.classList.contains('on'))resize();};addEventListener('resize',onWinResize);")
 js=rep(js,"addEventListener('pagehide',()=>cleanup());","addEventListener('pagehide',()=>cleanup());\n__reg(()=>{cleanup();removeEventListener('resize',onWinResize);});")
+
+# ---- choix de l'exercice depuis la Gestuelle
+body=rep(body,'<div class="card" id="exoBanner" hidden>','<div class="card" id="exoPick" style="display:grid;gap:8px"><h3>Exercice</h3><select id="exoSel"><option value="">Libre : je parle de ce que je veux</option></select><div id="exoSubj" class="note" hidden></div><div><button class="btn sec" id="exoNew" style="padding:9px 14px" hidden>Autre sujet</button></div></div>\n  <div class="card" id="exoBanner" hidden>')
+a=js.index("if(EXO){const sj=");b=js.index("show('s-set');}",a)+len("show('s-set');}")
+js=js[:a]+"""const exoSel=$('#exoSel');
+(opts.exos||[]).forEach(x=>{const o=document.createElement('option');o.value=x.id;o.textContent=x.nom;exoSel.appendChild(o);});
+if(EXO&&![...exoSel.options].some(o=>o.value===EXO.type)){const o=document.createElement('option');o.value=EXO.type;o.textContent=EXO.nom||EXO.type;exoSel.appendChild(o);}
+exoSel.value=EXO?EXO.type:'';
+const refreshExo=()=>{
+  if(EXO)EXO.dur=S.dur||0;
+  const sj=EXO?((EXO.sujet?'Sujet : '+EXO.sujet:'')+(EXO.stance?' · tu défends : '+EXO.stance:'')):'';
+  $('#exoBanner').hidden=!EXO;
+  if(EXO){$('#exoT').textContent='Exercice : '+(EXO.nom||EXO.type)+(EXO.dur?' · '+(EXO.dur<60?EXO.dur+' s':Math.round(EXO.dur/6)/10+' min'):'');$('#exoS').textContent=(sj||'Parle librement.')+' Tu seras filmé en entier : gestes, posture, voix et mots sont analysés.';}
+  $('#exoSubj').hidden=!sj;$('#exoSubj').textContent=sj;
+  $('#exoNew').hidden=!(EXO&&opts.subject&&EXO.type!=='lecture');
+  $('#subj').textContent=EXO?(sj||EXO.nom||''):'';$('#subj').hidden=!sj;
+};
+exoSel.onchange=()=>{const v=exoSel.value;if(!v){EXO=null;}else{const s=(opts.subject&&opts.subject(v))||{};EXO={type:v,nom:exoSel.options[exoSel.selectedIndex].textContent,sujet:s.sujet||'',stance:s.stance||'',dur:S.dur||0};}refreshExo();};
+$('#exoNew').onclick=()=>{if(!EXO||!opts.subject)return;const s=opts.subject(EXO.type)||{};EXO.sujet=s.sujet||'';EXO.stance=s.stance||'';refreshExo();};
+$('#g-dur').addEventListener('click',()=>setTimeout(refreshExo,0));
+refreshExo();show('s-set');"""+js[b:]
+js=rep(js,"const EXO=opts.exo||null","let EXO=opts.exo||null") if "const EXO=opts.exo||null" in js else js
+
 # l'écran de départ : une seule consigne (le rappel de l'exercice)
 out='''/* Agora — Gestuelle intégrée (généré par tools/make-gest.py : ne pas éditer à la main). Isolée dans un Shadow DOM : ni styles ni identifiants partagés avec l'appli. */
 (function(){
@@ -51,7 +74,7 @@ window.AGGEST={
     document.body.appendChild(host); var clean=null;
     var close=function(){ if(!cur)return; try{clean&&clean();}catch(e){} host.remove(); cur=null; try{o.onClose&&o.onClose();}catch(e){} };
     cur={close:close};
-    var opts={vendor:o.vendor||'gestuelle/vendor/',exo:o.exo||null,ns:o.ns||'/',demo:!!o.demo,open:o.open||null,close:close,done:function(it){ var h={id:it.id,date:it.date,score:it.r.score.total,duree:it.r.duree,exo:it.exo}; try{o.onDone&&o.onDone(h);}catch(e){} close(); }};
+    var opts={exos:o.exos||null,subject:o.subject||null,vendor:o.vendor||'gestuelle/vendor/',exo:o.exo||null,ns:o.ns||'/',demo:!!o.demo,open:o.open||null,close:close,done:function(it){ var h={id:it.id,date:it.date,score:it.r.score.total,duree:it.r.duree,exo:it.exo}; try{o.onDone&&o.onDone(h);}catch(e){} close(); }};
     var __reg=function(f){clean=f;};
     (async function(){
 %s
