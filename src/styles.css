@@ -118,7 +118,7 @@ pre.brief{white-space:pre-wrap;background:var(--surface2);border-radius:10px;pad
 .vsw button.on{background:var(--fg);color:var(--bg)}
 
 /* Studio simplifié : une étape à la fois */
-.exitem span{display:block}
+.exitem span{display:none}
 details.pick{padding:0 16px}
 details.pick>summary{cursor:pointer;list-style:none;display:flex;flex-direction:column;gap:2px;padding:14px 22px 14px 0;position:relative}
 details.pick>summary::-webkit-details-marker{display:none}

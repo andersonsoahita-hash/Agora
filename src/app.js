@@ -139,7 +139,7 @@ function catsHtml() {
   }).join('') + '</div></div>';
 }
 var EX_GROUPS = [['S’échauffer', ['mot', 'qr']], ['Structurer', ['argumenter', 'connecteurs', 'recit']], ['Convaincre', ['debat']], ['Aller plus loin', ['discours', 'lecture', 'express']]];
-function exItemBtn(x) { var on = x.id === st.type; return '<button class="exitem' + (on ? ' on' : '') + '" data-act="st-type" data-v="' + x.id + '"' + (on ? ' aria-pressed="true"' : '') + '><b>' + esc(x.nom) + (on ? ' <em>✓</em>' : '') + '</b><span>' + esc(x.modele || '') + '</span></button>'; }
+function exItemBtn(x) { var on = x.id === st.type; return '<button class="exitem' + (on ? ' on' : '') + '" data-act="st-type" data-v="' + x.id + '"' + (on ? ' aria-pressed="true"' : '') + '><b>' + esc(x.nom) + (on ? ' <em>✓</em>' : '') + '</b></button>'; }
 function exGroupsHtml() {
   var all = exOrdered(), used = {}, h = '';
   EX_GROUPS.forEach(function (g) {
@@ -237,10 +237,10 @@ function vStudio() {
   if (st.type === 'express') { h += exPhaseHtml(); if (ex.phase !== 'speak') return h + '</div>'; }
   h += '<div class="card stack" id="recCard">' + recHtml() + '</div>';
   if (!st.vid) h += '<button class="btn" id="goAnalyse" data-act="analyse"' + ((st.blob || st.transcript.trim()) ? '' : ' disabled') + '>Analyser</button><div id="stStatus" class="muted small">' + esc(st.status) + '</div>';
-  h += '<details class="more"><summary>Plus d’options</summary><div class="stack">' + objPanelHtml() + info;
+  h += '<div class="card stack opts"><div class="eyebrow">Plus d’options</div>' + objPanelHtml() + info;
   if (!st.vid) h += '<div class="stack" id="recLib"></div>';
   if (!st.vid) h += '<div class="stack"><div class="eyebrow">Transcription (pour analyser les mots)</div><textarea id="trIn" placeholder="' + (SR_API && CAN_MIC && S.set && S.set.sr ? 'Elle se remplit pendant l’enregistrement (transcription en ligne activée). Tu peux la corriger.' : 'Écris ou colle ici le texte de ce que tu as dit. Sans texte, seule la voix est analysée.') + '">' + esc(st.transcript) + '</textarea></div>';
-  h += '</div></details>';
+  h += '</div>';
   h += '</div>';
   return h;
 }
