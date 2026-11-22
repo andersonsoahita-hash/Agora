@@ -664,7 +664,7 @@ document.addEventListener('click', function (ev) {
   var act = el.getAttribute('data-act'), v = el.getAttribute('data-v');
   if (exAct(act, v, el) || objAct(act, v, el) || pwaAct(act, v, el, ev) || prepAct(act, v, el) || eristAct(act, v)) return;
   switch (act) {
-    case 'tab': go(v); break;
+    case 'tab': if (v === 'studio' && !st.rec) { st.screen = 'list'; st.exGroup = null; if (window.AGDISC && AGDISC.reset) AGDISC.reset(); } go(v); break;
     case 'vid-set': st.vid = v === '1'; try { localStorage.setItem('ab_vid', st.vid ? '1' : '0'); } catch (e) {} render(); break;
     case 'gest-exo': AGAMB.stop(); gestLaunch({ exo: gestExoOpts() }); break;
     case 'ex-go': view = { tab: 'studio', sub: null }; setExType(v); render(); window.scrollTo(0, 0); break;
