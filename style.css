@@ -156,6 +156,8 @@ details.more>.stack{padding-bottom:14px}
 
 .extx{background:var(--card,#fff);border:1px solid var(--line,#d9dee8);border-left:4px solid var(--accent,#1e3a8a);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}.extx h2{margin:0;font-size:1.05rem}.extx p{margin:0;line-height:1.55}.extn{display:inline-block;min-width:1.4em;margin-right:8px;font-size:.75rem;font-weight:700;color:var(--accent,#1e3a8a);opacity:.8}
 
+.exgn{display:block;font-size:.72rem;opacity:.7;margin-top:6px;line-height:1.35}.exgc-top{grid-column:1/-1;border-color:var(--accent,#e07a5f)}
+
 /* ===== Polices hébergées (aucun appel externe) ===== */
 @font-face{font-family:'Dancing Script';font-weight:700;font-style:normal;font-display:swap;src:url(fonts/dancing-script-latin-700-normal.woff2) format('woff2')}
 @font-face{font-family:'DM Sans';font-weight:400;font-style:normal;font-display:swap;src:url(fonts/dm-sans-latin-400-normal.woff2) format('woff2')}

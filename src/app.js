@@ -226,7 +226,7 @@ function exListHtml() {
   if (!G.length) { var f = '<div class="exlist">'; all.forEach(function (x) { f += '<button class="excard" data-act="st-type" data-v="' + x.id + '"><span class="excn">' + esc(x.nom) + '</span><span class="excg">›</span></button>'; }); return f + '</div>'; }
   if (!cur) {
     var h = '<div class="exgcs">';
-    G.forEach(function (g) { var n = g.ids.filter(get).length; h += '<button class="exgc" data-act="st-group" data-v="' + g.id + '"><b>' + esc(g.nom) + '</b><span>' + esc(g.d) + '</span><em>' + n + ' exercice' + (n > 1 ? 's' : '') + ' ›</em></button>'; });
+    G.forEach(function (g) { var n = g.ids.filter(get).length; var nm = g.ids.map(get).filter(Boolean).slice(0, 3).map(function (x) { return x.nom; }).join(' · ') + (n > 3 ? ' …' : ''); h += '<button class="exgc' + (g.id === 'charisme' ? ' exgc-top' : '') + '" data-act="st-group" data-v="' + g.id + '"><b>' + esc(g.nom) + '</b><span>' + esc(g.d) + '</span><small class="exgn">' + esc(nm) + '</small><em>' + (g.id === 'discours' ? 'Ouvrir la bibliothèque' : n + ' exercice' + (n > 1 ? 's' : '')) + ' ›</em></button>'; });
     return h + '</div>';
   }
   var o = '<button class="back" data-act="st-group" data-v="">‹ Toutes les catégories</button><div><h2 style="margin:6px 0 2px">' + esc(cur.nom) + '</h2><p class="muted small" style="margin:0 0 8px">' + esc(cur.d) + '</p></div><div class="exlist">';
@@ -249,7 +249,7 @@ function exTextHtml() {
 }
 function vStudio() {
   if (view.sub && view.sub.result) return vResult(view.sub.result);
-  if (!st.screen) st.screen = 'ex';
+  if (!st.screen) st.screen = 'list';
   if (st.screen === 'list') return '<div class="top tcol"><button class="back" data-act="st-screen" data-v="ex" aria-label="Retour">‹ Retour</button><h1>Exercices</h1></div><div class="stack">' + exResume() + exListHtml() + '</div>';
   if (!st.sujet) newSubject();
   var t = byId(D.exerciseTypes, st.type);
