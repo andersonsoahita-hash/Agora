@@ -42,7 +42,7 @@
    "Trois entrées gardées par semaine, le reste est supprimé.",
    "Une entrée n’existe que si tu l’as dite à voix haute."
   ],
-  "exercice": "Ouvre une note sur ton téléphone. Écris cinq lignes aujourd’hui : une phrase utile, deux mots à jouer, un lieu, un public. Relis-les dimanche et garde-en trois.",
+  "exercice": "Pendant sept jours, note chaque soir cinq lignes dans ton téléphone : une phrase utile, deux mots à jouer, un lieu, un public. Dimanche, garde trois lignes et dis-les à voix haute à quelqu’un ou enregistre-les. Réussi = 35 lignes notées, 3 gardées, chacune dite au moins une fois.",
   "quiz": [
    {
     "q": "Combien d’entrées gardes-tu chaque semaine ?",
@@ -147,7 +147,7 @@
    "Environ un jeu de mots toutes les deux minutes.",
    "S’il faut l’expliquer, il n’est pas prêt."
   ],
-  "exercice": "Choisis trois techniques. Pour chacune, écris ta propre phrase sur un sujet que tu connais, dis-la à voix haute et teste-la sur quelqu’un sans l’expliquer.",
+  "exercice": "Choisis trois techniques parmi les dix. Pour chacune, écris une phrase sur un sujet que tu connais, puis dis-la à une personne sans l’expliquer. Réussi = au moins une des trois comprend le jeu de mots seule ; réécris celles qu’elle n’a pas comprises.",
   "quiz": [
    {
     "q": "Que fait un proverbe retourné ?",
@@ -278,7 +278,7 @@
    "Lent, puis normal, puis rapide, puis expressif.",
    "Garde le virelangue raté pour demain."
   ],
-  "exercice": "Virelangue du jour : choisis un niveau, applique le protocole de 5 minutes, enregistre-toi et compte tes erreurs.",
+  "exercice": "Choisis un virelangue de niveau 2. Trois passages lents, trois passages à vitesse normale sans erreur, un passage rapide. Enregistre le rapide puis enchaîne trente secondes de parole libre. Réussi = trois passages normaux sans erreur d’affilée en moins de cinq minutes ; note ton temps pour le battre demain.",
   "quiz": [
    {
     "q": "Dans quel ordre travailler un virelangue ?",
@@ -362,7 +362,7 @@
    "Version simple d’abord, jeu de mots ensuite.",
    "Douze sur quinze valide l’exercice."
   ],
-  "exercice": "Fais l’exercice « Version simple d’abord » dans le Studio sur un sujet de ton choix, enregistre-toi et note-toi avec la grille.",
+  "exercice": "Dans le Studio, lance « Version simple, puis un seul jeu de mots » sur deux minutes. Note-toi sur chaque critère de la grille de la leçon. Refais le lendemain sur le même sujet. Réussi = au moins un critère s’est amélioré entre les deux prises.",
   "quiz": [
    {
     "q": "Quel total valide un exercice avec la grille ?",
@@ -425,7 +425,7 @@
    "Le style se trouve en essayant, pas en imitant.",
    "Les créateurs divergent : teste par toi-même."
   ],
-  "exercice": "Écris, puis dis, la même idée de trois façons : simple, avec un jeu de mots, plus lyrique. Laquelle sonne comme toi ?",
+  "exercice": "Choisis une idée en une phrase. Écris-la en trois versions : simple, avec un jeu de mots, plus lyrique. Enregistre les trois et fais voter deux personnes sans leur dire ta préférence. Réussi = tu expliques en une phrase pourquoi la version retenue sonne comme toi.",
   "quiz": [
    {
     "q": "Selon Pierre, que vaut le jeu de mots ?",
@@ -517,7 +517,7 @@
    "Change le lieu, la durée et l’anecdote à chaque fois.",
    "Un jeu de mots doit servir l’idée."
   ],
-  "exercice": "Lis le texte modèle à voix haute avec de vrais silences. Puis écris ta version sur le même plan, avec ton lieu et ton anecdote, et dis-la en trois minutes.",
+  "exercice": "Lis le texte modèle à voix haute en marquant les silences au crayon. Écris ensuite ta version sur le même plan : ton lieu, une anecdote vraie, trois idées, un appel, environ 350 mots. Dis-la en trois minutes chronométrées. Réussi = durée entre 2 min 40 et 3 min 20, un seul jeu de mots, anecdote vraie.",
   "quiz": [
    {
     "q": "Que doit-on changer à chaque fois ?",
