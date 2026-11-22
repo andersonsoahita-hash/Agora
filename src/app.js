@@ -564,7 +564,7 @@ function box(cls, label, body) { return '<div class="box ' + cls + '"><b>' + lab
 function vLesson(id) {
   var l = byId(D.lessons, id); if (!l) return '';
   var idx = D.lessons.indexOf(l), prev = D.lessons[idx - 1], next = D.lessons[idx + 1];
-  var h = '<div class="top"><button class="btn small ghost" data-act="course-back">← Cours</button><span class="pill">' + l.min + ' min</span></div><div class="stack">';
+  var h = '<div class="top"><button class="btn small ghost" data-act="course-back">← Cours</button><span class="row"><button class="btn small" data-slopen="' + l.id + '">▶ Diaporama</button><span class="pill">' + l.min + ' min</span></span></div><div class="stack">';
   h += '<div><div class="eyebrow">' + (l.src === 'schop' ? 'Éristique ' : l.m === 'cx' ? 'Atelier ' : 'Chapitre ') + esc(l.n) + (l.src === 'livre' ? ' · ton Tome I' : l.src === 'schop' ? ' · d’après Schopenhauer, reformulé par l’appli' : ' · rédigé par l’appli') + '</div><h1>' + esc(l.titre) + '</h1></div>';
   if (l.accroche) h += '<p class="lead">' + esc(l.accroche) + '</p>';
   h += '<div class="card prose">' + l.sections.map(function (sec) { return '<h3>' + esc(sec.h) + '</h3>' + sec.p.map(function (p) { return '<p>' + esc(p) + '</p>'; }).join(''); }).join('') + '</div>';
@@ -614,6 +614,7 @@ function vOrators() {
   if (view.sub) return vOrator(view.sub);
   var tags = ['Tous'], i;
   D.orators.forEach(function (o) { o.tags.forEach(function (t) { if (tags.indexOf(t) < 0) tags.push(t); }); });
+  tags = ['Tous'].concat(tags.slice(1).sort(function (a, b) { return a.localeCompare(b, 'fr'); }));
   var h = '<div class="top"><h1>Orateurs</h1></div><div class="stack">';
   var A2 = S.type ? D.archetypes[S.type] : null;
   h += '<button class="card tap" data-act="type-open"><div class="eyebrow">Ton type d’orateur</div><h3>' + (A2 ? esc(A2.nom) : 'Découvrir mon type') + '</h3><p class="muted small" style="margin:6px 0 0">' + (A2 ? esc(A2.formule) + ' · refaire le test' : '8 questions. Modèle propre à l’appli, pas une typologie scientifique.') + '</p></button>';

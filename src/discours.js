@@ -11,7 +11,7 @@ function isDir(l){return l.charAt(0)==='['}
 function dirSec(l){var m=/(\d+)\s*seconde/.exec(l);if(m)return +m[1];if(/longue/i.test(l))return 3;if(/pause/i.test(l))return 1.6;if(/respir/i.test(l))return 2.6;return 1.4}
 function mins(d){var t=0;d.l.forEach(function(l){t+=isDir(l)?dirSec(l):words(l)/2.2+.4});return Math.max(1,Math.round(t/60*2)/2)}
 function fmt(m){return m<1.25?'1 min':(String(m).replace('.',',')+' min')}
-var SEC=null;
+DATA.sections.sort(function(a,b){return a.t.localeCompare(b.t,'fr')});var SEC=null;
 function pickerHTML(){
   if(!SEC){return '<div class="dc-card dc-pick"><div class="dc-eb2">Discours à jouer · '+DATA.discours.length+' discours</div><p class="dc-note" style="margin:2px 0 8px">Choisis une situation, puis un discours.</p><div class="dc-tiles">'+DATA.sections.map(function(s){var n=DATA.discours.filter(function(d){return d.s===s.id}).length;return '<button type="button" class="dc-tile" data-dcsec="'+s.id+'"><b>'+esc(s.t)+'</b><span>'+esc(s.d||'')+'</span><em>'+n+' discours ›</em></button>'}).join('')+'</div><p class="dc-note">Textes écrits pour s’entraîner : noms, lieux et chiffres inventés.</p></div>'}
   var sec=DATA.sections.filter(function(s){return s.id===SEC})[0]||{t:'',d:''};

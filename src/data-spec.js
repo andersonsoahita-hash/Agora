@@ -7,3 +7,5 @@ D.lessons.forEach(function(l){var mv=P.move[l.id];if(mv){l.m=mv[0];l.n=mv[1];}el
 P.new.forEach(function(l){if(!D.lessons.some(function(x){return x.id===l.id;}))D.lessons.push(l);});
 /* regrouper les 4 modules à la suite */var sp=D.modules.filter(function(m){return order.indexOf(m.id)>-1;});D.modules=D.modules.filter(function(m){return order.indexOf(m.id)<0;}).concat(order.map(function(id){return sp.filter(function(m){return m.id===id;})[0];}).filter(Boolean));
 })();
+(function(){var D=window.AO_DATA;if(D&&D.orators)D.orators.sort(function(a,b){return String(a.nom).localeCompare(String(b.nom),'fr')});})();
+(function(){var D=window.AO_DATA;if(!D||!D.lessons)return;D.lessons.forEach(function(l){(l.sections||[]).forEach(function(s){if(!Array.isArray(s.p))s.p=[s.p]})});var t=['Tous'];})();
