@@ -247,7 +247,7 @@ function txStat(tx) {
   });
   return { words: words, pauses: pauses, sec: Math.round(t), cum: cum };
 }
-function txFit(tx) { var s = txStat(tx); return s.sec <= st.dur * 1.05 && s.sec >= st.dur * 0.4; }
+function txFit(tx) { if (tx.d) return tx.d === st.dur || (st.dur === 300 && tx.d === 120); var s = txStat(tx); return s.sec <= st.dur * 1.05 && s.sec >= st.dur * 0.4; }
 function txIdx(L) { var f = []; L.forEach(function (t, i) { if (txFit(t)) f.push(i); }); return f; }
 function exTextHtml() {
   var L = exTexts(); if (!L) return '';
@@ -255,7 +255,7 @@ function exTextHtml() {
   var h = '<div class="vsw"><button class="' + (mode === 'read' ? 'on' : '') + '" data-act="st-mode" data-v="read">Lire un texte écrit</button><button class="' + (mode === 'free' ? 'on' : '') + '" data-act="st-mode" data-v="free">Improviser</button></div>';
   if (mode !== 'read') return h;
   var s = txStat(tx), fits = txIdx(L), over = s.sec > st.dur * 1.05, under = s.sec < st.dur * 0.4;
-  var verdict = over ? 'Trop long pour ' + durLabel(st.dur) + ' : lis jusqu’au trait doré, ou choisis une durée plus longue.' : under ? 'Court pour ' + durLabel(st.dur) + ' : lis-le deux fois en changeant le ton, ou passe au texte suivant.' : 'Adapté à ' + durLabel(st.dur) + '.';
+  var verdict = tx.d ? (txFit(tx) ? 'Écrit pour ' + durLabel(tx.d) + ' : prêt à lire tel quel.' : 'Écrit pour ' + durLabel(tx.d) + '. Choisis cette durée ou passe au texte suivant.') : over ? 'Trop long pour ' + durLabel(st.dur) + ' : lis jusqu’au trait doré, ou choisis une durée plus longue.' : under ? 'Court pour ' + durLabel(st.dur) + ' : lis-le deux fois en changeant le ton, ou passe au texte suivant.' : 'Adapté à ' + durLabel(st.dur) + '.';
   h += '<div class="extx"><div class="eyebrow">Texte ' + (ti + 1) + ' / ' + L.length + (fits.length ? ' · ' + fits.length + ' adaptés à ' + durLabel(st.dur) : '') + '</div><h2>' + esc(tx.t) + '</h2>';
   h += '<div class="exmeta"><span>' + s.words + ' mots</span><span>≈ ' + fmt(s.sec) + ' à voix posée</span>' + (s.pauses ? '<span>' + s.pauses + ' silence' + (s.pauses > 1 ? 's' : '') + ' à tenir</span>' : '') + '</div>';
   h += '<div class="exverd' + (over || under ? ' warn' : ' ok') + '">' + verdict + '</div>';
@@ -705,7 +705,7 @@ document.addEventListener('click', function (ev) {
     case 'bk-use': var _p = v.split(':'); st.type = _p[0]; st.mode = 'read'; st.ti = +_p[1]; st.sujet = null; st.screen = 'ex'; render(); window.scrollTo(0, 0); break;
     case 'bk-word': var _w = (document.getElementById('bkw') || {}).value; if (_w && _w.trim()) { var _ws = bkGet('ab_carnet_words', []); _ws.push(_w.trim()); bkSet('ab_carnet_words', _ws); render(); } break;
     case 'bk-save': bkSet('ab_carnet_notes', (document.getElementById('bkn') || {}).value || ''); render(); break;
-    case 'st-dur': if (st.rec || st.timerOn) break; st.dur = +v; st.ended = false; st.recSec = 0; render(); break;
+    case 'st-dur': if (st.rec || st.timerOn) break; st.dur = +v; st.ended = false; st.recSec = 0; (function () { var L = exTexts(); if (L) { var f = txIdx(L); if (f.length && f.indexOf((st.ti || 0) % L.length) < 0) st.ti = f[0]; } })(); render(); break;
     case 'st-new': newSubject(); render(); break;
     case 'amb-toggle': if (AGAMB.on()) AGAMB.stop(); else AGAMB.start(st.type); render(); break;
     case 'rec-toggle': AGAMB.stop(); if (!st.rec) objPrime(); st.rec ? endTimer(false) : startRec(); break;
