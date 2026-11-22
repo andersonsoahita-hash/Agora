@@ -573,3 +573,24 @@ function pwaBoot() {
     if (navigator.onLine !== false) fetch('acces.json', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { if (j && j.actif === false) showLock(j.message); }).catch(function () {});
   } catch (e) {}
 }
+
+;(function(){
+  try{
+    var RATES=[0.5,0.75,1,1.25,1.5,2];
+    if(!document.getElementById('spstyle')){var s=document.createElement('style');s.id='spstyle';s.textContent='.spbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0;font-size:14px}.spbar span{opacity:.7;margin-right:2px}.spbar button{min-width:44px;min-height:36px;padding:4px 10px;border-radius:999px;border:1px solid currentColor;background:transparent;color:inherit;font:inherit;cursor:pointer;opacity:.75}.spbar button.on{opacity:1;background:#1f4fd8;border-color:#1f4fd8;color:#fff}';document.head.appendChild(s);}
+    var saved=1;try{saved=parseFloat(localStorage.getItem('ab_rate'))||1;}catch(e){}
+    function add(m){
+      if(m.dataset.sp)return;m.dataset.sp='1';
+      var bar=document.createElement('div');bar.className='spbar';
+      bar.innerHTML='<span>Vitesse</span>'+RATES.map(function(r){return '<button type="button" data-r="'+r+'">'+r+'×</button>';}).join('');
+      function mark(){var cur=m.playbackRate;[].forEach.call(bar.querySelectorAll('button'),function(b){b.classList.toggle('on',Math.abs(parseFloat(b.dataset.r)-cur)<0.01);});}
+      bar.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('button');if(!b)return;e.stopPropagation();var r=parseFloat(b.dataset.r);m.playbackRate=r;m.defaultPlaybackRate=r;try{localStorage.setItem('ab_rate',String(r));}catch(x){}mark();});
+      m.defaultPlaybackRate=saved;m.playbackRate=saved;
+      m.addEventListener('loadedmetadata',function(){m.playbackRate=saved;mark();});
+      m.addEventListener('ratechange',mark);mark();
+      var host=(m.closest&&m.closest('.vwrap'))||m;if(host.parentNode)host.parentNode.insertBefore(bar,host.nextSibling);
+    }
+    function scan(){[].forEach.call(document.querySelectorAll('audio[controls],video[controls]'),add);}
+    new MutationObserver(scan).observe(document.documentElement,{childList:true,subtree:true});scan();
+  }catch(e){}
+})();
