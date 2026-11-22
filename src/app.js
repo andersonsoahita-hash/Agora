@@ -237,6 +237,16 @@ function exListHtml() {
   });
   return o + '</div>';
 }
+function exTexts() { return (D.exerciseTexts && D.exerciseTexts[st.type]) || null; }
+function exTextHtml() {
+  var L = exTexts(); if (!L) return '';
+  var mode = st.mode || 'read'; var ti = (st.ti || 0) % L.length; var tx = L[ti];
+  var h = '<div class="vsw"><button class="' + (mode === 'read' ? 'on' : '') + '" data-act="st-mode" data-v="read">Lire un texte écrit</button><button class="' + (mode === 'free' ? 'on' : '') + '" data-act="st-mode" data-v="free">Improviser</button></div>';
+  if (mode !== 'read') return h;
+  h += '<div class="extx"><div class="eyebrow">Texte ' + (ti + 1) + ' / ' + L.length + '</div><h2>' + esc(tx.t) + '</h2>' + tx.x.map(function (l, i) { return '<p><span class="extn">' + (i + 1) + '</span>' + esc(l) + '</p>'; }).join('') + '</div>';
+  h += '<div class="row"><button class="btn ghost small" data-act="st-text" data-v="-1">‹ Précédent</button><button class="btn ghost small" data-act="st-text" data-v="r">Au hasard</button><button class="btn ghost small" data-act="st-text" data-v="1">Suivant ›</button></div>';
+  return h;
+}
 function vStudio() {
   if (view.sub && view.sub.result) return vResult(view.sub.result);
   if (!st.screen) st.screen = 'ex';
@@ -256,7 +266,8 @@ function vStudio() {
   if (st.type === 'lecture') return h + '<div class="card stack"><div class="eyebrow">Avec la caméra</div><p class="muted small" style="margin:0">Lis un discours prêt à l’emploi au prompteur en te filmant : gestes, posture, regard et voix sont analysés.</p><button class="btn" data-act="gest-lec">🎥 Lire un discours avec la caméra</button></div>' + AGDISC.pickerHTML() + '</div>';
   h += '<div class="card stack"><div class="eyebrow">Prépare-toi</div>';
   if (st.type !== 'express') h += '<div class="row">' + D.durations.map(function (d) { return '<button class="chip' + (d === st.dur ? ' on' : '') + '" data-act="st-dur" data-v="' + d + '">' + durLabel(d) + '</button>'; }).join('') + '</div>';
-  if (st.type !== 'express') h += '<div><div class="eyebrow">' + (st.type === 'mot' ? 'Ton mot' : 'Sujet') + '</div><h2>' + esc(st.sujet) + '</h2>' + (st.type === 'debat' && st.stance ? '<p style="margin:6px 0 0">Tu défends : <span class="pill stance ' + (st.stance === 'POUR' ? 'pour' : 'contre') + '">' + st.stance + '</span></p>' : '') + '<div class="row" style="margin-top:6px"><button class="btn small ghost" data-act="st-new">' + (st.type === 'mot' ? 'Tirer au sort un autre mot' : st.type === 'debat' ? 'Autre sujet et autre camp' : 'Autre sujet') + '</button></div></div>';
+  if (st.type !== 'express' && exTexts()) h += exTextHtml();
+  if (st.type !== 'express' && !(exTexts() && (st.mode || 'read') === 'read')) h += '<div><div class="eyebrow">' + (st.type === 'mot' ? 'Ton mot' : 'Sujet') + '</div><h2>' + esc(st.sujet) + '</h2>' + (st.type === 'debat' && st.stance ? '<p style="margin:6px 0 0">Tu défends : <span class="pill stance ' + (st.stance === 'POUR' ? 'pour' : 'contre') + '">' + st.stance + '</span></p>' : '') + '<div class="row" style="margin-top:6px"><button class="btn small ghost" data-act="st-new">' + (st.type === 'mot' ? 'Tirer au sort un autre mot' : st.type === 'debat' ? 'Autre sujet et autre camp' : 'Autre sujet') + '</button></div></div>';
   h += '<div class="callout"><b>' + esc(t.modele) + '</b> — ' + esc(t.aide) + '</div>';
   if (t.exemple) h += '<details class="callout"><summary><b>Voir un modèle</b></summary><p style="margin:8px 0 0;white-space:pre-line">' + esc(t.exemple) + '</p></details>';
   h += '</div>';
@@ -634,6 +645,8 @@ document.addEventListener('click', function (ev) {
     case 'st-screen': if (st.rec || st.timerOn) break; st.screen = v; render(); window.scrollTo(0, 0); break;
     case 'st-type': setExType(v); render(); window.scrollTo(0, 0); break;
     case 'st-group': st.exGroup = v || null; render(); window.scrollTo(0, 0); break;
+    case 'st-mode': st.mode = v; render(); break;
+    case 'st-text': var _L = exTexts() || []; if (_L.length) { st.ti = v === 'r' ? Math.floor(Math.random() * _L.length) : ((st.ti || 0) + (+v) + _L.length) % _L.length; } render(); break;
     case 'st-dur': if (st.rec || st.timerOn) break; st.dur = +v; st.ended = false; st.recSec = 0; render(); break;
     case 'st-new': newSubject(); render(); break;
     case 'amb-toggle': if (AGAMB.on()) AGAMB.stop(); else AGAMB.start(st.type); render(); break;

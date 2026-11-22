@@ -1,8 +1,8 @@
-/* Module « Vendre à l’oral et se présenter » : veille Naïm Khelif, études vérifiées ou signalées à vérifier, exercices concrets. Aucune phrase d’orateur n’est reprise. */
+/* Module « Vendre à l’oral et personal branding » : veille Naïm Khelif, études vérifiées ou signalées à vérifier, exercices concrets. Aucune phrase d’orateur n’est reprise. */
 (function () {
   var D = window.AO_DATA;
   if (!D || !D.modules || !D.lessons) return;
-  D.modules.push({"id": "ve", "tome": "Veille Agora · Vente et marque personnelle", "titre": "Vendre à l’oral et se présenter", "sous": "Appel de vente, prix, écoute, images, marque personnelle : ce que Naïm Khelif enseigne, ce que les études confirment, ce qui reste à vérifier."});
+  D.modules.push({"id": "ve", "tome": "Veille Agora · Vente et personal branding", "titre": "Vendre à l’oral et personal branding", "sous": "Appel de vente, prix, écoute, images, personal branding : ce que Naïm Khelif enseigne, ce que les études confirment, ce qui reste à vérifier."});
   D.lessons.push.apply(D.lessons, [
  {
   "id": "ve1",
@@ -462,7 +462,7 @@
     "u": "https://www.youtube.com/watch?v=74vtZIxDmVE"
    },
    {
-    "t": "Naïm Khelif, conférence sur la marque personnelle (août 2026)",
+    "t": "Naïm Khelif, conférence sur le personal branding (août 2026)",
     "u": "https://www.youtube.com/watch?v=9h0Kf1GMkAs"
    },
    {
@@ -475,10 +475,10 @@
   "id": "ve7",
   "m": "ve",
   "n": "V7",
-  "titre": "Marque personnelle : positionnement et preuve",
+  "titre": "Personal branding : positionnement et preuve",
   "min": 9,
   "src": "app",
-  "accroche": "La marque personnelle se construit en deux gestes : une promesse précise et des preuves réelles. Le reste est du contenu au service de ces deux gestes.",
+  "accroche": "La personal branding se construit en deux gestes : une promesse précise et des preuves réelles. Le reste est du contenu au service de ces deux gestes.",
   "sections": [
    {
     "h": "Le positionnement",
@@ -546,7 +546,7 @@
   ],
   "sources": [
    {
-    "t": "Naïm Khelif, conférence sur la marque personnelle (août 2026)",
+    "t": "Naïm Khelif, conférence sur le personal branding (août 2026)",
     "u": "https://www.youtube.com/watch?v=9h0Kf1GMkAs"
    },
    {
@@ -625,10 +625,25 @@
     "u": "https://www.youtube.com/watch?v=74vtZIxDmVE"
    },
    {
-    "t": "Naïm Khelif, conférence sur la marque personnelle (août 2026)",
+    "t": "Naïm Khelif, conférence sur le personal branding (août 2026)",
     "u": "https://www.youtube.com/watch?v=9h0Kf1GMkAs"
    }
   ]
  }
 ]);
 })();
+(function(){var D=window.AO_DATA;var L={id:'ve0',m:'ve',n:'V0',titre:'Personal branding : de quoi parle-t-on ?',min:6,src:'app',
+accroche:'Le personal branding, c’est l’image que les autres gardent de toi quand tu n’es pas dans la pièce. Tu en as déjà une.',
+sections:[
+{h:'La définition simple',p:'Le personal branding (ou « marque personnelle ») désigne l’image professionnelle cohérente qu’une personne construit et donne à voir : ce qu’elle sait faire, comment elle se comporte, ce qu’on dit d’elle. Ce n’est pas du faux : c’est choisir, parmi tout ce que tu es, ce que tu veux qu’on retienne.'},
+{h:'D’où vient le terme',p:'L’idée est popularisée en 1997 par Tom Peters, dans un article intitulé « The Brand Called You » (Fast Company) : chacun est le dirigeant de sa propre entreprise, « Moi SA », et doit se soucier de sa réputation comme une marque. Depuis, les blogs marketing (HubSpot, Neil Patel, Blog du Modérateur) l’ont repris pour les réseaux sociaux et la recherche d’emploi.'},
+{h:'Les trois briques',p:'1. L’image : ce que l’on voit de toi (tenue, photo, profil, voix). 2. L’attitude : ta façon d’être avec les autres (écoute, ponctualité, ton). 3. Le contenu : ce que tu dis et montres (posts, réalisations, prises de parole). Les trois doivent raconter la même histoire.'},
+{h:'Authenticité = cohérence',p:'Une marque personnelle solide n’est pas un masque : c’est la cohérence entre ce que tu dis, ce que tu fais et ce que tu montres. Quand les trois divergent, les gens le sentent vite.'},
+{h:'La limite à connaître',p:'Courir après les likes ou copier un personnage qui marche mène à l’épuisement et à la méfiance. Le bon repère : « Est-ce que je pourrais tenir ce personnage dix ans ? »'}],
+retenir:['Le personal branding = l’image cohérente que tu construis et que les autres perçoivent.','Trois briques : image, attitude, contenu.','L’authenticité, c’est la cohérence, pas la perfection.'],
+exercice:'Écris en une phrase : « Pour [qui], je suis la personne qui [quoi], et on peut me faire confiance parce que [preuve]. » Puis dis-la à voix haute, une fois lentement.',
+quiz:[{q:'Que désigne le personal branding ?',o:['Un logo','L’image professionnelle cohérente qu’on construit et qu’on donne à voir','Un compte payant','Un CV'],a:1,e:'C’est la perception que les autres ont de toi, que tu peux choisir de construire.'},
+{q:'Qui a popularisé l’idée en 1997 ?',o:['Tom Peters','Steve Jobs','Neil Patel','Aristote'],a:0,e:'Article « The Brand Called You », Fast Company.'},
+{q:'Une marque personnelle solide repose surtout sur…',o:['Le nombre d’abonnés','La cohérence entre dire, faire et montrer','Un personnage inventé','Des photos retouchées'],a:1,e:'La cohérence crée la confiance.'}],
+sources:[{t:'HubSpot, Personal branding',u:'https://blog.hubspot.fr/sales/personal-branding'},{t:'Neil Patel, Personal branding',u:'https://neilpatel.com/fr/blog/personal-branding/'},{t:'Blog du Modérateur, définition',u:'https://www.blogdumoderateur.com/definitions/personal-branding/'},{t:'Sprout Social, personal brand',u:'https://sproutsocial.com/fr/glossary/personal-brand/'},{t:'Tom Peters, Brand You',u:'https://tompeters.com/brand-you-25th-anniversary/'}]};
+var i=D.lessons.findIndex(function(l){return l.m==='ve';});if(i<0)i=D.lessons.length;D.lessons.splice(i,0,L);})();
