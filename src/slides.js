@@ -7,7 +7,11 @@ var SHELL=`#lv{position:fixed;inset:0;z-index:100001;display:flex!important;flex
 #lv .vpg i{transition:transform .3s cubic-bezier(.2,.8,.2,1);transform-origin:0 50%;width:100%!important;transform:scaleX(0)}
 #lv .btn:not(.ghost){background:linear-gradient(180deg,#c63c24,#a62c18)!important;color:#fff!important}
 #lv .btn.ghost{background:rgba(255,255,255,.08)!important;color:#fff!important;border:1px solid rgba(255,255,255,.3)!important}
-#lstg{contain:layout paint}`;
+#lstg{contain:layout paint}
+.vnav{gap:6px!important;padding:8px 10px max(10px,env(safe-area-inset-bottom))!important}#lv .vnav .btn{flex:1;min-width:0;padding:12px 8px;font-size:14px;white-space:nowrap;text-align:center}
+@media (max-width:640px){#lv .stg{padding:8px!important}#lv .sl{padding:20px 16px!important;border-radius:18px!important;gap:12px!important;min-height:100%}#lv .sl h2{font-size:clamp(23px,7vw,30px)!important;max-width:none!important}#lv .sl .cv{font-size:clamp(30px,9.4vw,40px)!important;max-width:none!important;line-height:1.08;hyphens:manual;word-break:normal;overflow-wrap:break-word}
+#lv .sl .sb{max-width:none!important;font-size:16.5px!important}#lv .sl .bd,#lv .sl .nt,#lv .sl .qt{max-width:none!important}#lv .sl.hasil{display:flex!important;flex-direction:column;gap:8px!important}#lv .il{order:-1;margin-bottom:-4px}#lv .il svg{width:92px!important;max-height:92px}#lv .sl[data-k=tri] .il,#lv .sl[data-k=cover] .il svg{width:92px!important}
+#lv .sl,#lv .sl .sc{justify-content:safe center!important}#lv .sl{overflow:visible!important}#lv ul.ck{display:flex!important;flex-direction:column;gap:12px}#lv .ck li{align-items:flex-start;width:100%}#lv .ck li span{flex:1;min-width:0;font-size:16px}#lv .rq{font-size:clamp(22px,6.6vw,28px)!important;max-width:none!important}#lv .sl .trg{grid-template-columns:1fr!important}#lv .trs svg{max-width:240px;margin:0 auto;display:block}}`;
 var A={S:{online:true},IL:null};
 var D=function(){return window.AO_DATA||window.AGD};
   function hd(x,d){return '<g class="pop" style="--d:'+d+'s"><circle class="f" cx="'+x+'" cy="150" r="16"/><path class="f" d="M'+(x-26)+' 214 Q'+(x-26)+' 172 '+x+' 172 Q'+(x+26)+' 172 '+(x+26)+' 214Z"/></g>'}
@@ -186,7 +190,7 @@ function lgo(i,d){
   [].forEach.call(lstg.querySelectorAll('.cnt'),function(e){var to=+e.dataset.to,dc=+e.dataset.dec,t0=null;function st(ts){if(t0===null)t0=ts;var p=Math.min(1,(ts-t0)/500),v=to*(1-Math.pow(1-p,3));e.textContent=v.toFixed(dc).replace('.',',');if(p<1)requestAnimationFrame(st)}if(d===0)e.textContent=to.toFixed(dc).replace('.',',');else requestAnimationFrame(st)});
 }
 function say(){try{speechSynthesis.cancel();if(!AU)return;var s=lstg.querySelector('.sc'),t=s?s.innerText.replace(/\s+/g,' ').trim():'';if(!t)return;var u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';u.rate=.96;var vs=speechSynthesis.getVoices().filter(function(v){return /^fr/i.test(v.lang)});if(vs.length)u.voice=vs[0];u.onend=function(){if(AU&&LI<SLD.length-1)setTimeout(function(){if(AU)lgo(LI+1,1)},700)};speechSynthesis.speak(u)}catch(e){}}
-function auPaint(){var b=$('#lvau');if(b)b.textContent=AU?'Arrêter l’audio':'Écouter la leçon'}
+function auPaint(){var b=$('#lvau');if(b)b.textContent=AU?'Arrêter':'Écouter'}
 function key(e){if(!host)return;if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}else if(e.key==='ArrowLeft')lgo(LI-1,-1);else if(e.key==='Escape')close()}
 function next(){if(LI>=SLD.length-1)close();else lgo(LI+1,1)}
 function close(){AU=false;try{speechSynthesis.cancel()}catch(e){}if(host){host.remove();host=null;root=null}document.removeEventListener('keydown',key);document.body.style.overflow=''}
@@ -194,7 +198,7 @@ function open(lesson){
   if(!lesson)return;close();CUR=lesson;SLD=genSlides(lesson,'');LS={rv:{}};
   host=document.createElement('div');host.id='slO';host.setAttribute('role','dialog');host.setAttribute('aria-label','Diaporama');
   root=host.attachShadow({mode:'open'});
-  root.innerHTML='<style>'+CSS+SHELL+'</style><div id="lv" class="on"><div class="vw-top"><button class="vx" id="lvx" type="button" aria-label="Fermer la leçon">&#10005;</button><div class="vt"><b id="lvt"></b><span id="lvc"></span></div><span class="vnet" id="lvnet"></span></div><div class="vpg"><i id="lvpg"></i></div><div class="stg" id="lstg"></div><div class="vnav"><button class="btn ghost" id="lvp" type="button">Précédent</button><button class="btn ghost" id="lvau" type="button">Écouter la leçon</button><button class="btn" id="lvn" type="button">Suivant</button></div></div>';
+  root.innerHTML='<style>'+CSS+SHELL+'</style><div id="lv" class="on"><div class="vw-top"><button class="vx" id="lvx" type="button" aria-label="Fermer la leçon">&#10005;</button><div class="vt"><b id="lvt"></b><span id="lvc"></span></div><span class="vnet" id="lvnet"></span></div><div class="vpg"><i id="lvpg"></i></div><div class="stg" id="lstg"></div><div class="vnav"><button class="btn ghost" id="lvp" type="button">Précédent</button><button class="btn ghost" id="lvau" type="button">Écouter</button><button class="btn" id="lvn" type="button">Suivant</button></div></div>';
   document.body.appendChild(host);document.body.style.overflow='hidden';
   lstg=$('#lstg');$('#lvt').textContent=lesson.titre;
   root.addEventListener('click',function(e){var t=e.target;if(!t.closest)return;
