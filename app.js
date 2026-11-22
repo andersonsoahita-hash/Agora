@@ -1,4 +1,4 @@
-window.AGORA_BUILD='aaee7e272a';
+window.AGORA_BUILD='7be2b4c26b';
 /* ============================================================
    Analyse de la voix (signal) et du texte (transcription)
    Tout se calcule dans la page. Aucun audio n'est envoyé nulle part.
@@ -3781,9 +3781,14 @@ window.AO_DATA.recordTips = {
  "analogie": "Idée : se spécialiser aide à être choisi.\nComparaison : un médecin généraliste et un chirurgien du genou : pour une opération du genou, on choisit le chirurgien.\nLimite : « là où l’image s’arrête : un spécialiste peut aussi se couper d’autres clients. »",
  "positionnement": "Trois mots : j’aide à parler.\nPersonne précise : les étudiants en alternance qui présentent un projet devant un jury.\nPreuve : j’ai coaché quatre étudiants, tous ont tenu leur temps de parole et deux ont eu la meilleure note de leur groupe.\nDit en dix secondes : « J’aide les alternants à présenter leur projet sans lire leurs notes. »",
  "story": "Gros résultat : une étudiante est passée de 40 à 70 sur ma grille de diction en six semaines.\nPetits résultats : elle a supprimé ses « euh », elle a tenu 3 minutes sans note.\nMéthode en une phrase : un exercice chronométré chaque jour, enregistré et noté.\nDit en 60 secondes, avec l’accord de la personne.",
- "express": "Thème : l’inflation.\nChercher 3 minutes : définition, causes, effet pour un ménage.\nStructurer : définir, deux causes, un exemple chiffré sourcé.\nExpliquer en un cinquième du temps de préparation."
+ "express": "Thème : l’inflation.\nChercher 3 minutes : définition, causes, effet pour un ménage.\nStructurer : définir, deux causes, un exemple chiffré sourcé.\nExpliquer en un cinquième du temps de préparation.",
+ "pitchsoi": "Qui je suis : Stephen, étudiant en marketing du luxe.\nCe que j’apporte : je crée des applications simples qui font gagner du temps aux petites entreprises.\nPourquoi moi : j’en ai livré six, utilisées chaque semaine.\nQuestion : et vous, qu’est-ce qui vous prend le plus de temps en ce moment ?",
+ "contenu": "Intention : prouver.\nIdée : montrer comment une élève a réduit ses « euh » de moitié en trois semaines (avec son accord).\nAccroche : « Trois semaines, deux fois moins de “euh”. Voici comment. »\nAppel : « Si tu veux la même grille de suivi, écris-moi “grille”. »\nTest : cette vidéo est pour un acheteur, pas pour un abonné."
 };
+  var NEW = [{"id": "pitchsoi", "nom": "Me présenter en 30 secondes", "modele": "Qui je suis → Ce que j’apporte → Pourquoi moi → Question", "aide": "1) Écris quatre phrases courtes, une par étape. 2) Dis-les en 30 secondes, debout, sans notes. 3) Enregistre et réécoute. Réussi = on comprend ce que tu fais en dix secondes, sans jargon, et tu finis par une question qui invite l’autre à répondre.", "sujets": ["Entretien pour une alternance", "Soirée de réseautage avec des inconnus", "Premier appel avec un client potentiel", "Présentation devant une nouvelle équipe"]}, {"id": "contenu", "nom": "Une idée de contenu avec intention", "modele": "Intention → Idée → Accroche de 10 mots → Appel", "aide": "1) Choisis une intention : attirer, rassurer, prouver ou convertir. 2) Écris l’idée en une phrase. 3) Écris l’accroche en dix mots maximum. 4) Dis le contenu en 45 secondes face caméra. Réussi = une personne qui ne te connaît pas devine l’intention, et tu peux dire si cette vidéo est faite pour un abonné ou pour un acheteur.", "sujets": ["Une vidéo pour attirer des étudiants", "Une vidéo pour rassurer un client hésitant", "Une vidéo pour prouver un résultat réel", "Une vidéo pour proposer un premier rendez-vous"]}];
+  NEW.forEach(function (t) { if (!D.exerciseTypes.some(function (x) { return x.id === t.id; })) D.exerciseTypes.push(t); });
   D.exerciseTypes.forEach(function (t) { if (M[t.id]) t.exemple = M[t.id]; });
+  D.exerciseGroups = [{"id": "bases", "nom": "Les bases", "d": "Structurer une idée à l’oral.", "ids": ["mot", "qr", "argumenter", "connecteurs", "recit", "discours"]}, {"id": "debat", "nom": "Débat et objections", "d": "Répondre sans esquiver ni attaquer.", "ids": ["debat", "objection", "reprise", "interview", "aveu"]}, {"id": "style", "nom": "Style et diction", "d": "Jeux de mots, silences, textes à dire.", "ids": ["virelangue", "proverbe", "arrivee", "bascule", "simple"]}, {"id": "vente", "nom": "Vente", "d": "Ouvrir, écouter, annoncer un prix.", "ids": ["ouverture", "ratio", "prix", "analogie"]}, {"id": "marque", "nom": "Marque personnelle", "d": "Promesse, preuve, contenu avec intention.", "ids": ["positionnement", "story", "pitchsoi", "contenu"]}, {"id": "libre", "nom": "Entraînement libre", "d": "Discours à jouer, recherche express, histoire fétiche.", "ids": ["lecture", "express", "fetiche"]}];
 })();
 
 ;
@@ -6120,12 +6125,22 @@ function exResume() {
   return '<button class="card tap" data-act="ex-resume" data-v="express"><div class="eyebrow">Recherche express en cours</div><h3>Reprendre sur « ' + esc(ex.theme) + ' »</h3></button>';
 }
 function exListHtml() {
-  var h = '<div class="exlist">';
-  exOrdered().forEach(function (x) {
+  var G = D.exerciseGroups || [], all = exOrdered();
+  function get(id) { return all.filter(function (x) { return x.id === id; })[0]; }
+  var cur = G.filter(function (g) { return g.id === st.exGroup; })[0];
+  if (!G.length) { var f = '<div class="exlist">'; all.forEach(function (x) { f += '<button class="excard" data-act="st-type" data-v="' + x.id + '"><span class="excn">' + esc(x.nom) + '</span><span class="excg">›</span></button>'; }); return f + '</div>'; }
+  if (!cur) {
+    var h = '<div class="exgcs">';
+    G.forEach(function (g) { var n = g.ids.filter(get).length; h += '<button class="exgc" data-act="st-group" data-v="' + g.id + '"><b>' + esc(g.nom) + '</b><span>' + esc(g.d) + '</span><em>' + n + ' exercice' + (n > 1 ? 's' : '') + ' ›</em></button>'; });
+    return h + '</div>';
+  }
+  var o = '<button class="back" data-act="st-group" data-v="">‹ Toutes les catégories</button><div><h2 style="margin:6px 0 2px">' + esc(cur.nom) + '</h2><p class="muted small" style="margin:0 0 8px">' + esc(cur.d) + '</p></div><div class="exlist">';
+  cur.ids.forEach(function (id) {
+    var x = get(id); if (!x) return;
     var d = x.id === 'express' || x.id === 'lecture' ? '' : (x.id === 'discours' ? '3 min et +' : '1 min');
-    h += '<button class="excard" data-act="st-type" data-v="' + x.id + '"><span class="excn">' + esc(x.nom) + '</span>' + (d ? '<span class="excd">' + d + '</span>' : '') + '<span class="excg">›</span></button>';
+    o += '<button class="excard" data-act="st-type" data-v="' + x.id + '"><span class="excn">' + esc(x.nom) + '</span>' + (d ? '<span class="excd">' + d + '</span>' : '') + '<span class="excg">›</span></button>';
   });
-  return h + '</div>';
+  return o + '</div>';
 }
 function vStudio() {
   if (view.sub && view.sub.result) return vResult(view.sub.result);
@@ -6847,6 +6862,7 @@ document.addEventListener('click', function (ev) {
     case 'open-session': view = { tab: 'studio', sub: { result: v } }; render(); window.scrollTo(0, 0); break;
     case 'st-screen': if (st.rec || st.timerOn) break; st.screen = v; render(); window.scrollTo(0, 0); break;
     case 'st-type': setExType(v); render(); window.scrollTo(0, 0); break;
+    case 'st-group': st.exGroup = v || null; render(); window.scrollTo(0, 0); break;
     case 'st-dur': if (st.rec || st.timerOn) break; st.dur = +v; st.ended = false; st.recSec = 0; render(); break;
     case 'st-new': newSubject(); render(); break;
     case 'amb-toggle': if (AGAMB.on()) AGAMB.stop(); else AGAMB.start(st.type); render(); break;

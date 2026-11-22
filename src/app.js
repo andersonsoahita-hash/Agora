@@ -220,12 +220,22 @@ function exResume() {
   return '<button class="card tap" data-act="ex-resume" data-v="express"><div class="eyebrow">Recherche express en cours</div><h3>Reprendre sur « ' + esc(ex.theme) + ' »</h3></button>';
 }
 function exListHtml() {
-  var h = '<div class="exlist">';
-  exOrdered().forEach(function (x) {
+  var G = D.exerciseGroups || [], all = exOrdered();
+  function get(id) { return all.filter(function (x) { return x.id === id; })[0]; }
+  var cur = G.filter(function (g) { return g.id === st.exGroup; })[0];
+  if (!G.length) { var f = '<div class="exlist">'; all.forEach(function (x) { f += '<button class="excard" data-act="st-type" data-v="' + x.id + '"><span class="excn">' + esc(x.nom) + '</span><span class="excg">›</span></button>'; }); return f + '</div>'; }
+  if (!cur) {
+    var h = '<div class="exgcs">';
+    G.forEach(function (g) { var n = g.ids.filter(get).length; h += '<button class="exgc" data-act="st-group" data-v="' + g.id + '"><b>' + esc(g.nom) + '</b><span>' + esc(g.d) + '</span><em>' + n + ' exercice' + (n > 1 ? 's' : '') + ' ›</em></button>'; });
+    return h + '</div>';
+  }
+  var o = '<button class="back" data-act="st-group" data-v="">‹ Toutes les catégories</button><div><h2 style="margin:6px 0 2px">' + esc(cur.nom) + '</h2><p class="muted small" style="margin:0 0 8px">' + esc(cur.d) + '</p></div><div class="exlist">';
+  cur.ids.forEach(function (id) {
+    var x = get(id); if (!x) return;
     var d = x.id === 'express' || x.id === 'lecture' ? '' : (x.id === 'discours' ? '3 min et +' : '1 min');
-    h += '<button class="excard" data-act="st-type" data-v="' + x.id + '"><span class="excn">' + esc(x.nom) + '</span>' + (d ? '<span class="excd">' + d + '</span>' : '') + '<span class="excg">›</span></button>';
+    o += '<button class="excard" data-act="st-type" data-v="' + x.id + '"><span class="excn">' + esc(x.nom) + '</span>' + (d ? '<span class="excd">' + d + '</span>' : '') + '<span class="excg">›</span></button>';
   });
-  return h + '</div>';
+  return o + '</div>';
 }
 function vStudio() {
   if (view.sub && view.sub.result) return vResult(view.sub.result);
@@ -623,6 +633,7 @@ document.addEventListener('click', function (ev) {
     case 'open-session': view = { tab: 'studio', sub: { result: v } }; render(); window.scrollTo(0, 0); break;
     case 'st-screen': if (st.rec || st.timerOn) break; st.screen = v; render(); window.scrollTo(0, 0); break;
     case 'st-type': setExType(v); render(); window.scrollTo(0, 0); break;
+    case 'st-group': st.exGroup = v || null; render(); window.scrollTo(0, 0); break;
     case 'st-dur': if (st.rec || st.timerOn) break; st.dur = +v; st.ended = false; st.recSec = 0; render(); break;
     case 'st-new': newSubject(); render(); break;
     case 'amb-toggle': if (AGAMB.on()) AGAMB.stop(); else AGAMB.start(st.type); render(); break;
