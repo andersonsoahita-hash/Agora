@@ -1,4 +1,4 @@
-/* Module « Trouver son style à l’oral » : carnet de mots, jeux de mots, virelangues, exercices, discours modèle. Veille Naïm Khelif et Pierre Faury, reformulée : aucune phrase d’orateur n’est reprise. Rédigé par l'appli. */
+/* Module « Trouver son style à l’oral » : carnet de mots, jeux de mots, virelangues, exercices, discours modèle. Veille sur des formateurs et auteurs contemporains, reformulée : aucune phrase d’orateur n’est reprise. Rédigé par l'appli. */
 (function () {
   var D = window.AO_DATA;
   if (!D || !D.modules || !D.lessons) return;
@@ -33,7 +33,7 @@
    {
     "h": "D’où vient l’idée",
     "p": [
-     "La banque de phrases et l’auto-feedback viennent de la veille sur Naïm Khelif ; la méthode d’écriture et le goût des mots, de celle sur Pierre Faury. Tout est réécrit avec les mots de l’appli : on enseigne le mécanisme, jamais la phrase d’un orateur à recopier."
+     "La banque de phrases et l’auto-feedback viennent de l’observation d’un formateur en vente ; la méthode d’écriture et le goût des mots, de celle d’un auteur contemporain. Tout est réécrit avec les mots de l’appli : on enseigne le mécanisme, jamais la phrase d’un orateur à recopier."
     ]
    }
   ],
@@ -393,10 +393,10 @@
   "titre": "Le style se trouve par l’essai",
   "min": 8,
   "src": "app",
-  "accroche": "Pierre Faury raconte comment son propre style est né. Quelques consignes utiles, reformulées, et deux points sur lesquels les créateurs ne sont pas d’accord.",
+  "accroche": "Un auteur contemporain raconte comment son propre style est né. Quelques consignes utiles, reformulées, et deux points sur lesquels les créateurs ne sont pas d’accord.",
   "sections": [
    {
-    "h": "Ce que Pierre dit de son style",
+    "h": "Ce qu’un auteur dit de son style",
     "p": [
      "Le jeu de mots est une étape, pas un but : il a d’abord enchaîné les jeux de mots en imitant les gagnants de concours, puis évolué vers un style plus lyrique, où le trait d’esprit surprend et fait réfléchir.",
      "Le style se trouve par l’essai : il a testé une éloquence théâtrale qui ne lui ressemblait pas et a échoué. Il conseille de se demander d’abord qui l’on est, puis d’écrire.",
@@ -407,9 +407,9 @@
     ]
    },
    {
-    "h": "Là où Naïm et Pierre divergent",
+    "h": "Là où deux approches divergent",
     "p": [
-     "Les 30 premières secondes : Naïm les juge décisives, Pierre les juge peu importantes. Aucun des deux ne cite d’étude : l’appli présente les deux points de vue.",
+     "Les 30 premières secondes : un formateur les juge décisives, un auteur les juge peu importantes. Aucun des deux ne cite d’étude : l’appli présente les deux points de vue.",
      "Imiter le non-verbal de l’autre : les deux le conseillent, avec des preuves faibles hors négociation. À essayer sans en faire une règle."
     ]
    },

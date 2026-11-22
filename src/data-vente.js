@@ -1,8 +1,8 @@
-/* Module « Vendre à l’oral et personal branding » : veille Naïm Khelif, études vérifiées ou signalées à vérifier, exercices concrets. Aucune phrase d’orateur n’est reprise. */
+/* Module « Vendre à l’oral et personal branding » : veille sur un formateur en vente, études vérifiées ou signalées à vérifier, exercices concrets. Aucune phrase d’orateur n’est reprise. */
 (function () {
   var D = window.AO_DATA;
   if (!D || !D.modules || !D.lessons) return;
-  D.modules.push({"id": "ve", "tome": "Veille Agora · Vente et personal branding", "titre": "Vendre à l’oral et personal branding", "sous": "Appel de vente, prix, écoute, images, personal branding : ce que Naïm Khelif enseigne, ce que les études confirment, ce qui reste à vérifier."});
+  D.modules.push({"id": "ve", "tome": "Veille Agora · Vente et personal branding", "titre": "Vendre à l’oral et personal branding", "sous": "Appel de vente, prix, écoute, images, personal branding : ce qu’enseignent les formateurs en vente, ce que les études confirment, ce qui reste à vérifier."});
   D.lessons.push.apply(D.lessons, [
  {
   "id": "ve1",
@@ -16,7 +16,7 @@
    {
     "h": "Ce que dit la recherche, et ce qu’elle ne dit pas",
     "p": [
-     "Naïm Khelif affirme qu’on se fait une idée de toi en sept secondes. Aucune source n’accompagne ce chiffre. L’étude connue porte sur des visages vus 100 millisecondes : les jugements de confiance ou de compétence se forment très vite, et un temps plus long augmente surtout la confiance qu’on a dans son jugement (Willis et Todorov, 2006).",
+     "Un formateur très suivi affirme qu’on se fait une idée de toi en sept secondes. Aucune source n’accompagne ce chiffre. L’étude connue porte sur des visages vus 100 millisecondes : les jugements de confiance ou de compétence se forment très vite, et un temps plus long augmente surtout la confiance qu’on a dans son jugement (Willis et Todorov, 2006).",
      "À retenir : la première impression est rapide, mais le chiffre exact des sept secondes est une règle de coach, pas un résultat de laboratoire. À vérifier avant de le citer."
     ]
    },
@@ -72,7 +72,7 @@
   ],
   "sources": [
    {
-    "t": "Naïm Khelif, « Tu perds des ventes à cause de ta façon de parler » (nov. 2026)",
+    "t": "Vidéo de formation sur la vente à l’oral (nov. 2026)",
     "u": "https://www.youtube.com/watch?v=74vtZIxDmVE"
    },
    {
@@ -93,15 +93,15 @@
    {
     "h": "Le chiffre : 43 % contre 64 %",
     "p": [
-     "Naïm cite une étude sur 100 000 appels où les meilleurs vendeurs parlent 43 % du temps et les moins bons 64 %. Je n’ai pas retrouvé cette étude. L’analyse la plus proche est celle de Gong : environ 25 000 appels analysés en 2016, avec un rapport idéal d’environ 43 % de parole pour 57 % d’écoute.",
-     "En 2025, Gong a réanalysé environ 326 000 appels : 57 % de temps de parole dans les ventes gagnées, 62 % dans les ventes perdues, et un écart modeste. Retiens donc : parler un peu moins aide, mais l’écart est moins spectaculaire que dans la vidéo. À vérifier : le « 64 % » de Naïm ne correspond à aucun de ces chiffres. Les données viennent d’un éditeur de logiciels de vente, donc d’un intérêt commercial."
+     "Ce formateur cite une étude sur 100 000 appels où les meilleurs vendeurs parlent 43 % du temps et les moins bons 64 %. Je n’ai pas retrouvé cette étude. L’analyse la plus proche est celle de Gong : environ 25 000 appels analysés en 2016, avec un rapport idéal d’environ 43 % de parole pour 57 % d’écoute.",
+     "En 2025, Gong a réanalysé environ 326 000 appels : 57 % de temps de parole dans les ventes gagnées, 62 % dans les ventes perdues, et un écart modeste. Retiens donc : parler un peu moins aide, mais l’écart est moins spectaculaire que dans la vidéo. À vérifier : le « 64 % » de ce formateur ne correspond à aucun de ces chiffres. Les données viennent d’un éditeur de logiciels de vente, donc d’un intérêt commercial."
     ]
    },
    {
     "h": "Ce que « bien écouter » veut dire",
     "p": [
      "Poser une question ouverte, laisser deux secondes de silence, puis reformuler avec les mots du client : « Si je comprends bien, le problème, c’est… »",
-     "Naïm renvoie à la maïeutique de Socrate : faire dire à l’autre ce qu’il sait déjà. Dans une vente, la question utile est « qu’est-ce que cela vous coûte aujourd’hui ? »"
+     "Ce formateur renvoie à la maïeutique de Socrate : faire dire à l’autre ce qu’il sait déjà. Dans une vente, la question utile est « qu’est-ce que cela vous coûte aujourd’hui ? »"
     ]
    }
   ],
@@ -148,7 +148,7 @@
   ],
   "sources": [
    {
-    "t": "Naïm Khelif, « Tu perds des ventes à cause de ta façon de parler » (nov. 2026)",
+    "t": "Vidéo de formation sur la vente à l’oral (nov. 2026)",
     "u": "https://www.youtube.com/watch?v=74vtZIxDmVE"
    },
    {
@@ -169,7 +169,7 @@
    {
     "h": "Ce que l’étude montre",
     "p": [
-     "Naïm cite Maddux et Galinsky (2008) : 67 % d’accords quand le vendeur imite, 12 % sinon. L’étude existe (Maddux, Mullen, Galinsky). Dans l’expérience principale, des étudiants en MBA négociaient l’achat d’une station-service, avec une situation presque impossible à conclure. Dix paires sur quinze ont trouvé un accord quand l’acheteur imitait le vendeur, contre deux sur seize sans imitation.",
+     "Ce formateur cite Maddux et Galinsky (2008) : 67 % d’accords quand le vendeur imite, 12 % sinon. L’étude existe (Maddux, Mullen, Galinsky). Dans l’expérience principale, des étudiants en MBA négociaient l’achat d’une station-service, avec une situation presque impossible à conclure. Dix paires sur quinze ont trouvé un accord quand l’acheteur imitait le vendeur, contre deux sur seize sans imitation.",
      "Limites : échantillon de 31 paires d’étudiants, négociation fictive, imitation de comportements discrets (posture, gestes). Rien ne prouve que le résultat se transpose tel quel à une vente réelle de 500 euros."
     ]
    },
@@ -225,7 +225,7 @@
   ],
   "sources": [
    {
-    "t": "Naïm Khelif, « Tu perds des ventes à cause de ta façon de parler » (nov. 2026)",
+    "t": "Vidéo de formation sur la vente à l’oral (nov. 2026)",
     "u": "https://www.youtube.com/watch?v=74vtZIxDmVE"
    },
    {
@@ -246,7 +246,7 @@
    {
     "h": "Pourquoi ça marche, et le risque",
     "p": [
-     "Naïm affirme que l’humain comprend mieux les images que les mots. Dit ainsi, c’est trop large : ce qui est établi, c’est qu’un exemple concret ou une comparaison facilite la compréhension. Le risque est l’analogie trompeuse : si l’image ne ressemble pas vraiment au produit, le client achète autre chose que ce que tu vends.",
+     "Ce formateur affirme que l’humain comprend mieux les images que les mots. Dit ainsi, c’est trop large : ce qui est établi, c’est qu’un exemple concret ou une comparaison facilite la compréhension. Le risque est l’analogie trompeuse : si l’image ne ressemble pas vraiment au produit, le client achète autre chose que ce que tu vends.",
      "Il illustre le positionnement par deux couteaux : un couteau à tout faire contre un couteau spécialisé. C’est une bonne analogie parce qu’elle porte sur une décision (se spécialiser), pas sur de la décoration."
     ]
    },
@@ -303,11 +303,11 @@
   ],
   "sources": [
    {
-    "t": "Naïm Khelif, « Tu perds des ventes à cause de ta façon de parler » (nov. 2026)",
+    "t": "Vidéo de formation sur la vente à l’oral (nov. 2026)",
     "u": "https://www.youtube.com/watch?v=74vtZIxDmVE"
    },
    {
-    "t": "Naïm Khelif, vidéo sur l’assurance, le charisme et l’improvisation",
+    "t": "Vidéo sur l’assurance, le charisme et l’improvisation",
     "u": "https://www.youtube.com/watch?v=Qo4qIBQ-e_I"
    }
   ]
@@ -324,7 +324,7 @@
    {
     "h": "Mots parasites et débit",
     "p": [
-     "Les « euh », « genre », « du coup » ne sont pas une faute grave, mais trop fréquents ils détournent l’attention. La méthode de Naïm : phrases courtes qui finissent par un silence plutôt que par un remplissage.",
+     "Les « euh », « genre », « du coup » ne sont pas une faute grave, mais trop fréquents ils détournent l’attention. La méthode de ce formateur : phrases courtes qui finissent par un silence plutôt que par un remplissage.",
      "Il compare le débit à un robinet : plus rapide pour l’intensité, plus lent pour la précision. Ajuste aussi au client : plus calme avec une personne posée, plus vif avec une personne vive.",
      "Côté preuves : Schroeder et Epley (2015) ont montré que des recruteurs jugent un candidat plus intelligent quand ils l’entendent que quand ils lisent le même texte. La voix porte la réflexion, pas seulement l’émotion."
     ]
@@ -380,7 +380,7 @@
   ],
   "sources": [
    {
-    "t": "Naïm Khelif, « Tu perds des ventes à cause de ta façon de parler » (nov. 2026)",
+    "t": "Vidéo de formation sur la vente à l’oral (nov. 2026)",
     "u": "https://www.youtube.com/watch?v=74vtZIxDmVE"
    },
    {
@@ -411,7 +411,7 @@
     "h": "Prix, perception et honnêteté",
     "p": [
      "Shiv, Carmon et Ariely (2005) ont montré que le prix payé peut modifier l’effet ressenti d’un produit : des participants qui avaient payé une boisson énergisante à prix réduit résolvaient moins de problèmes que ceux qui l’avaient payée plein tarif. Ça montre que le prix crée des attentes. Ça ne justifie pas de gonfler un prix : un prix ancré sur du faux se retourne contre toi.",
-     "Naïm calcule la perte du client : s’il convertit 20 % des appels et pourrait en convertir 50 %, il perd 5 à 6 000 euros par mois dans son exemple. Ces chiffres sont des hypothèses de la vidéo, pas des données. L’exercice reste utile : donne au client un coût de ne rien faire que tu peux justifier."
+     "Ce formateur calcule la perte du client : s’il convertit 20 % des appels et pourrait en convertir 50 %, il perd 5 à 6 000 euros par mois dans son exemple. Ces chiffres sont des hypothèses de la vidéo, pas des données. L’exercice reste utile : donne au client un coût de ne rien faire que tu peux justifier."
     ]
    }
   ],
@@ -458,11 +458,11 @@
   ],
   "sources": [
    {
-    "t": "Naïm Khelif, « Tu perds des ventes à cause de ta façon de parler » (nov. 2026)",
+    "t": "Vidéo de formation sur la vente à l’oral (nov. 2026)",
     "u": "https://www.youtube.com/watch?v=74vtZIxDmVE"
    },
    {
-    "t": "Naïm Khelif, conférence sur le personal branding (août 2026)",
+    "t": "Conférence sur le personal branding (août 2026)",
     "u": "https://www.youtube.com/watch?v=9h0Kf1GMkAs"
    },
    {
@@ -483,7 +483,7 @@
    {
     "h": "Le positionnement",
     "p": [
-     "Trois mots pour dire ce que tu fais : si tu ne peux pas, ce n’est pas encore clair. Le test de Naïm : un contenu a une intention (attirer, rassurer, prouver, convertir) ou il ne sert à rien.",
+     "Trois mots pour dire ce que tu fais : si tu ne peux pas, ce n’est pas encore clair. Le test de ce formateur : un contenu a une intention (attirer, rassurer, prouver, convertir) ou il ne sert à rien.",
      "Le marketing parle à une seule personne très précise ; l’offre peut accueillir plus large. Autre repère : cherche l’intersection entre ce que le marché veut, ce que tu fais mieux que les autres, et là où tes concurrents sont moins forts.",
      "Un test utile : avant de poster, demande-toi si cette vidéo est faite pour un abonné ou pour un acheteur."
     ]
@@ -498,7 +498,7 @@
    {
     "h": "Ce qu’il faut vérifier",
     "p": [
-     "Les chiffres personnels de Naïm (30 000 euros par mois, 64 clients, 5 millions de vues) sont des affirmations non vérifiées. De même, « la forme bat le fond » est une provocation : il dit lui-même qu’il faut les deux. Sans fond, la forme finit par se voir.",
+     "Les chiffres personnels de ce formateur (30 000 euros par mois, 64 clients, 5 millions de vues) sont des affirmations non vérifiées. De même, « la forme bat le fond » est une provocation : il dit lui-même qu’il faut les deux. Sans fond, la forme finit par se voir.",
      "Les chiffres d’entonnoir (3 000 abonnés qui connaissent, 800 qui citent le prénom, 100 qui ont pensé acheter, 20 acheteurs) sont des exemples, pas des mesures. Si tu publies des résultats clients ou des témoignages, vérifie les règles sur les allégations et les avis avant de les afficher, et n’utilise que des résultats réels avec accord de la personne."
     ]
    }
@@ -546,11 +546,11 @@
   ],
   "sources": [
    {
-    "t": "Naïm Khelif, conférence sur le personal branding (août 2026)",
+    "t": "Conférence sur le personal branding (août 2026)",
     "u": "https://www.youtube.com/watch?v=9h0Kf1GMkAs"
    },
    {
-    "t": "Naïm Khelif, vidéo sur l’assurance, le charisme et l’improvisation",
+    "t": "Vidéo sur l’assurance, le charisme et l’improvisation",
     "u": "https://www.youtube.com/watch?v=Qo4qIBQ-e_I"
    }
   ]
@@ -568,7 +568,7 @@
     "h": "Le plan minuté",
     "p": [
      "0:00 à 0:30 : entrée, deux phrases préparées. 0:30 à 5:00 : questions ouvertes et reformulations, tu parles moins que le client. 5:00 à 6:30 : une analogie qui résume ce que tu proposes. 6:30 à 7:30 : le prix en une phrase, puis trois secondes de silence. 7:30 à 10:00 : objection, réponse (concéder, recadrer, preuve), puis étape suivante claire.",
-     "Cet enchaînement est une synthèse de ce qui précède ; ce n’est pas la méthode propre de Naïm."
+     "Cet enchaînement est une synthèse de ce qui précède ; ce n’est pas la méthode propre de ce formateur."
     ]
    },
    {
@@ -621,11 +621,11 @@
   ],
   "sources": [
    {
-    "t": "Naïm Khelif, « Tu perds des ventes à cause de ta façon de parler » (nov. 2026)",
+    "t": "Vidéo de formation sur la vente à l’oral (nov. 2026)",
     "u": "https://www.youtube.com/watch?v=74vtZIxDmVE"
    },
    {
-    "t": "Naïm Khelif, conférence sur le personal branding (août 2026)",
+    "t": "Conférence sur le personal branding (août 2026)",
     "u": "https://www.youtube.com/watch?v=9h0Kf1GMkAs"
    }
   ]

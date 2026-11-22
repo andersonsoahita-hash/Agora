@@ -14,14 +14,14 @@ function txt(p){return Array.isArray(p)?p.join(' '):String(p||'')}
 function chunks(t){var s=t.match(/[^.!?…]+[.!?…]+["»”]?\s*|[^.!?…]+$/g)||[t],out=[],cur='';s.forEach(function(x){if((cur+x).length>330&&cur){out.push(cur.trim());cur=x}else cur+=x});if(cur.trim())out.push(cur.trim());return out}
 function build(L){
   var S=[{t:'cover'}];
-  (L.sections||[]).forEach(function(s){var ps=chunks(txt(s.p));ps.forEach(function(p,i){S.push({t:'sec',h:s.h,p:p,part:ps.length>1?(i+1)+' / '+ps.length:''})})});
+  (L.sections||[]).forEach(function(s){var arr=Array.isArray(s.p)?s.p:[s.p];arr.forEach(function(par,k){var m=/^(Exemple[^:]{0,30}|Preuve)\s*:\s*/.exec(par),kind=m?(/^Preuve/.test(m[1])?'Preuve':'Exemple'):'',body=m?par.slice(m[0].length):par;if(m)body=body.charAt(0).toUpperCase()+body.slice(1);var ps=chunks(String(body||''));ps.forEach(function(p,i){S.push({t:'sec',h:s.h,p:p,kind:kind,part:ps.length>1?(i+1)+' / '+ps.length:''})})})});
   if(L.retenir&&L.retenir.length)S.push({t:'ret',l:L.retenir});
   if(L.exercice)S.push({t:'exo',p:txt(L.exercice)});
   S.push({t:'end'});return S}
 var cur=null,idx=0,S=[],L=null;
 function slideHtml(s){
   if(s.t==='cover')return '<div class="sl-k">'+esc(L.n||'')+' · '+(L.min||'')+' min</div><h2>'+esc(L.titre)+'</h2>'+(L.accroche?'<p class="sl-p">'+esc(L.accroche)+'</p>':'');
-  if(s.t==='sec')return '<div class="sl-k">'+esc(s.part||'Idée')+'</div><h2>'+esc(s.h||'')+'</h2><p class="sl-p">'+esc(s.p)+'</p>';
+  if(s.t==='sec')return '<div class="sl-k">'+esc((s.kind||'Idée')+(s.part?' · '+s.part:''))+'</div><h2>'+esc(s.h||'')+'</h2>'+(s.kind?'<div class="sl-box">':'')+'<p class="sl-p">'+esc(s.p)+'</p>'+(s.kind?'</div>':'');
   if(s.t==='ret')return '<div class="sl-k">À retenir</div><h2>L’essentiel</h2><ol>'+s.l.map(function(x,i){return '<li><b>'+(i+1)+'</b><span>'+esc(x)+'</span></li>'}).join('')+'</ol>';
   if(s.t==='exo')return '<div class="sl-k">Exercice</div><h2>À toi de jouer</h2><div class="sl-box"><p class="sl-p">'+esc(s.p)+'</p></div>';
   return '<div class="sl-k">Terminé</div><h2>Bien joué.</h2><p class="sl-p">Tu peux maintenant faire le quiz de la leçon, puis t’entraîner dans le Studio.</p>'}
