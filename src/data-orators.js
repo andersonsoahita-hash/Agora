@@ -16,6 +16,18 @@ window.AO_DATA.orators = [
     sources: [{ t: 'World History Encyclopedia : Demosthenes', u: 'https://www.worldhistory.org/Demosthenes/' }]
   },
   {
+    id: 'faury', nom: 'Pierre Faury', epoque: 'XXIe siècle', lieu: 'France', tags: ['Contemporain', 'France', 'Poésie'],
+    genre: 'Poésie dite, éloquence', archetype: 'conteur',
+    discours: { titre: 'La théorie des cordes (recueil)', date: '5 mars 2025', cadre: 'Premier recueil, éditions J’ai lu' },
+    contexte: 'Ancien étudiant de HEC, il y remporte son premier concours d’éloquence. Il est finaliste du concours national d’éloquence en 2022 et en 2023, et crée le prix Cyrano, un concours d’éloquence ouvert au plus grand nombre. Connu pour ses poèmes diffusés sur les réseaux sociaux, il compte plus de 300 000 abonnés sur Instagram (chiffre de janvier 2025).',
+    parcours: 'Source principale : un article de Livres Hebdo du 31 janvier 2025, publié en contenu sponsorisé par son éditeur : à lire avec ce recul. L’article ne donne aucun chiffre de ventes.',
+    techniques: [
+      { nom: 'Du concours à la vidéo courte', texte: 'Son parcours relie deux mondes : la compétition d’éloquence (parole préparée, jugée) et la vidéo courte des réseaux (une image, une idée, une chute). Les deux demandent de tenir un auditoire en peu de temps.' }
+    ],
+    essai: { label: 'Un poème-minute', type: 'mot', duree: 60, consigne: 'Choisis un mot. En 1 minute : une image concrète, une idée, puis une chute qui retourne le sens du mot. Dis-le comme si tu le lisais à quelqu’un en face.' },
+    sources: [{ t: 'Livres Hebdo : Pierre Faury (contenu sponsorisé)', u: 'https://www.livreshebdo.fr/article/pierre-faury-le-petit-prince-de-leloquence-francaise' }, { t: 'Goodreads : La théorie des cordes', u: 'https://www.goodreads.com/book/show/222533465-la-th-orie-des-cordes' }]
+  },
+  {
     id: 'ciceron', nom: 'Cicéron', epoque: '106 – 43 av. J.-C.', lieu: 'Rome', tags: ['Antiquité'],
     genre: 'Accusation devant le Sénat', archetype: 'architecte',
     discours: { titre: 'Première Catilinaire', date: '7 novembre 63 av. J.-C. (selon Hérodote.net ; d’autres sources donnent le 8)', cadre: 'Sénat romain' },
