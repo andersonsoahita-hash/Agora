@@ -226,7 +226,7 @@ function exListHtml() {
   if (!G.length) { var f = '<div class="exlist">'; all.forEach(function (x) { f += '<button class="excard" data-act="st-type" data-v="' + x.id + '"><span class="excn">' + esc(x.nom) + '</span><span class="excg">›</span></button>'; }); return f + '</div>'; }
   if (!cur) {
     var h = '<div class="exgcs">';
-    G.forEach(function (g) { var n = g.ids.filter(get).length; var nm = g.ids.map(get).filter(Boolean).slice(0, 3).map(function (x) { return x.nom; }).join(' · ') + (n > 3 ? ' …' : ''); h += '<button class="exgc' + (g.id === 'charisme' ? ' exgc-top' : '') + '" data-act="st-group" data-v="' + g.id + '"><b>' + esc(g.nom) + '</b><span>' + esc(g.d) + '</span><small class="exgn">' + esc(nm) + '</small><em>' + (g.id === 'discours' ? 'Ouvrir la bibliothèque' : n + ' exercice' + (n > 1 ? 's' : '')) + ' ›</em></button>'; });
+    G.forEach(function (g) { var n = g.ids.filter(get).length; var nm = g.ids.map(get).filter(Boolean).slice(0, 3).map(function (x) { return x.nom; }).join(' · ') + (n > 3 ? ' …' : ''); h += '<button class="exgc' + (g.id === 'charisme' ? ' exgc-top' : '') + '" data-act="st-group" data-v="' + g.id + '"><b>' + esc(g.nom) + '</b><span>' + esc(g.d) + '</span><small class="exgn">' + esc(nm) + '</small><em>' + (g.id === 'discours' ? 'Ouvrir la bibliothèque' : g.id === 'banque' ? 'Ouvrir' : n + ' exercice' + (n > 1 ? 's' : '')) + ' ›</em></button>'; });
     return h + '</div>';
   }
   var o = '<button class="back" data-act="st-group" data-v="">‹ Toutes les catégories</button><div><h2 style="margin:6px 0 2px">' + esc(cur.nom) + '</h2><p class="muted small" style="margin:0 0 8px">' + esc(cur.d) + '</p></div><div class="exlist">';
@@ -247,9 +247,43 @@ function exTextHtml() {
   h += '<div class="row"><button class="btn ghost small" data-act="st-text" data-v="-1">‹ Précédent</button><button class="btn ghost small" data-act="st-text" data-v="r">Au hasard</button><button class="btn ghost small" data-act="st-text" data-v="1">Suivant ›</button></div>';
   return h;
 }
+
+function bkGet(k, d) { try { return JSON.parse(localStorage.getItem(k) || 'null') || d; } catch (e) { return d; } }
+function bkSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+function bkFavs() { return bkGet('ab_carnet_fav', []); }
+function vBank() {
+  var tab = st.bk || 'bank', favs = bkFavs(), T = D.exerciseTexts || {};
+  var h = '<div class="top tcol"><button class="back" data-act="st-screen" data-v="list" aria-label="Retour">‹ Retour</button><h1>Banque et carnet</h1></div><div class="stack">';
+  h += '<div class="vsw"><button class="' + (tab === 'bank' ? 'on' : '') + '" data-act="bk-tab" data-v="bank">Banque de textes</button><button class="' + (tab === 'note' ? 'on' : '') + '" data-act="bk-tab" data-v="note">Mon carnet</button></div>';
+  if (tab === 'bank') {
+    h += '<p class="muted small" style="margin:0">Tous les textes prêts à lire, rangés par exercice. Touche ★ pour en garder dans ton carnet, ou « S’entraîner » pour les lire dans le Studio.</p>';
+    Object.keys(T).forEach(function (id) {
+      var t = byId(D.exerciseTypes, id); if (!t || !T[id].length) return;
+      h += '<details class="card bkd"><summary><b>' + esc(t.nom) + '</b> <span class="muted small">' + T[id].length + ' textes</span></summary><div class="stack" style="margin-top:8px">';
+      T[id].forEach(function (x, i) {
+        var key = id + ':' + i, on = favs.indexOf(key) > -1;
+        h += '<div class="extx"><div class="row" style="justify-content:space-between"><b>' + esc(x.t) + '</b><button class="chip' + (on ? ' on' : '') + '" data-act="bk-fav" data-v="' + key + '" aria-label="Garder dans le carnet">' + (on ? '★' : '☆') + '</button></div>' + x.x.map(function (l) { return '<p>' + esc(l) + '</p>'; }).join('') + '<button class="btn ghost small" data-act="bk-use" data-v="' + key + '">S’entraîner avec ce texte</button></div>';
+      });
+      h += '</div></details>';
+    });
+    return h + '</div>';
+  }
+  var notes = bkGet('ab_carnet_notes', ''), words = bkGet('ab_carnet_words', []);
+  h += '<div class="card stack"><div class="eyebrow">Textes gardés (' + favs.length + ')</div>';
+  if (!favs.length) h += '<p class="muted small" style="margin:0">Aucun pour l’instant. Dans la banque, touche ☆ à côté d’un texte.</p>';
+  favs.forEach(function (key) {
+    var p = key.split(':'), x = T[p[0]] && T[p[0]][+p[1]]; if (!x) return;
+    h += '<div class="extx"><div class="row" style="justify-content:space-between"><b>' + esc(x.t) + '</b><button class="chip on" data-act="bk-fav" data-v="' + key + '">★</button></div>' + x.x.map(function (l) { return '<p>' + esc(l) + '</p>'; }).join('') + '<button class="btn ghost small" data-act="bk-use" data-v="' + key + '">S’entraîner</button></div>';
+  });
+  h += '</div><div class="card stack"><div class="eyebrow">Carnet de mots</div><p class="muted small" style="margin:0">Un mot nouveau par jour, avec une phrase à toi pour l’employer.</p><div class="row"><input id="bkw" type="text" placeholder="Un mot" style="flex:1;font-size:16px"><button class="btn small" data-act="bk-word">Ajouter</button></div>';
+  words.slice().reverse().forEach(function (w) { h += '<div class="metric"><span><b>' + esc(w) + '</b></span></div>'; });
+  h += '</div><div class="card stack"><div class="eyebrow">Mes notes et phrases</div><textarea id="bkn" rows="6" style="font-size:16px" placeholder="Phrases à retenir, formules à toi, idées de discours…">' + esc(notes) + '</textarea><button class="btn small" data-act="bk-save">Enregistrer</button></div>';
+  return h + '</div>';
+}
 function vStudio() {
   if (view.sub && view.sub.result) return vResult(view.sub.result);
   if (!st.screen) st.screen = 'list';
+  if (st.screen === 'bank') return vBank();
   if (st.screen === 'list') return '<div class="top tcol"><button class="back" data-act="st-screen" data-v="ex" aria-label="Retour">‹ Retour</button><h1>Exercices</h1></div><div class="stack">' + exResume() + exListHtml() + '</div>';
   if (!st.sujet) newSubject();
   var t = byId(D.exerciseTypes, st.type);
@@ -644,9 +678,14 @@ document.addEventListener('click', function (ev) {
     case 'open-session': view = { tab: 'studio', sub: { result: v } }; render(); window.scrollTo(0, 0); break;
     case 'st-screen': if (st.rec || st.timerOn) break; st.screen = v; render(); window.scrollTo(0, 0); break;
     case 'st-type': setExType(v); render(); window.scrollTo(0, 0); break;
-    case 'st-group': st.exGroup = v || null; render(); window.scrollTo(0, 0); break;
+    case 'st-group': if (v === 'banque') { st.screen = 'bank'; render(); window.scrollTo(0, 0); break; } st.exGroup = v || null; render(); window.scrollTo(0, 0); break;
     case 'st-mode': st.mode = v; render(); break;
     case 'st-text': var _L = exTexts() || []; if (_L.length) { st.ti = v === 'r' ? Math.floor(Math.random() * _L.length) : ((st.ti || 0) + (+v) + _L.length) % _L.length; } render(); break;
+    case 'bk-tab': st.bk = v; render(); break;
+    case 'bk-fav': var _f = bkFavs(), _i = _f.indexOf(v); if (_i > -1) _f.splice(_i, 1); else _f.push(v); bkSet('ab_carnet_fav', _f); render(); break;
+    case 'bk-use': var _p = v.split(':'); st.type = _p[0]; st.mode = 'read'; st.ti = +_p[1]; st.sujet = null; st.screen = 'ex'; render(); window.scrollTo(0, 0); break;
+    case 'bk-word': var _w = (document.getElementById('bkw') || {}).value; if (_w && _w.trim()) { var _ws = bkGet('ab_carnet_words', []); _ws.push(_w.trim()); bkSet('ab_carnet_words', _ws); render(); } break;
+    case 'bk-save': bkSet('ab_carnet_notes', (document.getElementById('bkn') || {}).value || ''); render(); break;
     case 'st-dur': if (st.rec || st.timerOn) break; st.dur = +v; st.ended = false; st.recSec = 0; render(); break;
     case 'st-new': newSubject(); render(); break;
     case 'amb-toggle': if (AGAMB.on()) AGAMB.stop(); else AGAMB.start(st.type); render(); break;
