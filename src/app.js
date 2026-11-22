@@ -238,12 +238,30 @@ function exListHtml() {
   return o + '</div>';
 }
 function exTexts() { return (D.exerciseTexts && D.exerciseTexts[st.type]) || null; }
+function txStat(tx) {
+  var words = 0, pauses = 0, cum = [], t = 0;
+  tx.x.forEach(function (l) {
+    var p = (l.match(/\[[^\]]*\]/g) || []).length; pauses += p;
+    var w = l.replace(/\[[^\]]*\]/g, ' ').split(/\s+/).filter(Boolean).length; words += w;
+    t += w / 2.1 + p * 2.5 + (w ? 0.6 : 0); cum.push(t);
+  });
+  return { words: words, pauses: pauses, sec: Math.round(t), cum: cum };
+}
+function txFit(tx) { var s = txStat(tx); return s.sec <= st.dur * 1.05 && s.sec >= st.dur * 0.4; }
+function txIdx(L) { var f = []; L.forEach(function (t, i) { if (txFit(t)) f.push(i); }); return f; }
 function exTextHtml() {
   var L = exTexts(); if (!L) return '';
   var mode = st.mode || 'read'; var ti = (st.ti || 0) % L.length; var tx = L[ti];
   var h = '<div class="vsw"><button class="' + (mode === 'read' ? 'on' : '') + '" data-act="st-mode" data-v="read">Lire un texte écrit</button><button class="' + (mode === 'free' ? 'on' : '') + '" data-act="st-mode" data-v="free">Improviser</button></div>';
   if (mode !== 'read') return h;
-  h += '<div class="extx"><div class="eyebrow">Texte ' + (ti + 1) + ' / ' + L.length + '</div><h2>' + esc(tx.t) + '</h2>' + tx.x.map(function (l, i) { return '<p><span class="extn">' + (i + 1) + '</span>' + esc(l) + '</p>'; }).join('') + '</div>';
+  var s = txStat(tx), fits = txIdx(L), over = s.sec > st.dur * 1.05, under = s.sec < st.dur * 0.4;
+  var verdict = over ? 'Trop long pour ' + durLabel(st.dur) + ' : lis jusqu’au trait doré, ou choisis une durée plus longue.' : under ? 'Court pour ' + durLabel(st.dur) + ' : lis-le deux fois en changeant le ton, ou passe au texte suivant.' : 'Adapté à ' + durLabel(st.dur) + '.';
+  h += '<div class="extx"><div class="eyebrow">Texte ' + (ti + 1) + ' / ' + L.length + (fits.length ? ' · ' + fits.length + ' adaptés à ' + durLabel(st.dur) : '') + '</div><h2>' + esc(tx.t) + '</h2>';
+  h += '<div class="exmeta"><span>' + s.words + ' mots</span><span>≈ ' + fmt(s.sec) + ' à voix posée</span>' + (s.pauses ? '<span>' + s.pauses + ' silence' + (s.pauses > 1 ? 's' : '') + ' à tenir</span>' : '') + '</div>';
+  h += '<div class="exverd' + (over || under ? ' warn' : ' ok') + '">' + verdict + '</div>';
+  var cut = -1; if (over) { for (var k = 0; k < s.cum.length; k++) { if (s.cum[k] >= st.dur) { cut = k; break; } } }
+  h += tx.x.map(function (l, i) { return '<p class="extl">' + esc(l) + '</p>' + (i === cut ? '<div class="excut">Fin de ton temps (' + durLabel(st.dur) + ')</div>' : ''); }).join('');
+  h += '<p class="small muted" style="margin:6px 0 0">Comment le lire : debout, à voix haute, une respiration à chaque point ; ce qui est entre crochets n’est pas dit, c’est un geste ou un silence à tenir.</p></div>';
   h += '<div class="row"><button class="btn ghost small" data-act="st-text" data-v="-1">‹ Précédent</button><button class="btn ghost small" data-act="st-text" data-v="r">Au hasard</button><button class="btn ghost small" data-act="st-text" data-v="1">Suivant ›</button></div>';
   return h;
 }
@@ -681,7 +699,7 @@ document.addEventListener('click', function (ev) {
     case 'st-type': setExType(v); render(); window.scrollTo(0, 0); break;
     case 'st-group': if (v === 'banque') { st.screen = 'bank'; render(); window.scrollTo(0, 0); break; } st.exGroup = v || null; render(); window.scrollTo(0, 0); break;
     case 'st-mode': st.mode = v; render(); break;
-    case 'st-text': var _L = exTexts() || []; if (_L.length) { st.ti = v === 'r' ? Math.floor(Math.random() * _L.length) : ((st.ti || 0) + (+v) + _L.length) % _L.length; } render(); break;
+    case 'st-text': var _L = exTexts() || []; if (_L.length) { var _f = txIdx(_L); var _p = _f.length > 1 ? _f : _L.map(function (x, i) { return i; }); var _c = _p.indexOf((st.ti || 0) % _L.length); if (v === 'r') st.ti = _p[Math.floor(Math.random() * _p.length)]; else st.ti = _p[((_c < 0 ? 0 : _c) + (+v) + _p.length) % _p.length]; } render(); break;
     case 'bk-tab': st.bk = v; render(); break;
     case 'bk-fav': var _f = bkFavs(), _i = _f.indexOf(v); if (_i > -1) _f.splice(_i, 1); else _f.push(v); bkSet('ab_carnet_fav', _f); render(); break;
     case 'bk-use': var _p = v.split(':'); st.type = _p[0]; st.mode = 'read'; st.ti = +_p[1]; st.sujet = null; st.screen = 'ex'; render(); window.scrollTo(0, 0); break;
