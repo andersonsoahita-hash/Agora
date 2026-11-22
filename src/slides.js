@@ -2,12 +2,12 @@
 (function(){
 var CSS='#slO{position:fixed;inset:0;z-index:100001;display:flex;flex-direction:column;color:#fff;background:radial-gradient(1200px 700px at 20% 0%,#7a2418 0%,#2a0b0a 55%,#120607 100%);font-family:"DM Sans",Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;overscroll-behavior:contain;touch-action:pan-y}#slO *{box-sizing:border-box}'+
 '#slO .sl-top{display:flex;align-items:center;gap:12px;padding:max(14px,env(safe-area-inset-top)) 18px 6px}#slO .sl-brand{font:600 11px system-ui;letter-spacing:.16em;text-transform:uppercase;color:#e8c25a;flex:1}#slO .sl-x{width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:transparent;color:#fff;font-size:20px;cursor:pointer}'+
-'#slO .sl-bar{height:3px;background:rgba(255,255,255,.15);margin:0 18px}#slO .sl-bar i{display:block;height:100%;background:#e8c25a;transition:width .25s}'+
-'#slO .sl-st{flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px;padding:18px clamp(22px,7vw,120px);max-width:980px;width:100%;margin:0 auto;overflow:auto}'+
+'#slO .sl-bar{height:3px;background:rgba(255,255,255,.15);margin:0 18px}#slO .sl-bar i{display:block;height:100%;width:100%;background:#e8c25a;transform-origin:0 50%;transition:transform .2s}'+
+'#slO .sl-st{flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px;padding:18px clamp(22px,7vw,120px);max-width:980px;width:100%;margin:0 auto;overflow:auto;contain:layout paint;-webkit-overflow-scrolling:touch}'+
 '#slO .sl-k{font:700 12px system-ui;letter-spacing:.18em;text-transform:uppercase;color:#e8c25a}#slO h2{font-family:Georgia,"Times New Roman",serif;font-weight:700;font-size:clamp(28px,6vw,54px);line-height:1.08;margin:0}'+
 '#slO .sl-p{font-size:clamp(18px,3.6vw,26px);line-height:1.5;margin:0;color:rgba(255,255,255,.92)}#slO ol,#slO ul{margin:0;padding:0;list-style:none;display:grid;gap:14px}#slO li{display:flex;gap:14px;align-items:flex-start;font-size:clamp(18px,3.4vw,24px);line-height:1.4}#slO li b{flex:none;width:34px;height:34px;border-radius:50%;background:#e8c25a;color:#2a0b0a;display:grid;place-items:center;font-size:16px}'+
 '#slO .sl-box{border:1px solid rgba(232,194,90,.5);border-radius:16px;padding:18px 20px;background:rgba(255,255,255,.06)}'+
-'#slO .sl-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 18px max(18px,env(safe-area-inset-bottom))}#slO .sl-b{min-width:112px;height:48px;border-radius:99px;border:1px solid rgba(255,255,255,.3);background:transparent;color:#fff;font:600 15px system-ui;cursor:pointer}#slO .sl-b.pri{background:#e8c25a;color:#2a0b0a;border-color:#e8c25a}#slO .sl-b[disabled]{opacity:.3;cursor:default}#slO .sl-n{font:600 13px system-ui;opacity:.7}'+
+'#slO .sl-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 18px max(18px,env(safe-area-inset-bottom))}#slO .sl-b{touch-action:manipulation;-webkit-tap-highlight-color:transparent;min-width:112px;height:48px;border-radius:99px;border:1px solid rgba(255,255,255,.3);background:transparent;color:#fff;font:600 15px system-ui;cursor:pointer}#slO .sl-b.pri{background:#e8c25a;color:#2a0b0a;border-color:#e8c25a}#slO .sl-b[disabled]{opacity:.3;cursor:default}#slO .sl-n{font:600 13px system-ui;opacity:.7}'+
 '.sl-open{display:inline-flex;align-items:center;gap:8px;border:1px solid currentColor;background:transparent;color:inherit;border-radius:99px;padding:9px 16px;font:600 14px system-ui;cursor:pointer}';
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function txt(p){return Array.isArray(p)?p.join(' '):String(p||'')}
@@ -28,7 +28,7 @@ function slideHtml(s){
 function draw(){
   var el=document.getElementById('slO');if(!el)return;
   el.querySelector('.sl-st').innerHTML=slideHtml(S[idx]);el.querySelector('.sl-st').scrollTop=0;
-  el.querySelector('.sl-bar i').style.width=Math.round(100*(idx+1)/S.length)+'%';
+  el.querySelector('.sl-bar i').style.transform='scaleX('+((idx+1)/S.length)+')';
   el.querySelector('.sl-n').textContent=(idx+1)+' / '+S.length;
   el.querySelector('[data-sl="prev"]').disabled=idx===0;
   var nx=el.querySelector('[data-sl="next"]');nx.textContent=idx===S.length-1?'Fermer':'Suivant ›'}
