@@ -5,17 +5,17 @@
    cachees (mains cachées) · basses (bras ballants) · croises (bras croisés) · regard-bas (tête baissée)
    regard-cote (tête de côté) · balancement · deplacement · contact (main sur le visage/corps) · contradiction
    Exemple : cachees:[{u:'https://youtu.be/XXXXXXXXXXX?t=95',t:'Des mains qui accompagnent le propos',d:30}] */
-/* Vidéos en français (TEDx, lecteur officiel TED), choisies d'après leur titre : à vérifier en les regardant. */
+/* Une ou deux vidéos en français par difficulté, choisies d'après leur titre. d:0 = jusqu'à la fin ; pour cibler un passage : u:'…watch?v=ID&t=95', d:30. */
 window.AGREF={
-  'cachees':[{u:'https://www.youtube.com/watch?v=bCcyt7Ky8mQ',t:'Samuel Savarel · Réveillez l’orateur qui sommeille en vous (TEDx)',d:0},{u:'https://www.youtube.com/watch?v=_C0LcvY5wtM',t:'Pascal Haumont · Devenez un meilleur orateur : imitez les autres (TEDx)',d:0}],
-  'basses':[{u:'https://www.youtube.com/watch?v=bCcyt7Ky8mQ',t:'Samuel Savarel · Réveillez l’orateur qui sommeille en vous (TEDx)',d:0},{u:'https://www.youtube.com/watch?v=_C0LcvY5wtM',t:'Pascal Haumont · Devenez un meilleur orateur : imitez les autres (TEDx)',d:0}],
-  'croises':[{u:'https://www.youtube.com/watch?v=bCcyt7Ky8mQ',t:'Samuel Savarel · Réveillez l’orateur qui sommeille en vous (TEDx)',d:0},{u:'https://www.youtube.com/watch?v=_C0LcvY5wtM',t:'Pascal Haumont · Devenez un meilleur orateur : imitez les autres (TEDx)',d:0}],
-  'regard-bas':[{u:'https://www.youtube.com/watch?v=bCcyt7Ky8mQ',t:'Samuel Savarel · Réveillez l’orateur qui sommeille en vous (TEDx)',d:0}],
-  'regard-cote':[{u:'https://www.youtube.com/watch?v=bCcyt7Ky8mQ',t:'Samuel Savarel · Réveillez l’orateur qui sommeille en vous (TEDx)',d:0}],
-  'balancement':[],
-  'deplacement':[],
-  'contact':[{u:'https://www.youtube.com/watch?v=bCcyt7Ky8mQ',t:'Samuel Savarel · Réveillez l’orateur qui sommeille en vous (TEDx)',d:0},{u:'https://www.youtube.com/watch?v=_C0LcvY5wtM',t:'Pascal Haumont · Devenez un meilleur orateur : imitez les autres (TEDx)',d:0}],
-  'contradiction':[{u:'https://www.youtube.com/watch?v=sNwX_WZvvU0',t:'Olivier Courbier · Donnez de l’impact à vos discours (TEDx)',d:0}]
+  'cachees':[{u:'https://www.youtube.com/watch?v=W0bBWW65nqg',t:'Parler en public : savoir quoi faire de ses mains',d:0},{u:'https://www.youtube.com/watch?v=-N4IXQZi7QI',t:'Que faire de ses mains quand on parle en public ?',d:0}],
+  'basses':[{u:'https://www.youtube.com/watch?v=Davf0w6CpeA',t:'Que faire de ses bras durant une présentation en public ?',d:0},{u:'https://www.youtube.com/watch?v=W0bBWW65nqg',t:'Parler en public : savoir quoi faire de ses mains',d:0}],
+  'croises':[{u:'https://www.youtube.com/watch?v=lZlMF_I2mlw',t:'Langage corporel : croisements de bras',d:0},{u:'https://www.youtube.com/watch?v=VdmATWC6qVA',t:'Croiser les bras en communication non verbale',d:0}],
+  'regard-bas':[{u:'https://www.youtube.com/watch?v=5tSm6R99V0k',t:'Prise de parole : 3 astuces pour maintenir le contact visuel',d:0},{u:'https://www.youtube.com/watch?v=fTwgxjY1oJo',t:'Comment regarder son audience dans les yeux',d:0}],
+  'regard-cote':[{u:'https://www.youtube.com/watch?v=fTwgxjY1oJo',t:'Comment regarder son audience dans les yeux',d:0},{u:'https://www.youtube.com/watch?v=5tSm6R99V0k',t:'Prise de parole : 3 astuces pour maintenir le contact visuel',d:0}],
+  'balancement':[{u:'https://www.youtube.com/watch?v=ilO6bwsq-2g',t:'La posture et l’ancrage au sol quand on prend la parole',d:0},{u:'https://www.youtube.com/watch?v=wZe7aU-ixWY',t:'Parler en public : la posture et l’ancrage au sol',d:0}],
+  'deplacement':[{u:'https://www.youtube.com/watch?v=wx6UvvRZw2g',t:'Présence scénique : bouger sur scène sans en faire trop',d:0},{u:'https://www.youtube.com/watch?v=ZQNBfE85n2s',t:'Prise de parole : posture, gestuelle, gestion de l’espace',d:0}],
+  'contact':[{u:'https://www.youtube.com/watch?v=tM_AzegwXG8',t:'Capsule éloquence : les gestes parasites',d:0},{u:'https://www.youtube.com/watch?v=MAfEPGL1-No',t:'Tremblements et gestes parasites en public',d:0}],
+  'contradiction':[{u:'https://www.youtube.com/watch?v=5eVSk_YmuyY',t:'3 types de gestes dans les prises de parole',d:0},{u:'https://www.youtube.com/watch?v=7kO4mPxv1k0',t:'Le langage du corps : ces gestes qui nous parlent ou nous trahissent',d:0}]
 };
 window.AGREF_play=function(x){if(x&&/^https:\/\/embed\.ted\.com\//.test(x.u||''))return x.u;
   var m=String(x.u||'').match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/)([A-Za-z0-9_-]{11})/);if(!m)return '';
