@@ -349,9 +349,10 @@ function toLM(f){return f[1].map(p=>({x:p[0]/1000,y:p[1]/1000,visibility:p[2]/10
 function openReport(it){
   stopPlayback();show('s-rep');const r=it.r,dur=Math.max(1,r.duree);
   const sevCls=s=>s>=3?'':(s===2?'':'s1');
+  const shownK={};
   const card=(i,kind)=>{const cls=kind==='n'?'n':kind==='g'?'s0':(i.sev>=2?'':'s1');
     return `<div class="iss ${cls}" data-id="${i.id}"><button class="play" data-t0="${i.t0}" data-t1="${i.t1}">▶ ${fmt(i.t0)}${i.t1-i.t0>1?'–'+fmt(i.t1):''}</button><h4>${esc(i.title)}</h4>
-      <p>${esc(i.what)}</p>${i.ctx?`<p class="w">${esc(i.ctx)}</p>`:''}${i.why?`<p class="w">${esc(i.why)}</p>`:''}${i.fix?`<p class="f">→ ${esc(i.fix)}</p>`:''}${kind||!(window.AGREF&&(AGREF[i.kind]||[]).length)?'':`<button class="btn sec refb" data-k="${i.kind}" style="margin-top:8px">▶ Voir un exemple</button>`}</div>`;};
+      <p>${esc(i.what)}</p>${i.ctx?`<p class="w">${esc(i.ctx)}</p>`:''}${i.why?`<p class="w">${esc(i.why)}</p>`:''}${i.fix?`<p class="f">→ ${esc(i.fix)}</p>`:''}${kind||shownK[i.kind]||!(window.AGREF&&(AGREF[i.kind]||[]).length)?'':(shownK[i.kind]=1,`<button class="btn sec refb" data-k="${i.kind}" style="margin-top:8px">▶ Voir un exemple</button>`)}</div>`;};
   const pri=r.issues.filter(i=>r.priorites.includes(i.id));
   const marks=[...r.issues.map(i=>[i,i.sev>=2?'i-bad':'i-mid']),...r.good.map(i=>[i,'i-good']),...r.neutral.map(i=>[i,'i-neu'])];
   const mk=marks.map(([i,c])=>`<i class="${c}" data-t0="${i.t0}" style="left:${100*i.t0/dur}%;width:${Math.max(0.8,100*(i.t1-i.t0)/dur)}%"></i>`).join('');
