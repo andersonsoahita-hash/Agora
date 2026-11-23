@@ -520,7 +520,7 @@ function m(label, val, cls) { return '<div class="metric"><span>' + label + '</s
 function vResult(id) {
   var s = byId(S.sessions, id);
   if (!s) return '<p>Séance introuvable.</p><button class="btn" data-act="back">Retour</button>';
-  var a = s.sig, t = s.txt, h = '<div class="top"><div><div class="eyebrow">' + esc(s.date) + ' · ' + esc(durLabel(s.dur)) + '</div><h1>Résultat</h1></div><button class="btn small ghost" data-act="back">Fermer</button></div><div class="stack">';
+  var a = s.sig, t = s.txt, h = '<div class="top"><div><div class="eyebrow">' + esc(s.date) + ' · ' + esc(durLabel(s.dur)) + '</div><h1>Résultat</h1></div><button class="btn small ghost" data-act="back">Fermer</button></div><div class="stack">' + (window.AGREF_howBtn ? AGREF_howBtn(s.type) : '');
   h += '<div class="card"><h3>' + esc(s.sujet) + '</h3>' + pillarsHtml(s.pil) + pilEvHtml(s) + '</div>';
   h += discResultHtml(s);
   if (s.gest) h += '<div class="card"><div class="eyebrow">Gestuelle</div><h3>' + s.gest.score + ' / 100</h3>' + (s.gest.prio && s.gest.prio.length ? '<p class="muted small" style="margin:0 0 8px">À corriger : ' + s.gest.prio.map(esc).join(' · ') + '</p>' : '') + '<button class="btn" data-act="gest-view" data-v="' + s.gest.id + '">Voir la vidéo et les moments à corriger</button></div>';

@@ -180,11 +180,24 @@ E.createAnalyzer=function(opts){
     if(H){
       const shDy=Math.max(H.mouthDy+1.0,(Sm.y-H.cy)/H.ed-0.15);
       const sources=[];
+      /* profondeur : un poignet nettement plus près de la caméra que le visage = main devant le corps, pas un contact */
+      const SWn=SW/opts.aspect,zs=[L[0],L[11],L[12]].filter(q=>q&&typeof q.z==='number'),zRef=zs.length?zs.reduce((a,q)=>a+q.z,0)/zs.length:null;
+      const wrs=[15,16].map(i=>({i,p:P(L,i),z:L[i].z}));
+      /* 3D métrique (mètres) : les doigts doivent être réellement près de la tête ou du cou, pas seulement devant */
+      const Wd=f.world,near3D=wi=>{if(!Wd)return true;const g=i=>Wd[i]&&(Wd[i].visibility==null||Wd[i].visibility>0.4)?Wd[i]:null,fi=wi===15?[15,17,19,21]:[16,18,20,22],fp=fi.map(g).filter(Boolean),ls=g(11),rs=g(12),no=g(0);
+        if(!fp.length||!ls||!rs||!no)return true;
+        const m={x:(ls.x+rs.x)/2,y:(ls.y+rs.y)/2,z:(ls.z+rs.z)/2},ne={x:m.x+0.4*(no.x-m.x),y:m.y+0.4*(no.y-m.y),z:m.z+0.4*(no.z-m.z)},refs=[no,ne,g(7),g(8),g(9),g(10)].filter(Boolean),d=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y,a.z-b.z);
+        let mn=9;fp.forEach(a=>refs.forEach(b=>{mn=Math.min(mn,d(a,b))}));return mn<0.17};
+      const front=w=>!!w&&zRef!=null&&w.p.v>0.4&&typeof w.z==='number'&&(w.z-zRef)/SWn<-0.45;
       if(f.hands&&f.hands.length){
-        f.hands.forEach(lm=>{const pts=[4,8,12,16,20,9].map(i=>({x:lm[i].x*opts.aspect,y:lm[i].y}));
+        f.hands.forEach(lm=>{
+          /* la main détectée doit coller au poignet de la pose (sinon : résultat périmé ou autre main) */
+          const nw=wrs.filter(w=>w.p.v>0.3).map(w=>({w,d:Math.hypot(lm[0].x*opts.aspect-w.p.x,lm[0].y-w.p.y)})).sort((a,b)=>a.d-b.d)[0];
+          if(!nw||nw.d>0.9*H.ed||front(nw.w)||!near3D(nw.w.i))return;
+          const pts=[4,8,12,16,20,9].map(i=>({x:lm[i].x*opts.aspect,y:lm[i].y}));
           const palmW=Math.hypot((lm[5].x-lm[17].x)*opts.aspect,lm[5].y-lm[17].y);sources.push({pts,ratio:palmW/H.ed,known:true});});
       }else{
-        [[15,17,19,21],[16,18,20,22]].forEach(ids=>{const pts=ids.map(i=>P(L,i)).filter(p=>p.v>0.45&&p.rx>=0&&p.rx<=1&&p.ry>=0&&p.ry<=1);if(pts.length>=2)sources.push({pts,ratio:null,known:false});});
+        [[15,17,19,21],[16,18,20,22]].forEach(ids=>{if(front(wrs.filter(w=>w.i===ids[0])[0])||!near3D(ids[0]))return;const pts=ids.map(i=>P(L,i)).filter(p=>p.v>0.45&&p.rx>=0&&p.rx<=1&&p.ry>=0&&p.ry<=1);if(pts.length>=3)sources.push({pts,ratio:null,known:false});});
       }
       let best=null;
       sources.forEach(s=>{
@@ -201,7 +214,7 @@ E.createAnalyzer=function(opts){
         else{if(tc)closeTouch();tc={zone:best.z,t0:tt,t1:tt,frames:1,known:best.known,path:0,lx:best.cx,ly:best.cy,speakN:speaking?1:0,gap:0};}
       }else if(tc&&tt-tc.t1>0.35)closeTouch();
     }
-    function closeTouch(){if(tc&&tc.frames>=3&&tc.t1-tc.t0>=0.3){tc.static=(tc.path/Math.max(0.3,tc.t1-tc.t0))<0.5;touches.push(tc);}tc=null;}
+    function closeTouch(){if(tc&&tc.frames>=3&&tc.t1-tc.t0>=(tc.known?0.3:0.7)){tc.static=(tc.path/Math.max(0.3,tc.t1-tc.t0))<0.5;touches.push(tc);}tc=null;}
     A._closeTouch=closeTouch;
 
     /* bras croisés */

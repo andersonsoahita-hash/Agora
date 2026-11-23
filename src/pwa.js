@@ -594,3 +594,5 @@ function pwaBoot() {
     new MutationObserver(scan).observe(document.documentElement,{childList:true,subtree:true});scan();
   }catch(e){}
 })();
+
+(function(){['gesturestart','gesturechange','gestureend'].forEach(function(n){document.addEventListener(n,function(e){e.preventDefault()},{passive:false})});var lt=0;document.addEventListener('touchend',function(e){var n=Date.now();if(n-lt<350&&e.target.closest&&!e.target.closest('input,textarea,select'))e.preventDefault();lt=n},{passive:false});document.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault()},{passive:false})})();
