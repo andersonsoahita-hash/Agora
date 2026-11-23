@@ -176,11 +176,24 @@ function vHome() {
   h += homeDaily();
   h += goalsHtml();
   h += vBadges();
-  h += '<div class="card"><h3>Historique</h3>' + (S.sessions.length ? S.sessions.slice(0, 8).map(function (s) {
-    return '<button class="metric" style="width:100%;background:none;border:0;border-bottom:1px solid var(--line);text-align:left;cursor:pointer" data-act="open-session" data-v="' + esc(s.id) + '"><span>' + esc(s.date) + ' · ' + esc(s.sujet) + '</span><b class="muted small">' + (s.pil && s.pil.logos != null ? s.pil.logos : '–') + '/' + (s.pil && s.pil.ethos != null ? s.pil.ethos : '–') + '/' + (s.pil && s.pil.pathos != null ? s.pil.pathos : '–') + '</b></button>';
-  }).join('') + '<p class="muted small" style="margin:8px 0 0">Colonnes : Logos / Ethos / Pathos.</p>' : '<p class="muted">Aucune séance pour l’instant.</p>') + '</div>';
+  h += histCard();
   h += whyHtml();
   h += '</div>';
+  return h;
+}
+var hFil = 'all';
+function histCard() {
+  var L = S.sessions, kinds = {}, chips = [['all', 'Tout'], ['k:audio', '🎙 Audio'], ['k:video', '🎥 Vidéo']];
+  L.forEach(function (s) { kinds[s.type] = 1; });
+  Object.keys(kinds).forEach(function (t) { var d = byId(D.exerciseTypes, t); if (d) chips.push(['t:' + t, d.nom || d.name || d.label || t]); });
+  var F = L.filter(function (s) { return hFil === 'all' || (hFil === 'k:audio' && !s.gest) || (hFil === 'k:video' && s.gest) || hFil === 't:' + s.type; });
+  var h = '<div class="card" id="hist"><h3>Historique</h3>';
+  if (L.length > 1) h += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px">' + chips.map(function (c) { return '<button class="btn small ' + (hFil === c[0] ? '' : 'ghost') + '" data-act="hfil" data-v="' + esc(c[0]) + '">' + esc(c[1]) + '</button>'; }).join('') + '</div>';
+  if (!F.length) return h + '<p class="muted">' + (L.length ? 'Rien dans ce filtre.' : 'Aucune séance pour l’instant.') + '</p></div>';
+  h += F.slice(0, 30).map(function (s) {
+    var d = byId(D.exerciseTypes, s.type), pl = s.pil || {};
+    return '<button class="metric" style="width:100%;background:none;border:0;border-bottom:1px solid var(--line);text-align:left;cursor:pointer" data-act="open-session" data-v="' + esc(s.id) + '"><span>' + (s.gest ? '🎥 ' : '🎙 ') + esc(s.date) + ' · ' + esc(s.sujet) + (d ? ' <small class="muted">(' + esc(d.nom || d.name || d.label || s.type) + ')</small>' : '') + '</span><b class="muted small">' + (s.gest ? s.gest.score + '/100' : (pl.logos != null ? pl.logos : '–') + '/' + (pl.ethos != null ? pl.ethos : '–') + '/' + (pl.pathos != null ? pl.pathos : '–')) + '</b></button>';
+  }).join('') + '<p class="muted small" style="margin:8px 0 0">Audio : Logos / Ethos / Pathos · Vidéo : score gestuel.</p></div>';
   return h;
 }
 function goalsHtml() {
@@ -694,6 +707,7 @@ document.addEventListener('click', function (ev) {
     case 'goal-add': var gi = document.getElementById('goalIn'); if (gi && gi.value.trim()) { S.goals.push({ id: uid(), t: gi.value.trim(), done: false }); persist(); render(); } break;
     case 'goal-toggle': S.goals.forEach(function (x) { if (x.id === v) { x.done = !x.done; if (x.done) addXp(20); } }); persist(); render(); break;
     case 'goal-del': S.goals = S.goals.filter(function (x) { return x.id !== v; }); persist(); render(); break;
+    case 'hfil': hFil = v || 'all'; render(); break;
     case 'open-session': view = { tab: 'studio', sub: { result: v } }; render(); window.scrollTo(0, 0); break;
     case 'st-screen': if (st.rec || st.timerOn) break; st.screen = v; render(); window.scrollTo(0, 0); break;
     case 'st-type': setExType(v); render(); window.scrollTo(0, 0); break;
